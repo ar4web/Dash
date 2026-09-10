@@ -1,0 +1,102 @@
+// Full-system audit: NAV integrity, i18n coverage (every page + every
+// module, EN+AR parity), init wiring, DOM-id xref, links, dup IDs,
+// viewport and responsive tables — across all pages, not just HR.
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+
+const R = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
+const read = p => readFileSync(`${R}/${p}`, 'utf8');
+const fail = [];
+const ok = (name, cond, extra = '') => {
+  if (!cond) {
+    console.log(`FAIL ${name}${extra ? ` — ${extra}` : ''}`);
+    fail.push(name);
+  }
+};
+
+// ── dict parity ─────────────────────────────────────────────────────────
+const i18nSrc = read('src/v4/i18n.js');
+const enSrc = i18nSrc.slice(i18nSrc.indexOf('  en: {'), i18nSrc.indexOf('  ar: {'));
+const arSrc = i18nSrc.slice(i18nSrc.indexOf('  ar: {'));
+const kk = s => new Set([...s.matchAll(/'((?:nav|common|status|role|hr)\.[^']+)'\s*:/g)].map(m => m[1]));
+const EN = kk(enSrc);
+const AR = kk(arSrc);
+ok('dict-parity', EN.size === AR.size && [...EN].every(k => AR.has(k)) && [...AR].every(k => EN.has(k)));
+console.log(`  (dict EN=${EN.size} AR=${AR.size})`);
+
+// ── NAV ─────────────────────────────────────────────────────────────────
+const shell = read('src/v4/shell-render.js');
+const nav = [...shell.matchAll(/key: '([a-z0-9_-]+)'[\s\S]{0,200}?href: '([a-z0-9_]+\.html)'/g)];
+const navKeys = new Set(nav.map(n => n[1]));
+for (const m of nav) {
+  ok(`nav-file-${m[1]}`, existsSync(`${R}/production/${m[2]}`), m[2]);
+}
+const keyList = nav.map(n => n[1]);
+ok('nav-no-dupes', new Set(keyList).size === keyList.length);
+const icons = new Set([...shell.matchAll(/^  ([a-z]+): ?['\n]/gm)].map(m => m[1]));
+for (const m of shell.matchAll(/icon: '([a-z]+)'/g)) {
+  ok(`nav-icon-${m[1]}`, icons.has(m[1]));
+}
+
+// ── pages ───────────────────────────────────────────────────────────────
+const pages = readdirSync(`${R}/production`).filter(f => f.endsWith('.html'));
+const used = new Set();
+for (const p of pages) {
+  const html = read(`production/${p}`);
+  const isHr = p.startsWith('hr_');
+  for (const m of html.matchAll(/data-i18n(?:-ph)?="([^"]+)"/g)) {
+    used.add(m[1]);
+    ok(`i18n-page-${p}#${m[1]}`, EN.has(m[1]));
+  }
+  const dp = html.match(/data-page="([^"]+)"/);
+  if (dp) {
+    ok(`datapage-${p}`, navKeys.has(dp[1]), dp[1]);
+  }
+  const ids = [...html.matchAll(/ id="([^"]+)"/g)].map(m => m[1]);
+  ok(`dup-id-${p}`, new Set(ids).size === ids.length);
+  ok(`viewport-${p}`, html.includes('name="viewport"'));
+  for (const m of html.matchAll(/href="([a-z0-9_]+\.html)([?#][^"]*)?"/g)) {
+    ok(`link-${p}->${m[1]}`, existsSync(`${R}/production/${m[1]}`));
+  }
+  if (isHr) {
+    const tables = (html.match(/<table/g) || []).length;
+    const wraps = (html.match(/table-responsive/g) || []).length;
+    ok(`tables-wrapped-${p}`, tables <= wraps, `${tables} tables / ${wraps} wraps`);
+  }
+  for (const m of html.matchAll(/from '(\/src\/v4\/[a-z0-9-]+\.js)'/g)) {
+    const mod = m[1].slice(1);
+    ok(`init-mod-${p}`, existsSync(`${R}/${mod}`), m[1]);
+    if (!existsSync(`${R}/${mod}`)) {
+      continue;
+    }
+    const src = read(mod);
+    const im = html.match(new RegExp(`import \\{ ([^}]+) \\} from '${m[1]}'`));
+    if (im) {
+      for (const fn of im[1].split(',').map(s => s.trim())) {
+        ok(`init-fn-${p}#${fn}`, new RegExp(`export (async function|function|const|class) ${fn}\\b`).test(src), mod);
+      }
+    }
+    for (const x of src.matchAll(/getElementById\('([A-Za-z0-9-_]+)'\)/g)) {
+      const id = x[1];
+      const inPage = html.includes(`id="${id}"`);
+      const inMod = src.includes(`id="${id}"`) || src.includes(`id=\\"${id}\\"`);
+      ok(`dom-id-${p}#${id}`, inPage || inMod, mod);
+    }
+  }
+}
+
+// ── every module's t() keys resolve ─────────────────────────────────────
+const mods = readdirSync(`${R}/src/v4`).filter(f => f.endsWith('.js'));
+for (const m of mods) {
+  const src = read(`src/v4/${m}`);
+  for (const x of src.matchAll(/\bt\(['"]([^'"`$}]+)['"]\)/g)) {
+    used.add(x[1]);
+    ok(`i18n-mod-${m}#${x[1]}`, EN.has(x[1]));
+  }
+  for (const x of src.matchAll(/href=\\?"([a-z_]+\.html)/g)) {
+    ok(`jslink-${m}->${x[1]}`, existsSync(`${R}/production/${x[1]}`));
+  }
+}
+console.log(`  (pages=${pages.length} mods=${mods.length} keys-used=${used.size})`);
+
+console.log(fail.length ? `\nSYSTEM AUDIT: ${fail.length} FAILURES` : '\nALL SYSTEM CHECKS PASSED');
+process.exit(fail.length ? 1 : 0);

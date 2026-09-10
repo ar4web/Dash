@@ -3,6 +3,11 @@
 // Settings → JSON. Imports validate against a schema before anything is saved.
 
 import { showToast } from './toast.js';
+import { currentLang } from './i18n.js';
+
+function L(en, ar) {
+  return currentLang() === 'ar' ? ar : en;
+}
 
 function stamp() {
   return new Date().toISOString().slice(0, 10);
@@ -33,8 +38,12 @@ export function toCSV(columns, rows) {
 }
 
 export function exportCSV(filename, columns, rows) {
-  download(`${filename}-${stamp()}.csv`, toCSV(columns, rows), 'text/csv;charset=utf-8');
-  showToast(`Exported ${(rows || []).length} rows (CSV)`, { variant: 'success' });
+  const base = String(filename).replace(/\.csv$/i, '');
+  download(`${base}-${stamp()}.csv`, toCSV(columns, rows), 'text/csv;charset=utf-8');
+  showToast(
+    L(`Exported ${(rows || []).length} rows (CSV)`, `صُدّر ${(rows || []).length} صف (CSV)`),
+    { variant: 'success' }
+  );
 }
 
 export async function exportXLSX(filename, columns, rows, sheetName = 'Sheet1') {
@@ -51,7 +60,10 @@ export async function exportXLSX(filename, columns, rows, sheetName = 'Sheet1') 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, sheetName);
   XLSX.writeFile(wb, `${filename}-${stamp()}.xlsx`);
-  showToast(`Exported ${(rows || []).length} rows (Excel)`, { variant: 'success' });
+  showToast(
+    L(`Exported ${(rows || []).length} rows (Excel)`, `صُدّر ${(rows || []).length} صف (Excel)`),
+    { variant: 'success' }
+  );
 }
 
 export function exportData(format, filename, columns, rows, sheetName) {
@@ -59,7 +71,9 @@ export function exportData(format, filename, columns, rows, sheetName) {
     return exportXLSX(filename, columns, rows, sheetName);
   }
   if (format === 'pdf') {
-    showToast('Use Print → Save as PDF for documents', { variant: 'info' });
+    showToast(L('Use Print → Save as PDF for documents', 'استخدم الطباعة ← حفظ PDF للمستندات'), {
+      variant: 'info'
+    });
     window.print();
     return Promise.resolve();
   }
