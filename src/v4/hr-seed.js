@@ -2366,3 +2366,199 @@ export const INVOICES = [
     ]
   }
 ];
+
+// ── P4: payroll, expenses, advances ────────────────────────────────────────
+// Pay-run lines are computed live from employees + adjustments via calcPayLine
+// (hr-statutory.js) so seed math can never drift; the UI locks approved/paid
+// runs. The backend replaces this with snapshotted lines (see httpAdapter).
+
+export const SEED_EOSB = {
+  basis: 'basic', // 'basic' | 'basic+housing' — wage basis for Art. 84 (counsel sets)
+  capMonths: 0, // 0 = no cap; sources cite 12 vs 18 — verify, then set here
+  payDaysEmployer: 7, // pay within 1 week on employer termination
+  payDaysResign: 14 // …within 2 weeks on resignation
+};
+
+export const PAY_RUNS = [
+  {
+    id: 'PR-2026-08',
+    month: '2026-08',
+    status: 'paid',
+    paidOn: '2026-09-02',
+    wps: 'paid',
+    wpsAt: '2026-09-01T10:00:00',
+    adjustments: {
+      'EMP-0006': { otH: 12 },
+      'EMP-0007': { otH: 8 },
+      'EMP-0003': { extras: 300, extrasLabel: 'Site allowance' },
+      'EMP-0010': {
+        deductions: [
+          {
+            label: 'Salary advance settlement',
+            labelAr: 'سداد سلفة راتب',
+            cat: 'advance',
+            amount: 500
+          }
+        ]
+      }
+    }
+  },
+  {
+    id: 'PR-2026-09',
+    month: '2026-09',
+    status: 'draft',
+    paidOn: null,
+    wps: 'draft',
+    wpsAt: null,
+    adjustments: {
+      'EMP-0009': { otH: 4 }
+    }
+  }
+];
+
+export const EXPENSES = [
+  {
+    id: 'EXP-2026-011',
+    emp: 'EMP-0006',
+    date: '2026-09-03',
+    cat: 'fuel',
+    amount: 420,
+    vat: 63,
+    receipt: true,
+    desc: 'Diesel for site generator',
+    descAr: 'ديزل لمولد الموقع',
+    status: 'submitted',
+    billable: true,
+    client: 'CL-002',
+    history: [{ at: '2026-09-03', by: 'EMP-0006', action: 'submitted' }]
+  },
+  {
+    id: 'EXP-2026-012',
+    emp: 'EMP-0003',
+    date: '2026-09-01',
+    cat: 'travel',
+    amount: 1800,
+    vat: 270,
+    receipt: true,
+    desc: 'Client site visit — Dammam',
+    descAr: 'زيارة موقع العميل — الدمام',
+    status: 'approved',
+    billable: false,
+    client: null,
+    history: [
+      { at: '2026-09-01', by: 'EMP-0003', action: 'submitted' },
+      { at: '2026-09-04', by: 'EMP-0001', action: 'approved' }
+    ]
+  },
+  {
+    id: 'EXP-2026-013',
+    emp: 'EMP-0010',
+    date: '2026-08-28',
+    cat: 'supplies',
+    amount: 950,
+    vat: 142.5,
+    receipt: true,
+    desc: 'Safety gloves + cleaning stock',
+    descAr: 'قفازات سلامة ومواد تنظيف',
+    status: 'paid',
+    paidAt: '2026-09-04',
+    billable: false,
+    client: null,
+    history: [
+      { at: '2026-08-28', by: 'EMP-0010', action: 'submitted' },
+      { at: '2026-08-30', by: 'EMP-0001', action: 'approved' },
+      { at: '2026-09-04', by: 'EMP-0002', action: 'paid' }
+    ]
+  },
+  {
+    id: 'EXP-2026-014',
+    emp: 'EMP-0007',
+    date: '2026-09-05',
+    cat: 'fuel',
+    amount: 620,
+    vat: 93,
+    receipt: true,
+    desc: 'Diesel — two site trips',
+    descAr: 'ديزل — رحلتان للموقع',
+    status: 'submitted',
+    billable: false,
+    client: null,
+    history: [{ at: '2026-09-05', by: 'EMP-0007', action: 'submitted' }]
+  },
+  {
+    id: 'EXP-2026-015',
+    emp: 'EMP-0012',
+    date: '2026-09-06',
+    cat: 'perdiem',
+    amount: 300,
+    vat: 0,
+    receipt: false,
+    desc: 'Per diem — Jubail day trip',
+    descAr: 'بدل يومي — رحلة الجبيل',
+    status: 'draft',
+    billable: false,
+    client: null,
+    history: []
+  },
+  {
+    id: 'EXP-2026-016',
+    emp: 'EMP-0008',
+    date: '2026-08-20',
+    cat: 'medical',
+    amount: 800,
+    vat: 120,
+    receipt: false,
+    desc: 'Clinic visit + prescription',
+    descAr: 'زيارة عيادة ووصفة',
+    status: 'submitted',
+    billable: false,
+    client: null,
+    history: [{ at: '2026-08-20', by: 'EMP-0008', action: 'submitted' }]
+  },
+  {
+    id: 'EXP-2026-017',
+    emp: 'EMP-0009',
+    date: '2026-09-02',
+    cat: 'govt',
+    amount: 2500,
+    vat: 0,
+    receipt: true,
+    desc: 'Traffic fine',
+    descAr: 'مخالفة مرورية',
+    status: 'rejected',
+    billable: false,
+    client: null,
+    history: [
+      { at: '2026-09-02', by: 'EMP-0009', action: 'submitted' },
+      {
+        at: '2026-09-03',
+        by: 'EMP-0001',
+        action: 'rejected',
+        note: 'Personal fine — not reimbursable'
+      }
+    ]
+  }
+];
+
+export const ADVANCES = [
+  {
+    id: 'ADV-2026-004',
+    emp: 'EMP-0010',
+    date: '2026-08-10',
+    amount: 500,
+    purpose: 'Family emergency',
+    purposeAr: 'ظرف عائلي طارئ',
+    status: 'settled',
+    settled: [{ ref: 'PR-2026-08', at: '2026-09-02', amount: 500 }]
+  },
+  {
+    id: 'ADV-2026-005',
+    emp: 'EMP-0006',
+    date: '2026-09-01',
+    amount: 800,
+    purpose: 'School fees',
+    purposeAr: 'رسوم مدرسية',
+    status: 'open',
+    settled: []
+  }
+];

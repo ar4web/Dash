@@ -59,6 +59,11 @@ export const NAV = [
       { key: 'hr-assignments', href: 'hr_assignments.html', text: 'Assignments', icon: 'map' },
       { key: 'hr-ajeer', href: 'hr_ajeer.html', text: 'Ajeer permits', icon: 'doc' },
       { key: 'hr-invoices', href: 'hr_invoices.html', text: 'Invoices', icon: 'receipt' },
+      { key: 'hr-payroll', href: 'hr_payroll.html', text: 'Pay runs', icon: 'wallet' },
+      { key: 'hr-gosi', href: 'hr_gosi.html', text: 'GOSI', icon: 'percent' },
+      { key: 'hr-wps', href: 'hr_wps.html', text: 'WPS & Mudad', icon: 'bank' },
+      { key: 'hr-eosb', href: 'hr_eosb.html', text: 'EOSB & settlement', icon: 'price' },
+      { key: 'hr-expenses', href: 'hr_expenses.html', text: 'Expenses', icon: 'tag' },
       { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings', icon: 'settings' }
     ]
   },
@@ -268,7 +273,10 @@ export const ICONS = {
     '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
   clipboard:
     '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="4" width="14" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h4"/></svg>',
-  palm: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21v-9"/><path d="M12 12C8 12 5 10 4 6c4 0 7 2 8 4 1-2 4-4 8-4-1 4-4 6-8 6z"/><path d="M12 12c0-3 1-5 4-6"/></svg>'
+  palm: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21v-9"/><path d="M12 12C8 12 5 10 4 6c4 0 7 2 8 4 1-2 4-4 8-4-1 4-4 6-8 6z"/><path d="M12 12c0-3 1-5 4-6"/></svg>',
+  bank: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 9l10-6 10 6"/><path d="M4 9v10M20 9v10M8 12v5M12 12v5M16 12v5M2 21h20"/></svg>',
+  percent:
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>'
 };
 
 const CHEVRON =

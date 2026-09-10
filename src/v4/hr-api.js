@@ -24,7 +24,10 @@ import {
   TIMESHEETS,
   LEAVE_REQUESTS,
   AJEER_PERMITS,
-  INVOICES
+  INVOICES,
+  PAY_RUNS,
+  EXPENSES,
+  ADVANCES
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -49,7 +52,10 @@ const SEED_MAP = {
   timesheets: TIMESHEETS,
   leaveRequests: LEAVE_REQUESTS,
   ajeerPermits: AJEER_PERMITS,
-  invoices: INVOICES
+  invoices: INVOICES,
+  payRuns: PAY_RUNS,
+  expenses: EXPENSES,
+  advances: ADVANCES
 };
 
 const API_MAP = {
@@ -74,7 +80,10 @@ const API_MAP = {
   timesheets: { path: '/api/hr/timesheets', listKey: 'sheets' },
   leaveRequests: { path: '/api/hr/leave-requests', listKey: 'requests' },
   ajeerPermits: { path: '/api/hr/ajeer', listKey: 'permits' },
-  invoices: { path: '/api/hr/invoices', listKey: 'invoices' }
+  invoices: { path: '/api/hr/invoices', listKey: 'invoices' },
+  payRuns: { path: '/api/hr/pay-runs', listKey: 'runs' },
+  expenses: { path: '/api/hr/expenses', listKey: 'expenses' },
+  advances: { path: '/api/hr/advances', listKey: 'advances' }
 };
 
 function overlayRows(name) {

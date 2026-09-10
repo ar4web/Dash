@@ -178,7 +178,10 @@ export function calcEOSB({ basic = 0, joinDate, endDate = null, endReason = 'ter
   const rest = Math.max(0, years - 5);
   const gross = round2(basic * 0.5 * first5 + basic * rest);
   let factor = 1;
-  if (endReason === 'resignation' || endReason === 'resignation-fixed') {
+  // 2026 nuance (Art. 85): the resignation haircut applies only to fixed-term
+  // resignation. Indefinite resignation, termination, contract end and Art. 81
+  // exits keep the full award; Art. 80 forfeits it (handled above).
+  if (endReason === 'resignation-fixed') {
     if (years < 2) {
       factor = 0;
     } else if (years < 5) {
@@ -198,6 +201,81 @@ export function calcEOSB({ basic = 0, joinDate, endDate = null, endReason = 'ter
     factor,
     reason: endReason
   };
+}
+
+// ── Payroll line (P4) ────────────────────────────────────────────────────
+// Contract monthly wage = basic + housing + transport (seed shape; no `rate`
+// field on employees). Gross = wage + OT (hourly slice of wage/30 @1.5x) +
+// extras. Deductions carry a category; Art. 40 employer-borne cats are
+// flagged, never silently applied — the payroll UI must refuse to save them.
+
+export function calcPayLine(emp, { otH = 0, extras = 0, deductions = [], at = null } = {}) {
+  const rate = (Number(emp.basic) || 0) + (Number(emp.housing) || 0) + (Number(emp.transport) || 0);
+  const daily = round2(rate / 30);
+  const otPay = round2((rate / 30 / 8) * OT_RATE * (Number(otH) || 0));
+  const gross = round2(rate + otPay + (Number(extras) || 0));
+  const g = calcGosi({
+    basic: emp.basic,
+    housing: emp.housing,
+    isSaudi: !!emp.saudi,
+    enrolledOn: emp.gosiOn,
+    at
+  });
+  const deds = deductions || [];
+  const blocked = deds.filter(d => isBlockedDeduction(d.cat));
+  const dedTotal = round2(deds.reduce((s, d) => s + (Number(d.amount) || 0), 0));
+  const net = round2(gross - g.employee - dedTotal);
+  return {
+    emp: emp.code,
+    daily,
+    otH: Number(otH) || 0,
+    otPay,
+    extras: Number(extras) || 0,
+    gross,
+    gosiBase: g.base,
+    gosiEmp: g.employee,
+    gosiEr: g.employer,
+    gosiSystem: g.system,
+    deductions: deds,
+    dedTotal,
+    net,
+    blocked
+  };
+}
+
+// ── WPS / SIF (P4) ───────────────────────────────────────────────────────
+// Pay within the first 10 days of the following month (§0.7).
+
+export function wpsDeadline(month) {
+  const [y, m] = String(month).split('-').map(Number);
+  const d = new Date(y, m, 10); // m is 1-based month → 0-based next month
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+// SIF working format v1 (pipe-delimited). Confirm the final fixed-width Mudad
+// layout with the bank/finance before first live filing — the backend emits it.
+export function sifBuild(month, lines) {
+  const errors = [];
+  const rows = (lines || []).map(l => {
+    if (!l.iban) {
+      errors.push(`${l.emp}: missing IBAN`);
+    }
+    if (!(Number(l.net) > 0)) {
+      errors.push(`${l.emp}: non-positive net payable`);
+    }
+    const fils = Math.round((Number(l.net) || 0) * 100);
+    return [
+      'SAL',
+      String(month).replace('-', ''),
+      l.iban || 'NOIBAN',
+      String(fils).padStart(12, '0'),
+      l.emp
+    ].join('|');
+  });
+  const total = round2((lines || []).reduce((s, l) => s + (Number(l.net) || 0), 0));
+  const head = ['SIF', 'V1', month, rows.length, Math.round(total * 100)].join('|');
+  return { text: [head, ...rows].join('\n') + '\n', errors, total, count: rows.length };
 }
 
 // ── Leave ────────────────────────────────────────────────────────────────

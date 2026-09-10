@@ -147,7 +147,18 @@ function sitemapPlugin() {
 function rootRedirectPlugin() {
   return {
     name: 'gentelella-root-redirect',
-    apply: 'build',
+    // Dev: preview root opens the HR dashboard instead of a blank 404.
+    // (configureServer never runs during build; generateBundle never runs in serve.)
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === '/' || req.url === '/index.html') {
+          res.writeHead(302, { location: '/production/hr_dashboard.html' });
+          res.end();
+          return;
+        }
+        next();
+      });
+    },
     generateBundle() {
       this.emitFile({
         type: 'asset',
