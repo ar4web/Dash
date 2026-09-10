@@ -27,7 +27,13 @@ import {
   INVOICES,
   PAY_RUNS,
   EXPENSES,
-  ADVANCES
+  ADVANCES,
+  TEMPLATES,
+  CONTRACTS,
+  JOBS,
+  CANDIDATES,
+  INTERVIEWS,
+  OFFERS
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -55,7 +61,13 @@ const SEED_MAP = {
   invoices: INVOICES,
   payRuns: PAY_RUNS,
   expenses: EXPENSES,
-  advances: ADVANCES
+  advances: ADVANCES,
+  templates: TEMPLATES,
+  contracts: CONTRACTS,
+  jobs: JOBS,
+  candidates: CANDIDATES,
+  interviews: INTERVIEWS,
+  offers: OFFERS
 };
 
 const API_MAP = {
@@ -83,7 +95,13 @@ const API_MAP = {
   invoices: { path: '/api/hr/invoices', listKey: 'invoices' },
   payRuns: { path: '/api/hr/pay-runs', listKey: 'runs' },
   expenses: { path: '/api/hr/expenses', listKey: 'expenses' },
-  advances: { path: '/api/hr/advances', listKey: 'advances' }
+  advances: { path: '/api/hr/advances', listKey: 'advances' },
+  templates: { path: '/api/hr/templates', listKey: 'templates' },
+  contracts: { path: '/api/hr/contracts', listKey: 'contracts' },
+  jobs: { path: '/api/hr/jobs', listKey: 'jobs' },
+  candidates: { path: '/api/hr/candidates', listKey: 'candidates' },
+  interviews: { path: '/api/hr/interviews', listKey: 'interviews' },
+  offers: { path: '/api/hr/offers', listKey: 'offers' }
 };
 
 function overlayRows(name) {

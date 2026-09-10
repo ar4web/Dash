@@ -64,6 +64,13 @@ export const NAV = [
       { key: 'hr-wps', href: 'hr_wps.html', text: 'WPS & Mudad', icon: 'bank' },
       { key: 'hr-eosb', href: 'hr_eosb.html', text: 'EOSB & settlement', icon: 'price' },
       { key: 'hr-expenses', href: 'hr_expenses.html', text: 'Expenses', icon: 'tag' },
+      { key: 'hr-contracts', href: 'hr_contracts.html', text: 'Contract maker', icon: 'contract' },
+      { key: 'hr-templates', href: 'hr_templates.html', text: 'Templates', icon: 'type' },
+      { key: 'hr-jobs', href: 'hr_jobs.html', text: 'Jobs', icon: 'briefcase' },
+      { key: 'hr-candidates', href: 'hr_candidates.html', text: 'Candidates', icon: 'users' },
+      { key: 'hr-pipeline', href: 'hr_pipeline.html', text: 'Pipeline', icon: 'kanban' },
+      { key: 'hr-interviews', href: 'hr_interviews.html', text: 'Interviews', icon: 'calendar' },
+      { key: 'hr-offers', href: 'hr_offers.html', text: 'Offers', icon: 'mail' },
       { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings', icon: 'settings' }
     ]
   },
@@ -276,7 +283,9 @@ export const ICONS = {
   palm: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21v-9"/><path d="M12 12C8 12 5 10 4 6c4 0 7 2 8 4 1-2 4-4 8-4-1 4-4 6-8 6z"/><path d="M12 12c0-3 1-5 4-6"/></svg>',
   bank: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 9l10-6 10 6"/><path d="M4 9v10M20 9v10M8 12v5M12 12v5M16 12v5M2 21h20"/></svg>',
   percent:
-    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>'
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
+  contract:
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>'
 };
 
 const CHEVRON =

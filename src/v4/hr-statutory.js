@@ -588,3 +588,125 @@ export function invoiceDue(month, billingDay) {
   d.setDate(day);
   return d.toISOString().slice(0, 10);
 }
+
+// ── Contracts: placeholders + lint + dates (P5) ────────────────────────────
+// Template bodies use {{name}} placeholders drawn from records (no retyping).
+// lintTemplate blocks saves with unbalanced braces or unknown names.
+
+export const KNOWN_PLACEHOLDERS = [
+  'company_en',
+  'company_ar',
+  'company_cr',
+  'today_date',
+  'worker_name',
+  'worker_name_ar',
+  'id_no',
+  'nationality',
+  'job_title',
+  'job_title_ar',
+  'wage_basic',
+  'wage_housing',
+  'wage_transport',
+  'wage_total',
+  'salary_total',
+  'start_date',
+  'end_date',
+  'duration_months',
+  'probation_days',
+  'notice_days',
+  'hours_note',
+  'work_location',
+  'equipment_note',
+  'sla_note',
+  'bonus_note',
+  'client_name',
+  'client_name_ar',
+  'client_cr',
+  'site_name',
+  'service_type',
+  'professions',
+  'rate_monthly',
+  'payment_terms',
+  'period_text',
+  'validity_date',
+  'request_ref',
+  'assignment_ref',
+  'ajeer_ref',
+  'ticket_note',
+  'reason_text',
+  'tenure_text',
+  'last_role',
+  'appeal_note',
+  'settlement_total',
+  'sign_date',
+  'issuer_name',
+  'issuer_title'
+];
+
+export function lintTemplate(text) {
+  const errors = [];
+  const src = String(text || '');
+  const opens = (src.match(/\{\{/g) || []).length;
+  const closes = (src.match(/\}\}/g) || []).length;
+  if (opens !== closes) {
+    errors.push('unbalanced-braces');
+  }
+  if (/\{\{\s*\}\}/.test(src)) {
+    errors.push('empty-placeholder');
+  }
+  const names = [...src.matchAll(/\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g)].map(m => m[1]);
+  for (const n of new Set(names)) {
+    if (!KNOWN_PLACEHOLDERS.includes(n)) {
+      errors.push(`unknown:${n}`);
+    }
+  }
+  return { errors, placeholders: [...new Set(names)] };
+}
+
+export function renderTemplate(body, values = {}) {
+  return String(body || '').replace(/\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g, (m, k) => {
+    const v = values[k];
+    return v === undefined || v === null || v === '' ? '……' : String(v);
+  });
+}
+
+function fmtYMD(d) {
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+export function addDays(iso, n) {
+  const d = new Date(`${iso}T00:00:00`);
+  d.setDate(d.getDate() + Number(n || 0));
+  return fmtYMD(d);
+}
+
+export function addMonths(iso, n) {
+  const [y, m, d] = String(iso).split('-').map(Number);
+  const t = new Date(y, m - 1 + Number(n || 0), 1);
+  const last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
+  t.setDate(Math.min(d, last));
+  return fmtYMD(t);
+}
+
+// Probation must be stated in the contract and may not exceed 180 days (§0.4).
+export function probationOk(days) {
+  const n = Number(days);
+  return Number.isFinite(n) && n > 0 && n <= 180;
+}
+
+export function contractEnd(start, months) {
+  return addMonths(start, months);
+}
+
+// SAR 4,000/month floor for a Saudi to count toward Nitaqat (§0.8).
+export function nitaqatWageFloor() {
+  return 4000;
+}
+
+export function nitaqatWageOk(isSaudi, basic) {
+  if (!isSaudi) {
+    return true;
+  }
+  return (Number(basic) || 0) >= nitaqatWageFloor();
+}

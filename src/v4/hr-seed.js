@@ -2562,3 +2562,1193 @@ export const ADVANCES = [
     settled: []
   }
 ];
+
+// ── P5: contract templates + registers + hiring ────────────────────────────
+// Template bodies are bilingual with {{placeholders}} (see KNOWN_PLACEHOLDERS).
+// Fields with `source` auto-fill from the picked party; the rest are manual.
+
+export const TEMPLATES = [
+  {
+    code: 'E1',
+    cat: 'E',
+    en: 'Indefinite-term employment',
+    ar: 'عقد عمل غير محدد المدة',
+    version: 3,
+    updatedAt: '2026-08-01',
+    party: 'employee',
+    fields: [
+      {
+        key: 'probation_days',
+        en: 'Probation days (≤180)',
+        ar: 'أيام التجربة (≤180)',
+        kind: 'number',
+        def: 90
+      },
+      { key: 'notice_days', en: 'Notice days', ar: 'أيام الإشعار', kind: 'number', def: 60 }
+    ],
+    bodyEn: `INDEFINITE-TERM EMPLOYMENT CONTRACT
+Between {{company_en}} (CR {{company_cr}}) — the Employer — and {{worker_name}} (ID {{id_no}}, {{nationality}}) — the Employee.
+1. Job: {{job_title}}. Start date: {{start_date}}.
+2. Monthly wage: basic {{wage_basic}}, housing {{wage_housing}}, transport {{wage_transport}} (total {{wage_total}} SAR), paid electronically via WPS.
+3. Probation: {{probation_days}} days, stated here as required; either party may end the contract during probation per this contract.
+4. Notice: {{notice_days}} days for indefinite termination; resignation is deemed accepted if the employer does not reply within 30 days.
+5. The Employee consents to assignment to client sites under Ajeer-compliant outsourcing during employment.
+6. This contract is documented electronically via Qiwa.`,
+    bodyAr: `عقد عمل غير محدد المدة
+بين {{company_ar}} (س.ت {{company_cr}}) — صاحب العمل — و{{worker_name_ar}} (هوية {{id_no}}، {{nationality}}) — الموظف.
+1. المهنة: {{job_title_ar}}. تاريخ البدء: {{start_date}}.
+2. الأجر الشهري: أساسي {{wage_basic}}، سكن {{wage_housing}}، نقل {{wage_transport}} (الإجمالي {{wage_total}} ر.س)، يُدفع إلكترونيًا عبر حماية الأجور.
+3. فترة التجربة: {{probation_days}} يومًا، منصوص عليها هنا كما يشترط النظام؛ ويجوز لأي طرف إنهاء العقد خلالها وفق هذا العقد.
+4. الإشعار: {{notice_days}} يومًا لإنهاء العقد غير المحدد؛ وتُعد الاستقالة مقبولة إذا لم يرد صاحب العمل خلال 30 يومًا.
+5. يوافق الموظف على إعارته لمواقع العملاء ضمن إسناد متوافق مع أجير أثناء سريان العقد.
+6. يوثق هذا العقد إلكترونيًا عبر قوى.`
+  },
+  {
+    code: 'E2',
+    cat: 'E',
+    en: 'Fixed-term employment',
+    ar: 'عقد عمل محدد المدة',
+    version: 3,
+    updatedAt: '2026-08-01',
+    party: 'employee',
+    fields: [
+      {
+        key: 'duration_months',
+        en: 'Duration (months)',
+        ar: 'المدة (أشهر)',
+        kind: 'number',
+        def: 12
+      },
+      { key: 'end_date', en: 'End date', ar: 'تاريخ الانتهاء', kind: 'date' },
+      {
+        key: 'probation_days',
+        en: 'Probation days (≤180)',
+        ar: 'أيام التجربة (≤180)',
+        kind: 'number',
+        def: 90
+      },
+      {
+        key: 'notice_days',
+        en: 'Non-renewal notice days',
+        ar: 'إشعار عدم التجديد',
+        kind: 'number',
+        def: 60
+      }
+    ],
+    bodyEn: `FIXED-TERM EMPLOYMENT CONTRACT
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (ID {{id_no}}, {{nationality}}).
+1. Job: {{job_title}}. Term: {{start_date}} to {{end_date}} ({{duration_months}} months).
+2. Monthly wage: basic {{wage_basic}}, housing {{wage_housing}}, transport {{wage_transport}} (total {{wage_total}} SAR) via WPS.
+3. Probation: {{probation_days}} days. Renewal requires written agreement; non-renewal notice is {{notice_days}} days.
+4. Fixed-term resignation follows Art. 85 (2026: haircut applies to fixed-term resignation only).
+5. Documented electronically via Qiwa.`,
+    bodyAr: `عقد عمل محدد المدة
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (هوية {{id_no}}، {{nationality}}).
+1. المهنة: {{job_title_ar}}. المدة: من {{start_date}} إلى {{end_date}} ({{duration_months}} شهرًا).
+2. الأجر الشهري: أساسي {{wage_basic}}، سكن {{wage_housing}}، نقل {{wage_transport}} (الإجمالي {{wage_total}} ر.س) عبر حماية الأجور.
+3. التجربة: {{probation_days}} يومًا. يتطلب التجديد اتفاقًا كتابيًا؛ وإشعار عدم التجديد {{notice_days}} يومًا.
+4. تخضع استقالة محدد المدة للمادة 85 (2026: الحسم للاستقالة محددة المدة فقط).
+5. يوثق إلكترونيًا عبر قوى.`
+  },
+  {
+    code: 'E3',
+    cat: 'E',
+    en: 'Expat fixed-term employment',
+    ar: 'عقد عمل غير سعودي',
+    version: 4,
+    updatedAt: '2026-08-15',
+    party: 'employee',
+    fields: [
+      {
+        key: 'duration_months',
+        en: 'Duration (months)',
+        ar: 'المدة (أشهر)',
+        kind: 'number',
+        def: 24
+      },
+      { key: 'end_date', en: 'End date', ar: 'تاريخ الانتهاء', kind: 'date' },
+      {
+        key: 'probation_days',
+        en: 'Probation days (≤180)',
+        ar: 'أيام التجربة (≤180)',
+        kind: 'number',
+        def: 90
+      },
+      {
+        key: 'ticket_note',
+        en: 'Ticket / repatriation note',
+        ar: 'بند التذاكر',
+        kind: 'text',
+        def: 'Annual economy ticket plus end-of-service repatriation at employer cost.'
+      }
+    ],
+    bodyEn: `EXPATRIATE FIXED-TERM EMPLOYMENT CONTRACT
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (Iqama {{id_no}}, {{nationality}}).
+1. Job: {{job_title}} — must match the profession on the work permit/Iqama. Term: {{start_date}} to {{end_date}} ({{duration_months}} months).
+2. Monthly wage: basic {{wage_basic}}, housing {{wage_housing}}, transport {{wage_transport}} (total {{wage_total}} SAR) via WPS.
+3. Probation: {{probation_days}} days. The employer bears recruitment, Iqama and renewal costs (Art. 40) — never deducted from wage.
+4. Tickets: {{ticket_note}}
+5. The Employee consents to Ajeer-compliant assignment to client sites. Exit/re-entry follows mutual agreement and the law.
+6. Documented electronically via Qiwa; expiry is linked to Iqama validity.`,
+    bodyAr: `عقد عمل غير سعودي محدد المدة
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (إقامة {{id_no}}، {{nationality}}).
+1. المهنة: {{job_title_ar}} — يجب أن تطابق المهنة في رخصة العمل/الإقامة. المدة: من {{start_date}} إلى {{end_date}} ({{duration_months}} شهرًا).
+2. الأجر الشهري: أساسي {{wage_basic}}، سكن {{wage_housing}}، نقل {{wage_transport}} (الإجمالي {{wage_total}} ر.س) عبر حماية الأجور.
+3. التجربة: {{probation_days}} يومًا. يتحمل صاحب العمل تكاليف الاستقدام والإقامة والتجديد (مادة 40) — ولا تُستقطع من الأجر أبدًا.
+4. التذاكر: {{ticket_note}}
+5. يوافق الموظف على الإعارة لمواقع العملاء وفق أجير. وتخضع تأشيرات الخروج والعودة للاتفاق والنظام.
+6. يوثق إلكترونيًا عبر قوى؛ ويرتبط الانتهاء بصلاحية الإقامة.`
+  },
+  {
+    code: 'E4',
+    cat: 'E',
+    en: 'Part-time employment',
+    ar: 'عقد عمل بدوام جزئي',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'employee',
+    fields: [
+      {
+        key: 'hours_note',
+        en: 'Working hours note',
+        ar: 'بند ساعات العمل',
+        kind: 'text',
+        def: '20 hours per week, scheduled by the direct manager.'
+      },
+      { key: 'notice_days', en: 'Notice days', ar: 'أيام الإشعار', kind: 'number', def: 30 }
+    ],
+    bodyEn: `PART-TIME EMPLOYMENT CONTRACT
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (ID {{id_no}}).
+1. Job: {{job_title}}. Monthly wage {{wage_total}} SAR (basic {{wage_basic}}, housing {{wage_housing}}, transport {{wage_transport}}) via WPS.
+2. Hours: {{hours_note}} Any regular extra hours are compensated per the Labor Law.
+3. Notice: {{notice_days}} days. Saudi part-timers at SAR 3,000+ count as one-third toward Nitaqat.
+4. Documented electronically via Qiwa.`,
+    bodyAr: `عقد عمل بدوام جزئي
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (هوية {{id_no}}).
+1. المهنة: {{job_title_ar}}. الأجر الشهري {{wage_total}} ر.س (أساسي {{wage_basic}}، سكن {{wage_housing}}، نقل {{wage_transport}}) عبر حماية الأجور.
+2. الساعات: {{hours_note}} وأي ساعات إضافية منتظمة تُعوض وفق نظام العمل.
+3. الإشعار: {{notice_days}} يومًا. السعودي بدوام جزئي بأجر 3000+ ر.س يُحتسب ثلثًا في نطاقات.
+4. يوثق إلكترونيًا عبر قوى.`
+  },
+  {
+    code: 'E5',
+    cat: 'E',
+    en: 'Flexible / hourly work',
+    ar: 'عقد العمل المرن',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      {
+        key: 'hours_note',
+        en: 'Hourly terms',
+        ar: 'شروط الساعات',
+        kind: 'text',
+        def: 'Hourly wage per timesheet, capped at the statutory flexible-work ceiling.'
+      },
+      { key: 'notice_days', en: 'Notice days', ar: 'أيام الإشعار', kind: 'number', def: 15 }
+    ],
+    bodyEn: `FLEXIBLE / HOURLY WORK CONTRACT
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (ID {{id_no}}).
+1. Job: {{job_title}}. Terms: {{hours_note}}
+2. GOSI treatment follows the flexible-work regulations in force — confirm with counsel before issuing.
+3. Notice: {{notice_days}} days. Documented electronically via Qiwa.`,
+    bodyAr: `عقد العمل المرن
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (هوية {{id_no}}).
+1. المهنة: {{job_title_ar}}. الشروط: {{hours_note}}
+2. تخضع معاملة التأمينات للائحة العمل المرن السارية — أكّد مع المستشار قبل الإصدار.
+3. الإشعار: {{notice_days}} يومًا. يوثق إلكترونيًا عبر قوى.`
+  },
+  {
+    code: 'E6',
+    cat: 'E',
+    en: 'Temporary / seasonal work',
+    ar: 'عقد عمل مؤقت–موسمي',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      { key: 'end_date', en: 'End date', ar: 'تاريخ الانتهاء', kind: 'date' },
+      { key: 'site_name', en: 'Work site', ar: 'موقع العمل', kind: 'text' }
+    ],
+    bodyEn: `TEMPORARY / SEASONAL WORK CONTRACT
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (ID {{id_no}}).
+1. Job: {{job_title}} at {{site_name}}. Term: {{start_date}} to {{end_date}}.
+2. Monthly wage {{wage_total}} SAR via WPS. The contract ends automatically on {{end_date}} with clearance.
+3. Documented electronically via Qiwa.`,
+    bodyAr: `عقد عمل مؤقت–موسمي
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (هوية {{id_no}}).
+1. المهنة: {{job_title_ar}} في {{site_name}}. المدة: من {{start_date}} إلى {{end_date}}.
+2. الأجر الشهري {{wage_total}} ر.س عبر حماية الأجور. ينتهي العقد تلقائيًا بتاريخ {{end_date}} مع إخلاء الطرف.
+3. يوثق إلكترونيًا عبر قوى.`
+  },
+  {
+    code: 'E7',
+    cat: 'E',
+    en: 'Remote work',
+    ar: 'عقد العمل عن بعد',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      {
+        key: 'work_location',
+        en: 'Work location',
+        ar: 'مكان العمل',
+        kind: 'text',
+        def: 'From home within Saudi Arabia.'
+      },
+      {
+        key: 'equipment_note',
+        en: 'Equipment note',
+        ar: 'بند الأجهزة',
+        kind: 'text',
+        def: 'Laptop and connectivity allowance provided by the employer.'
+      },
+      {
+        key: 'sla_note',
+        en: 'Communication SLA',
+        ar: 'اتفاقية التواصل',
+        kind: 'text',
+        def: 'Reachable during working hours; daily async update.'
+      },
+      { key: 'notice_days', en: 'Notice days', ar: 'أيام الإشعار', kind: 'number', def: 60 }
+    ],
+    bodyEn: `REMOTE WORK CONTRACT
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (ID {{id_no}}).
+1. Job: {{job_title}}. Location: {{work_location}}
+2. Equipment: {{equipment_note}}
+3. Communication: {{sla_note}}
+4. Monthly wage {{wage_total}} SAR via WPS. Notice {{notice_days}} days. Documented via Qiwa.`,
+    bodyAr: `عقد العمل عن بعد
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (هوية {{id_no}}).
+1. المهنة: {{job_title_ar}}. المكان: {{work_location}}
+2. الأجهزة: {{equipment_note}}
+3. التواصل: {{sla_note}}
+4. الأجر الشهري {{wage_total}} ر.س عبر حماية الأجور. الإشعار {{notice_days}} يومًا. يوثق عبر قوى.`
+  },
+  {
+    code: 'E8',
+    cat: 'E',
+    en: 'Management / executive',
+    ar: 'عقد إداري / تنفيذي',
+    version: 2,
+    updatedAt: '2026-07-15',
+    party: 'employee',
+    fields: [
+      {
+        key: 'probation_days',
+        en: 'Probation days (≤180)',
+        ar: 'أيام التجربة (≤180)',
+        kind: 'number',
+        def: 180
+      },
+      { key: 'notice_days', en: 'Notice days', ar: 'أيام الإشعار', kind: 'number', def: 90 },
+      {
+        key: 'bonus_note',
+        en: 'Bonus terms',
+        ar: 'شروط المكافآت',
+        kind: 'text',
+        def: 'Annual performance bonus per company policy.'
+      }
+    ],
+    bodyEn: `MANAGEMENT / EXECUTIVE CONTRACT (counsel-reviewed template)
+Between {{company_en}} (CR {{company_cr}}) and {{worker_name}} (ID {{id_no}}).
+1. Role: {{job_title}}. Start: {{start_date}}. Probation {{probation_days}} days; notice {{notice_days}} days.
+2. Monthly wage {{wage_total}} SAR via WPS. Bonus: {{bonus_note}}
+3. Confidentiality survives termination; any non-compete applies only within enforceable legal limits.
+4. Documented electronically via Qiwa.`,
+    bodyAr: `عقد إداري / تنفيذي (قالب معتمد من المستشار)
+بين {{company_ar}} (س.ت {{company_cr}}) و{{worker_name_ar}} (هوية {{id_no}}).
+1. المنصب: {{job_title_ar}}. البدء: {{start_date}}. التجربة {{probation_days}} يومًا؛ الإشعار {{notice_days}} يومًا.
+2. الأجر الشهري {{wage_total}} ر.س عبر حماية الأجور. المكافآت: {{bonus_note}}
+3. تبقى السرية بعد الإنهاء؛ ولا يسري عدم المنافسة إلا ضمن الحدود النظامية الواجبة النفاذ.
+4. يوثق إلكترونيًا عبر قوى.`
+  },
+  {
+    code: 'A1',
+    cat: 'A',
+    en: 'Assignment / outsourcing consent',
+    ar: 'موافقة الإعارة',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'assignment',
+    fields: [{ key: 'period_text', en: 'Assignment period', ar: 'فترة الإعارة', kind: 'text' }],
+    bodyEn: `ASSIGNMENT / OUTSOURCING CONSENT
+I, {{worker_name}} (ID {{id_no}}), employed by {{company_en}}, consent to assignment to {{client_name}} at {{site_name}} for {{period_text}} (ref {{assignment_ref}}).
+- My profession of record ({{job_title}}) is unchanged; out-of-profession work is refused and reported.
+- Wage continuity: my salary, GOSI and EOSB remain with {{company_en}} during the assignment.
+- Ajeer documentation ({{ajeer_ref}}) must be in place before work starts.`,
+    bodyAr: `موافقة الإعارة
+أنا {{worker_name_ar}} (هوية {{id_no}})، الموظف لدى {{company_ar}}، أوافق على إعارتي إلى {{client_name}} في {{site_name}} لمدة {{period_text}} (مرجع {{assignment_ref}}).
+- مهنتي المسجلة ({{job_title_ar}}) لا تتغير؛ وأرفض العمل خارج المهنة وأبلغ عنه.
+- استمرارية الأجر: يبقى راتبي وتأميناتي ومكافأتي لدى {{company_ar}} أثناء الإعارة.
+- يجب أن يكون توثيق أجير ({{ajeer_ref}}) ساريًا قبل بدء العمل.`
+  },
+  {
+    code: 'A2',
+    cat: 'A',
+    en: 'Deployment letter',
+    ar: 'خطاب تكليف',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'assignment',
+    fields: [
+      { key: 'start_date', en: 'Reporting date', ar: 'تاريخ المباشرة', kind: 'date' },
+      { key: 'period_text', en: 'Assignment period', ar: 'فترة التكليف', kind: 'text' }
+    ],
+    bodyEn: `DEPLOYMENT LETTER
+To: {{worker_name}} (ID {{id_no}}).
+You are assigned to {{client_name}} — {{site_name}} starting {{start_date}}, for {{period_text}} (ref {{assignment_ref}}).
+Report to the site supervisor on arrival. Your employment, wage and benefits remain with {{company_en}}. Ajeer: {{ajeer_ref}}.
+Issued {{today_date}} by {{issuer_name}}, {{issuer_title}}.`,
+    bodyAr: `خطاب تكليف
+إلى: {{worker_name_ar}} (هوية {{id_no}}).
+كُلفت بالعمل لدى {{client_name}} — {{site_name}} اعتبارًا من {{start_date}}، لمدة {{period_text}} (مرجع {{assignment_ref}}).
+راجع مشرف الموقع عند الوصول. تبقى علاقتك وأجرك ومزاياك لدى {{company_ar}}. أجير: {{ajeer_ref}}.
+صدر بتاريخ {{today_date}} من {{issuer_name}}، {{issuer_title}}.`
+  },
+  {
+    code: 'A3',
+    cat: 'A',
+    en: 'Ajeer cover record',
+    ar: 'سجل تغطية أجير',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'assignment',
+    fields: [{ key: 'period_text', en: 'Permit period', ar: 'فترة التصريح', kind: 'text' }],
+    bodyEn: `AJEER COVER RECORD (internal ops file)
+Assignment {{assignment_ref}} — {{worker_name}} to {{client_name}} / {{site_name}}.
+Ajeer ref: {{ajeer_ref}}. Period: {{period_text}}.
+Renewal alerts at 60/30/14 days; revocation triggers a 1-working-day recall.`,
+    bodyAr: `سجل تغطية أجير (ملف تشغيلي داخلي)
+التكليف {{assignment_ref}} — {{worker_name_ar}} إلى {{client_name}} / {{site_name}}.
+مرجع أجير: {{ajeer_ref}}. الفترة: {{period_text}}.
+تنبيهات التجديد قبل 60/30/14 يومًا؛ والإلغاء يستوجب الاستدعاء خلال يوم عمل واحد.`
+  },
+  {
+    code: 'A4',
+    cat: 'A',
+    en: 'Recall / completion notice',
+    ar: 'إشعار استدعاء / إنجاز',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'assignment',
+    fields: [
+      { key: 'end_date', en: 'Last working day', ar: 'آخر يوم عمل', kind: 'date' },
+      {
+        key: 'reason_text',
+        en: 'End reason',
+        ar: 'سبب الإنهاء',
+        kind: 'text',
+        def: 'Assignment completed.'
+      }
+    ],
+    bodyEn: `RECALL / COMPLETION NOTICE
+To {{client_name}} and {{worker_name}} (ref {{assignment_ref}}).
+The assignment at {{site_name}} ends on {{end_date}}. Reason: {{reason_text}}
+The worker returns to {{company_en}} bench; handover must complete by the last day. Tracker status updates automatically.`,
+    bodyAr: `إشعار استدعاء / إنجاز
+إلى {{client_name}} و{{worker_name_ar}} (مرجع {{assignment_ref}}).
+ينتهي التكليف في {{site_name}} بتاريخ {{end_date}}. السبب: {{reason_text}}
+يعود العامل إلى قائمة الانتظار لدى {{company_ar}}؛ ويجب إتمام التسليم بحلول اليوم الأخير. تتحدث حالة المتتبع تلقائيًا.`
+  },
+  {
+    code: 'C1',
+    cat: 'C',
+    en: 'Manpower-supply framework (MSA)',
+    ar: 'اتفاقية توريد عمالة إطارية',
+    version: 3,
+    updatedAt: '2026-08-01',
+    party: 'client',
+    fields: [
+      {
+        key: 'service_type',
+        en: 'Service vs labour outsourcing',
+        ar: 'خدمة أم توريد عمالة',
+        kind: 'text',
+        def: 'service'
+      },
+      { key: 'professions', en: 'Professions in scope', ar: 'المهن المشمولة', kind: 'text' },
+      {
+        key: 'rate_monthly',
+        en: 'Rate methodology',
+        ar: 'منهجية الأجور',
+        kind: 'text',
+        def: 'Monthly rate per head per attached work order; OT at 1.5x.'
+      },
+      {
+        key: 'payment_terms',
+        en: 'Payment terms',
+        ar: 'شروط الدفع',
+        kind: 'text',
+        def: '30 days from invoice; 15% VAT applies.'
+      },
+      { key: 'start_date', en: 'Start date', ar: 'تاريخ البدء', kind: 'date' },
+      {
+        key: 'duration_months',
+        en: 'Duration (months)',
+        ar: 'المدة (أشهر)',
+        kind: 'number',
+        def: 12
+      }
+    ],
+    bodyEn: `MANPOWER-SUPPLY FRAMEWORK AGREEMENT
+Between {{company_en}} (CR {{company_cr}}) — the Provider — and {{client_name}} (CR {{client_cr}}) — the Client.
+1. Scope: {{service_type}} outsourcing for {{professions}}.
+2. Rates: {{rate_monthly}} Payment: {{payment_terms}}
+3. Term: {{start_date}} for {{duration_months}} months. Work orders attach hereunder.
+4. Ajeer duties: the Provider issues and renews permits before any work; the Client assigns in-profession work only and returns workers within 1 working day of revocation.
+5. Both parties maintain valid CR, WPS compliance and Nitaqat standing. Liability and termination per attached schedule.`,
+    bodyAr: `اتفاقية توريد عمالة إطارية
+بين {{company_ar}} (س.ت {{company_cr}}) — المورد — و{{client_name}} (س.ت {{client_cr}}) — العميل.
+1. النطاق: إسناد {{service_type}} لمهن {{professions}}.
+2. الأجور: {{rate_monthly}} الدفع: {{payment_terms}}
+3. المدة: اعتبارًا من {{start_date}} لمدة {{duration_months}} شهرًا. وتُلحق أوامر العمل بهذه الاتفاقية.
+4. التزامات أجير: يصدر المورد التصاريح ويجددها قبل أي عمل؛ ويسند العميل عملًا ضمن المهنة فقط ويعيد العمال خلال يوم عمل واحد من الإلغاء.
+5. يلتزم الطرفان بسجل ساري والتزام بالأجور ونطاقات. والمسؤولية والإنهاء وفق الملحق.`
+  },
+  {
+    code: 'C2',
+    cat: 'C',
+    en: 'Work order / deployment schedule',
+    ar: 'أمر عمل / جدول إسناد',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'client',
+    fields: [
+      { key: 'site_name', en: 'Site', ar: 'الموقع', kind: 'text' },
+      { key: 'professions', en: 'Profession x headcount', ar: 'المهنة × العدد', kind: 'text' },
+      { key: 'rate_monthly', en: 'Monthly rate per head', ar: 'الأجر الشهري للفرد', kind: 'text' },
+      { key: 'start_date', en: 'Start date', ar: 'تاريخ البدء', kind: 'date' },
+      {
+        key: 'duration_months',
+        en: 'Duration (months)',
+        ar: 'المدة (أشهر)',
+        kind: 'number',
+        def: 6
+      },
+      { key: 'request_ref', en: 'Request ref', ar: 'مرجع الطلب', kind: 'text' }
+    ],
+    bodyEn: `WORK ORDER (under the framework agreement)
+Client: {{client_name}} (CR {{client_cr}}). Site: {{site_name}}. Request: {{request_ref}}.
+Requirement: {{professions}} starting {{start_date}} for {{duration_months}} months.
+Rate: {{rate_monthly}} SAR per head per month; OT billed at 1.5x the hourly slice; 15% VAT applies.
+Deployments under this order require Ajeer documentation before work starts.`,
+    bodyAr: `أمر عمل (بموجب الاتفاقية الإطارية)
+العميل: {{client_name}} (س.ت {{client_cr}}). الموقع: {{site_name}}. الطلب: {{request_ref}}.
+المطلوب: {{professions}} اعتبارًا من {{start_date}} لمدة {{duration_months}} أشهر.
+الأجر: {{rate_monthly}} ر.س للفرد شهريًا؛ والإضافي بـ1.5 ضعف أجر الساعة؛ وتطبق ضريبة 15%.
+يتطلب الإسناد بموجب هذا الأمر توثيق أجير قبل بدء العمل.`
+  },
+  {
+    code: 'C3',
+    cat: 'C',
+    en: 'Quotation / rate offer',
+    ar: 'عرض سعر',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'client',
+    fields: [
+      { key: 'request_ref', en: 'Request ref', ar: 'مرجع الطلب', kind: 'text' },
+      {
+        key: 'professions',
+        en: 'Proposed professions/rates',
+        ar: 'المهن والأجور المقترحة',
+        kind: 'text'
+      },
+      { key: 'validity_date', en: 'Valid until', ar: 'صالح حتى', kind: 'date' }
+    ],
+    bodyEn: `QUOTATION
+To {{client_name}} (CR {{client_cr}}) — ref {{request_ref}}, dated {{today_date}}.
+{{company_en}} proposes: {{professions}}
+Valid until {{validity_date}}. On client confirmation this quotation converts to a work order. 15% VAT applies.`,
+    bodyAr: `عرض سعر
+إلى {{client_name}} (س.ت {{client_cr}}) — مرجع {{request_ref}}، بتاريخ {{today_date}}.
+تقترح {{company_ar}}: {{professions}}
+صالح حتى {{validity_date}}. وعند قبول العميل يتحول العرض إلى أمر عمل. تطبق ضريبة 15%.`
+  },
+  {
+    code: 'C4',
+    cat: 'C',
+    en: 'NDA (mutual)',
+    ar: 'اتفاقية سرية (متبادلة)',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'client',
+    fields: [
+      {
+        key: 'period_text',
+        en: 'Confidentiality period',
+        ar: 'مدة السرية',
+        kind: 'text',
+        def: '3 years from signature.'
+      },
+      { key: 'sign_date', en: 'Effective date', ar: 'تاريخ النفاذ', kind: 'date' }
+    ],
+    bodyEn: `MUTUAL NON-DISCLOSURE AGREEMENT
+Between {{company_en}} (CR {{company_cr}}) and {{client_name}} (CR {{client_cr}}), effective {{sign_date}}.
+Each party keeps the other's workforce, rate and operational information confidential for {{period_text}}
+Breach remedies follow the governing law. Optional per client engagement.`,
+    bodyAr: `اتفاقية سرية متبادلة
+بين {{company_ar}} (س.ت {{company_cr}}) و{{client_name}} (س.ت {{client_cr}})، اعتبارًا من {{sign_date}}.
+يحافظ كل طرف على سرية معلومات القوى العاملة والأجور والتشغيل الخاصة بالآخر لمدة {{period_text}}
+وتخضع جزاءات الإخلال للنظام الحاكم. اختيارية حسب التعاقد.`
+  },
+  {
+    code: 'C5',
+    cat: 'C',
+    en: 'Service completion certificate',
+    ar: 'شهادة إنجاز خدمة',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'client',
+    fields: [
+      { key: 'period_text', en: 'Service period', ar: 'فترة الخدمة', kind: 'text' },
+      { key: 'professions', en: 'Headcount delivered', ar: 'الأعداد المسلّمة', kind: 'text' },
+      { key: 'sign_date', en: 'Sign date', ar: 'تاريخ التوقيع', kind: 'date' }
+    ],
+    bodyEn: `SERVICE COMPLETION / HANDOVER CERTIFICATE
+{{client_name}} confirms that {{company_en}} delivered {{professions}} for {{period_text}} at agreed service levels.
+Issued {{sign_date}} in support of monthly billing. Client signature and stamp below.`,
+    bodyAr: `شهادة إنجاز / تسليم خدمة
+يؤكد {{client_name}} أن {{company_ar}} سلّم {{professions}} عن {{period_text}} بمستويات الخدمة المتفق عليها.
+صدرت بتاريخ {{sign_date}} دعمًا للفوترة الشهرية. توقيع العميل وختمه أدناه.`
+  },
+  {
+    code: 'L1',
+    cat: 'L',
+    en: 'Job offer',
+    ar: 'عرض وظيفي',
+    version: 3,
+    updatedAt: '2026-08-01',
+    party: 'candidate',
+    fields: [
+      { key: 'wage_basic', en: 'Basic', ar: 'الأساسي', kind: 'number' },
+      { key: 'wage_housing', en: 'Housing', ar: 'السكن', kind: 'number' },
+      { key: 'wage_transport', en: 'Transport', ar: 'النقل', kind: 'number' },
+      { key: 'start_date', en: 'Expected start', ar: 'البدء المتوقع', kind: 'date' },
+      { key: 'validity_date', en: 'Offer valid until', ar: 'العرض صالح حتى', kind: 'date' }
+    ],
+    bodyEn: `JOB OFFER
+To {{worker_name}} — {{nationality}}.
+{{company_en}} is pleased to offer you the position of {{job_title}}: basic {{wage_basic}}, housing {{wage_housing}}, transport {{wage_transport}} SAR per month (total {{wage_total}}).
+Expected start: {{start_date}}. This offer is valid until {{validity_date}} and converts to an employment contract on acceptance.`,
+    bodyAr: `عرض وظيفي
+إلى {{worker_name_ar}} — {{nationality}}.
+يسر {{company_ar}} أن تعرض عليك وظيفة {{job_title_ar}}: أساسي {{wage_basic}}، سكن {{wage_housing}}، نقل {{wage_transport}} ر.س شهريًا (الإجمالي {{wage_total}}).
+البدء المتوقع: {{start_date}}. هذا العرض صالح حتى {{validity_date}} ويتحول إلى عقد عمل عند القبول.`
+  },
+  {
+    code: 'L2',
+    cat: 'L',
+    en: 'Salary certificate',
+    ar: 'تعريف بالراتب',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'employee',
+    fields: [],
+    bodyEn: `SALARY CERTIFICATE (to whom it may concern)
+{{company_en}} (CR {{company_cr}}) certifies that {{worker_name}} (ID {{id_no}}) works with us as {{job_title}} since {{start_date}}, with a current total monthly salary of {{salary_total}} SAR.
+Issued {{today_date}} on employee request for official use.`,
+    bodyAr: `تعريف بالراتب (إلى من يهمه الأمر)
+تشهد {{company_ar}} (س.ت {{company_cr}}) بأن {{worker_name_ar}} (هوية {{id_no}}) يعمل لدينا بمهنة {{job_title_ar}} منذ {{start_date}}، بإجمالي راتب شهري حالي {{salary_total}} ر.س.
+صدر بتاريخ {{today_date}} بناء على طلب الموظف للاستخدام الرسمي.`
+  },
+  {
+    code: 'L3',
+    cat: 'L',
+    en: 'Experience certificate',
+    ar: 'شهادة خبرة',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'employee',
+    fields: [
+      { key: 'tenure_text', en: 'Tenure text', ar: 'نص المدة', kind: 'text' },
+      {
+        key: 'last_role',
+        en: 'Last role',
+        ar: 'آخر منصب',
+        kind: 'text',
+        source: 'employee.titleEn'
+      }
+    ],
+    bodyEn: `EXPERIENCE CERTIFICATE
+{{company_en}} (CR {{company_cr}}) certifies that {{worker_name}} (ID {{id_no}}) worked with us {{tenure_text}}, last serving as {{last_role}}.
+Issued {{today_date}} per the employer's duty on exit. We wish them success.`,
+    bodyAr: `شهادة خبرة
+تشهد {{company_ar}} (س.ت {{company_cr}}) بأن {{worker_name_ar}} (هوية {{id_no}}) عمل لدينا {{tenure_text}}، وكان آخر منصب {{last_role}}.
+صدرت بتاريخ {{today_date}} وفق واجب صاحب العمل عند الخروج. نتمنى له التوفيق.`
+  },
+  {
+    code: 'L4',
+    cat: 'L',
+    en: 'First written warning',
+    ar: 'إنذار كتابي أول',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      { key: 'reason_text', en: 'Violation', ar: 'المخالفة', kind: 'text' },
+      {
+        key: 'appeal_note',
+        en: 'Appeal note',
+        ar: 'بند التظلم',
+        kind: 'text',
+        def: 'You may appeal in writing within 7 days under the internal appeals procedure.'
+      }
+    ],
+    bodyEn: `FIRST WRITTEN WARNING
+To {{worker_name}} (ID {{id_no}}), {{job_title}}.
+Violation recorded on {{today_date}}: {{reason_text}}
+This is a first warning. Repetition escalates per policy. {{appeal_note}}`,
+    bodyAr: `إنذار كتابي أول
+إلى {{worker_name_ar}} (هوية {{id_no}})، {{job_title_ar}}.
+سُجلت بتاريخ {{today_date}} المخالفة: {{reason_text}}
+وهذا إنذار أول. والتكرار يصعّد وفق السياسة. {{appeal_note}}`
+  },
+  {
+    code: 'L5',
+    cat: 'L',
+    en: 'Second written warning',
+    ar: 'إنذار كتابي ثانٍ',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      { key: 'reason_text', en: 'Violation', ar: 'المخالفة', kind: 'text' },
+      {
+        key: 'appeal_note',
+        en: 'Appeal note',
+        ar: 'بند التظلم',
+        kind: 'text',
+        def: 'You may appeal in writing within 7 days under the internal appeals procedure.'
+      }
+    ],
+    bodyEn: `SECOND WRITTEN WARNING
+To {{worker_name}} (ID {{id_no}}), {{job_title}}.
+Further violation recorded on {{today_date}}: {{reason_text}}
+This is a second warning; a further breach may lead to a final warning or lawful termination. {{appeal_note}}`,
+    bodyAr: `إنذار كتابي ثانٍ
+إلى {{worker_name_ar}} (هوية {{id_no}})، {{job_title_ar}}.
+سُجلت بتاريخ {{today_date}} مخالفة جديدة: {{reason_text}}
+وهذا إنذار ثانٍ؛ وأي إخلال لاحق قد يؤدي لإنذار نهائي أو إنهاء نظامي. {{appeal_note}}`
+  },
+  {
+    code: 'L6',
+    cat: 'L',
+    en: 'Final warning',
+    ar: 'إنذار نهائي',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      { key: 'reason_text', en: 'Violation', ar: 'المخالفة', kind: 'text' },
+      {
+        key: 'appeal_note',
+        en: 'Appeal note',
+        ar: 'بند التظلم',
+        kind: 'text',
+        def: 'You may appeal in writing within 7 days under the internal appeals procedure.'
+      }
+    ],
+    bodyEn: `FINAL WARNING
+To {{worker_name}} (ID {{id_no}}), {{job_title}}.
+Final violation recorded on {{today_date}}: {{reason_text}}
+Any further breach exposes you to lawful termination, including Art. 80 where its conditions are met. {{appeal_note}}`,
+    bodyAr: `إنذار نهائي
+إلى {{worker_name_ar}} (هوية {{id_no}})، {{job_title_ar}}.
+سُجلت بتاريخ {{today_date}} مخالفة نهائية: {{reason_text}}
+وأي إخلال لاحق يعرضك للإنهاء النظامي، بما فيه المادة 80 عند تحقق شروطها. {{appeal_note}}`
+  },
+  {
+    code: 'L7',
+    cat: 'L',
+    en: 'Termination notice',
+    ar: 'إشعار إنهاء',
+    version: 2,
+    updatedAt: '2026-07-01',
+    party: 'employee',
+    fields: [
+      { key: 'reason_text', en: 'Termination reason', ar: 'سبب الإنهاء', kind: 'text' },
+      { key: 'end_date', en: 'Last working day', ar: 'آخر يوم عمل', kind: 'date' }
+    ],
+    bodyEn: `TERMINATION NOTICE
+To {{worker_name}} (ID {{id_no}}), {{job_title}}.
+Your employment with {{company_en}} ends on {{end_date}}. Reason: {{reason_text}}
+EOSB and settlement follow the reason branch (Art. 80 forfeits EOSB; Art. 81 keeps it in full plus compensation). Handover and clearance apply.`,
+    bodyAr: `إشعار إنهاء
+إلى {{worker_name_ar}} (هوية {{id_no}})، {{job_title_ar}}.
+تنتهي خدمتك لدى {{company_ar}} بتاريخ {{end_date}}. السبب: {{reason_text}}
+تتبع المكافأة والتسوية فرع السبب (المادة 80 تسقط المكافأة؛ والمادة 81 تبقيها كاملة مع التعويض). ويسري التسليم وإخلاء الطرف.`
+  },
+  {
+    code: 'L8',
+    cat: 'L',
+    en: 'Resignation acceptance',
+    ar: 'قبول استقالة',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [{ key: 'end_date', en: 'Last working day', ar: 'آخر يوم عمل', kind: 'date' }],
+    bodyEn: `RESIGNATION ACCEPTANCE
+To {{worker_name}} (ID {{id_no}}), {{job_title}}.
+Your resignation is accepted; your last working day is {{end_date}}.
+The notice clock and handover start now. (A resignation is deemed accepted if the employer does not reply within 30 days.)`,
+    bodyAr: `قبول استقالة
+إلى {{worker_name_ar}} (هوية {{id_no}})، {{job_title_ar}}.
+قُبلت استقالتك؛ وآخر يوم عمل هو {{end_date}}.
+يبدأ الآن احتساب الإشعار والتسليم. (تُعد الاستقالة مقبولة إذا لم يرد صاحب العمل خلال 30 يومًا.)`
+  },
+  {
+    code: 'L9',
+    cat: 'L',
+    en: 'Clearance & handover',
+    ar: 'إخلاء طرف وتسليم',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      { key: 'end_date', en: 'Clearance date', ar: 'تاريخ الإخلاء', kind: 'date' },
+      {
+        key: 'period_text',
+        en: 'Clearance scope',
+        ar: 'نطاق الإخلاء',
+        kind: 'text',
+        def: 'Assets, advances, housing and client handover.'
+      }
+    ],
+    bodyEn: `CLEARANCE & HANDOVER
+{{worker_name}} (ID {{id_no}}), {{job_title}} — cleared on {{end_date}}.
+Scope: {{period_text}} All dues feed the final settlement. Signed by HR, finance and the direct manager.`,
+    bodyAr: `إخلاء طرف وتسليم
+{{worker_name_ar}} (هوية {{id_no}})، {{job_title_ar}} — أُخلي طرفه بتاريخ {{end_date}}.
+النطاق: {{period_text}} وتُرحل جميع المستحقات إلى التسوية النهائية. يوقعه الموارد البشرية والمالية والمدير المباشر.`
+  },
+  {
+    code: 'L10',
+    cat: 'L',
+    en: 'Final settlement statement',
+    ar: 'مخالصة نهائية',
+    version: 1,
+    updatedAt: '2026-06-01',
+    party: 'employee',
+    fields: [
+      {
+        key: 'settlement_total',
+        en: 'Settlement total (SAR)',
+        ar: 'إجمالي التسوية (ر.س)',
+        kind: 'number'
+      },
+      { key: 'sign_date', en: 'Sign date', ar: 'تاريخ التوقيع', kind: 'date' }
+    ],
+    bodyEn: `FINAL SETTLEMENT STATEMENT
+{{worker_name}} (ID {{id_no}}) received a total final settlement of {{settlement_total}} SAR (EOSB + leave + salary + ticket) from {{company_en}} on {{sign_date}}.
+EOSB is tax-free in KSA; the destination country may tax it. No further claims between the parties.`,
+    bodyAr: `مخالصة نهائية
+استلم {{worker_name_ar}} (هوية {{id_no}}) إجمالي تسوية نهائية {{settlement_total}} ر.س (مكافأة + إجازات + راتب + تذكرة) من {{company_ar}} بتاريخ {{sign_date}}.
+مكافأة نهاية الخدمة معفاة من الضريبة في السعودية؛ وقد تخضع للضريبة في بلد الوجهة. ولا مطالبات لاحقة بين الطرفين.`
+  }
+];
+
+export const CONTRACTS = [
+  {
+    id: 'CT-2026-001',
+    type: 'E3',
+    partyKind: 'employee',
+    party: 'EMP-0006',
+    start: '2025-06-10',
+    end: '2027-06-09',
+    status: 'active',
+    sign: 'signed',
+    signedAt: '2025-06-08',
+    templateVer: 4,
+    qiwa: 'authenticated',
+    filed: true,
+    values: {
+      duration_months: 24,
+      probation_days: 90,
+      ticket_note: 'Annual economy ticket plus end-of-service repatriation at employer cost.'
+    }
+  },
+  {
+    id: 'CT-2026-002',
+    type: 'E1',
+    partyKind: 'employee',
+    party: 'EMP-0001',
+    start: '2022-03-01',
+    end: '',
+    status: 'active',
+    sign: 'signed',
+    signedAt: '2022-02-27',
+    templateVer: 3,
+    qiwa: 'authenticated',
+    filed: true,
+    values: { probation_days: 90, notice_days: 60 }
+  },
+  {
+    id: 'CT-2026-003',
+    type: 'C1',
+    partyKind: 'client',
+    party: 'CL-001',
+    start: '2026-01-01',
+    end: '2027-12-31',
+    status: 'active',
+    sign: 'signed',
+    signedAt: '2025-12-28',
+    templateVer: 3,
+    qiwa: '',
+    filed: true,
+    values: {
+      service_type: 'labour',
+      professions: 'Drivers, cleaners, masons',
+      duration_months: 24,
+      rate_monthly: 'Monthly rate per head per attached work order; OT at 1.5x.',
+      payment_terms: '30 days from invoice; 15% VAT applies.'
+    }
+  },
+  {
+    id: 'CT-2026-004',
+    type: 'C2',
+    partyKind: 'client',
+    party: 'CL-001',
+    start: '2026-07-01',
+    end: '2026-12-31',
+    status: 'active',
+    sign: 'signed',
+    signedAt: '2026-06-29',
+    templateVer: 2,
+    qiwa: '',
+    filed: true,
+    values: {
+      site_name: 'North Ring Site',
+      professions: 'Mason x 6',
+      rate_monthly: '2,800',
+      duration_months: 6,
+      request_ref: 'REQ-2026-010'
+    }
+  },
+  {
+    id: 'CT-2026-005',
+    type: 'E3',
+    partyKind: 'employee',
+    party: 'EMP-0018',
+    start: '2024-10-16',
+    end: '2026-10-15',
+    status: 'active',
+    sign: 'signed',
+    signedAt: '2024-10-14',
+    templateVer: 4,
+    qiwa: 'authenticated',
+    filed: true,
+    values: {
+      duration_months: 24,
+      probation_days: 90,
+      ticket_note: 'Annual economy ticket plus end-of-service repatriation at employer cost.'
+    }
+  },
+  {
+    id: 'CT-2026-006',
+    type: 'L2',
+    partyKind: 'employee',
+    party: 'EMP-0003',
+    start: '2026-09-02',
+    end: '',
+    status: 'issued',
+    sign: 'acknowledged',
+    signedAt: '',
+    templateVer: 2,
+    qiwa: '',
+    filed: false,
+    values: {}
+  },
+  {
+    id: 'CT-2026-007',
+    type: 'E4',
+    partyKind: 'employee',
+    party: 'EMP-0005',
+    start: '2025-06-01',
+    end: '',
+    status: 'active',
+    sign: 'signed',
+    signedAt: '2025-05-29',
+    templateVer: 2,
+    qiwa: 'authenticated',
+    filed: true,
+    values: { hours_note: '20 hours per week, scheduled by the direct manager.', notice_days: 30 }
+  },
+  {
+    id: 'CT-2026-008',
+    type: 'A2',
+    partyKind: 'assignment',
+    party: 'ASN-2026-001',
+    start: '2026-08-01',
+    end: '',
+    status: 'issued',
+    sign: 'acknowledged',
+    signedAt: '',
+    templateVer: 2,
+    qiwa: '',
+    filed: false,
+    values: { start_date: '2026-08-03', period_text: '6 months' }
+  },
+  {
+    id: 'CT-2026-009',
+    type: 'E3',
+    partyKind: 'employee',
+    party: 'EMP-0022',
+    start: '',
+    end: '',
+    status: 'draft',
+    sign: 'unsigned',
+    signedAt: '',
+    templateVer: 4,
+    qiwa: '',
+    filed: false,
+    values: {}
+  }
+];
+
+export const JOBS = [
+  {
+    id: 'J-2026-01',
+    titleEn: 'Driver',
+    titleAr: 'سائق',
+    prof: 'driver',
+    headcount: 10,
+    hired: 2,
+    basic: 1800,
+    housing: 500,
+    transport: 300,
+    site: 'ST-003',
+    status: 'open',
+    note: 'Client CL-002 pipeline'
+  },
+  {
+    id: 'J-2026-02',
+    titleEn: 'Mason',
+    titleAr: 'بناء',
+    prof: 'mason',
+    headcount: 6,
+    hired: 0,
+    basic: 2200,
+    housing: 550,
+    transport: 300,
+    site: 'ST-001',
+    status: 'open',
+    note: 'Work order REQ-2026-010'
+  },
+  {
+    id: 'J-2026-03',
+    titleEn: 'Cleaner',
+    titleAr: 'عامل نظافة',
+    prof: 'cleaner',
+    headcount: 4,
+    hired: 4,
+    basic: 1500,
+    housing: 400,
+    transport: 250,
+    site: 'ST-002',
+    status: 'filled',
+    note: ''
+  },
+  {
+    id: 'J-2026-04',
+    titleEn: 'Security guard',
+    titleAr: 'حارس أمن',
+    prof: 'guard',
+    headcount: 2,
+    hired: 0,
+    basic: 3500,
+    housing: 800,
+    transport: 400,
+    site: '',
+    status: 'draft',
+    note: 'Saudization-friendly post'
+  }
+];
+
+export const CANDIDATES = [
+  {
+    id: 'CD-2026-001',
+    job: 'J-2026-01',
+    nameEn: 'Suresh Yadav',
+    nameAr: 'سوريش ياداف',
+    nat: 'India',
+    saudi: false,
+    prof: 'driver',
+    source: 'AG-01',
+    phone: '+91 98000 00001',
+    passport: 'N100001',
+    stage: 'new'
+  },
+  {
+    id: 'CD-2026-002',
+    job: 'J-2026-01',
+    nameEn: 'Bilal Ahmed',
+    nameAr: 'بلال أحمد',
+    nat: 'Pakistan',
+    saudi: false,
+    prof: 'driver',
+    source: 'AG-02',
+    phone: '+92 300 000002',
+    passport: 'P200002',
+    stage: 'screening'
+  },
+  {
+    id: 'CD-2026-003',
+    job: 'J-2026-01',
+    nameEn: 'Deepak Singh',
+    nameAr: 'ديباك سينغ',
+    nat: 'India',
+    saudi: false,
+    prof: 'driver',
+    source: 'AG-01',
+    phone: '+91 98000 00003',
+    passport: 'N100003',
+    stage: 'interview'
+  },
+  {
+    id: 'CD-2026-004',
+    job: 'J-2026-02',
+    nameEn: 'Karim Hassan',
+    nameAr: 'كريم حسن',
+    nat: 'Egypt',
+    saudi: false,
+    prof: 'mason',
+    source: 'AG-02',
+    phone: '+20 100 000004',
+    passport: 'E300004',
+    stage: 'interview'
+  },
+  {
+    id: 'CD-2026-005',
+    job: 'J-2026-02',
+    nameEn: 'Omar Farouk',
+    nameAr: 'عمر فاروق',
+    nat: 'Egypt',
+    saudi: false,
+    prof: 'mason',
+    source: 'AG-02',
+    phone: '+20 100 000005',
+    passport: 'E300005',
+    stage: 'offer'
+  },
+  {
+    id: 'CD-2026-006',
+    job: 'J-2026-01',
+    nameEn: 'Ravi Patel',
+    nameAr: 'رافي باتيل',
+    nat: 'India',
+    saudi: false,
+    prof: 'driver',
+    source: 'AG-01',
+    phone: '+91 98000 00006',
+    passport: 'N100006',
+    stage: 'rejected'
+  },
+  {
+    id: 'CD-2026-007',
+    job: 'J-2026-04',
+    nameEn: 'Fahad Al-Harbi',
+    nameAr: 'فهد الحربي',
+    nat: 'Saudi',
+    saudi: true,
+    prof: 'guard',
+    source: 'referral',
+    phone: '+966 555 010 031',
+    passport: '',
+    stage: 'offer'
+  },
+  {
+    id: 'CD-2026-008',
+    job: 'J-2026-01',
+    nameEn: 'Amit Verma',
+    nameAr: 'أميت فيرما',
+    nat: 'India',
+    saudi: false,
+    prof: 'driver',
+    source: 'AG-01',
+    phone: '+91 98000 00008',
+    passport: 'N100008',
+    stage: 'hired'
+  }
+];
+
+export const INTERVIEWS = [
+  {
+    id: 'IV-2026-011',
+    candidate: 'CD-2026-003',
+    at: '2026-09-12T10:00',
+    interviewer: 'EMP-0001',
+    kind: 'onsite',
+    result: 'scheduled',
+    notes: ''
+  },
+  {
+    id: 'IV-2026-012',
+    candidate: 'CD-2026-004',
+    at: '2026-09-11T14:00',
+    interviewer: 'EMP-0001',
+    kind: 'video',
+    result: 'passed',
+    notes: 'Strong trade test.'
+  },
+  {
+    id: 'IV-2026-013',
+    candidate: 'CD-2026-006',
+    at: '2026-09-05T11:00',
+    interviewer: 'EMP-0002',
+    kind: 'phone',
+    result: 'failed',
+    notes: 'No driving experience.'
+  },
+  {
+    id: 'IV-2026-014',
+    candidate: 'CD-2026-007',
+    at: '2026-09-09T09:30',
+    interviewer: 'EMP-0001',
+    kind: 'onsite',
+    result: 'passed',
+    notes: 'Ex-military, documents ready.'
+  }
+];
+
+export const OFFERS = [
+  {
+    id: 'OF-2026-001',
+    candidate: 'CD-2026-005',
+    job: 'J-2026-02',
+    basic: 2200,
+    housing: 550,
+    transport: 300,
+    start: '2026-10-01',
+    validUntil: '2026-09-20',
+    status: 'sent',
+    templateVer: 3
+  },
+  {
+    id: 'OF-2026-002',
+    candidate: 'CD-2026-007',
+    job: 'J-2026-04',
+    basic: 3500,
+    housing: 800,
+    transport: 400,
+    start: '2026-10-01',
+    validUntil: '2026-09-25',
+    status: 'draft',
+    templateVer: 3
+  },
+  {
+    id: 'OF-2026-003',
+    candidate: 'CD-2026-008',
+    job: 'J-2026-01',
+    basic: 1800,
+    housing: 500,
+    transport: 300,
+    start: '2026-09-01',
+    validUntil: '2026-08-25',
+    status: 'accepted',
+    templateVer: 3
+  }
+];

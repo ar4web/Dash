@@ -8,7 +8,7 @@
     "build": "NODE_ENV=production vite build",
     "build:dev": "NODE_ENV=development vite build",
     "preview": "vite preview",
-    "test": "node tests/hr-audit-p1.mjs && node tests/hr-logic-p1.mjs && node tests/hr-audit-p2.mjs && node tests/hr-logic-p2.mjs && node tests/hr-import-test.mjs && node tests/hr-audit-p3.mjs && node tests/hr-logic-p3.mjs && node tests/hr-audit-p4.mjs && node tests/hr-logic-p4.mjs",
+    "test": "node tests/hr-audit-p1.mjs && node tests/hr-logic-p1.mjs && node tests/hr-audit-p2.mjs && node tests/hr-logic-p2.mjs && node tests/hr-import-test.mjs && node tests/hr-audit-p3.mjs && node tests/hr-logic-p3.mjs && node tests/hr-audit-p4.mjs && node tests/hr-logic-p4.mjs && node tests/hr-audit-p5.mjs && node tests/hr-logic-p5.mjs",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
