@@ -5,7 +5,8 @@
 // file), render it from the same string templates. Either way, mountShell()
 // always wires up runtime behavior (mobile drawer, theme toggle).
 
-import { renderShell } from './shell-render.js';
+import { renderShell, NAV } from './shell-render.js';
+import { roleScopes, viewedRole } from './roles.js';
 import { openPanel, openMenu } from './menus.js';
 import { showToast } from './toast.js';
 import { showModal } from './modal.js';
@@ -517,4 +518,50 @@ export function mountShell() {
   bindSidebarToggle();
   bindThemeToggle();
   bindTopbarPanels();
+  applyRolePreview();
+}
+
+// "View sidebar as" preview (hr_roles.html): hide HR leaves the selected
+// role may not see. Display-only — the server enforces real permissions.
+function applyRolePreview() {
+  try {
+    const role = viewedRole();
+    if (role === 'admin') {
+      return;
+    }
+    const allow = roleScopes()[role];
+    if (!allow) {
+      return;
+    }
+    const byHref = {};
+    for (const g of NAV) {
+      for (const it of g.items || []) {
+        if (it.key && it.href) {
+          byHref[it.href] = it.key;
+        }
+        for (const c of it.children || []) {
+          if (c.key && c.href) {
+            byHref[c.href] = c.key;
+          }
+        }
+      }
+    }
+    const show = k => !k.startsWith('hr-') || allow.includes('*') || allow.includes(k);
+    document
+      .querySelectorAll('.sidebar-nav a.nav-link[href], .sidebar-nav a.nav-sublink[href]')
+      .forEach(a => {
+        const k = byHref[a.getAttribute('href')];
+        if (k && !show(k)) {
+          a.style.display = 'none';
+        }
+      });
+    document.querySelectorAll('.sidebar-nav .nav-group').forEach(g => {
+      const vis = [...g.querySelectorAll('a.nav-link, a.nav-sublink')].some(a => a.style.display !== 'none');
+      if (!vis) {
+        g.style.display = 'none';
+      }
+    });
+  } catch (_e) {
+    /* preview is best-effort */
+  }
 }

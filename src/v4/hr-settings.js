@@ -3,9 +3,10 @@
 
 import { showToast } from './toast.js';
 import { t, currentLang, setLang, LANG_EVENT, applyI18n, applyBranding } from './i18n.js';
-import { getSettings, saveSettings } from './hr-statutory.js';
+import { getSettings, saveSettings, getEosbConfig } from './hr-statutory.js';
 import { download } from './import-export.js';
-import { DEPARTMENTS } from './hr-seed.js';
+import { getSeed } from './hr-api.js';
+import { DEPARTMENTS, APPROVAL_CHAINS, ROLES } from './hr-seed.js';
 
 let booted = false;
 
@@ -200,7 +201,15 @@ function renderExport() {
     </div>`;
   el.querySelector('#set-backup')?.addEventListener('click', () => {
     const data = {};
-    ['hr:settings:v1', 'hr:lang', 'hr:custom-lists', 'hr:my-code', 'hr:client-id'].forEach(k => {
+    [
+      'hr:settings:v1',
+      'hr:lang',
+      'hr:custom-lists',
+      'hr:my-code',
+      'hr:client-id',
+      'hr:audit',
+      'hr:role-view'
+    ].forEach(k => {
       try {
         data[k] = localStorage.getItem(k);
       } catch (_e) {
@@ -263,6 +272,217 @@ function renderDanger() {
   });
 }
 
+// ── P6: EOSB policy (live in hr-statutory via getEosbConfig) ──────────────
+function renderEosb() {
+  const el = document.getElementById('set-eosb');
+  if (!el) {
+    return;
+  }
+  const c = getEosbConfig();
+  const opt = (v, en, ar) =>
+    `<option value="${v}"${c.basis === v ? ' selected' : ''}>${L(en, ar)}</option>`;
+  el.innerHTML = `<div class="hr-form-2col">
+    <div class="form-group"><label class="form-label" for="set-eosb-basis">${L('EOSB basis', 'أساس المكافأة')}</label>
+      <select class="form-control" id="set-eosb-basis">
+        ${opt('basic', 'Basic salary (Art. 84 minimum)', 'الأساسي (الحد الأدنى م84)')}
+        ${opt('basic+housing', 'Basic + housing (contractual)', 'الأساسي + السكن (تعاقدي)')}
+      </select></div>
+    ${field('set-eosb-cap', L('Cap (months of pay, 0 = none)', 'السقف (شهور، 0 = بلا)'), c.capMonths ?? 0, { type: 'number', dir: 'ltr', extra: 'min="0"' })}
+    ${field('set-eosb-emp', L('Pay within (days) — employer end', 'السداد خلال (يوم) — إنهاء صاحب العمل'), c.payDaysEmployer ?? 7, { type: 'number', dir: 'ltr', extra: 'min="0"' })}
+    ${field('set-eosb-res', L('Pay within (days) — resignation', 'السداد خلال (يوم) — الاستقالة'), c.payDaysResign ?? 14, { type: 'number', dir: 'ltr', extra: 'min="0"' })}
+    </div>
+    <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">⚖️ ${L('Art. 84: half-month × 5y then full-month; resignation haircut applies.', 'م84: نصف شهر × 5 سنوات ثم شهر كامل؛ ويُطبق خصم الاستقالة.')}</p>`;
+}
+
+// ── P6: expat levy floors (live in hr-statutory levyFor via settings) ────
+function renderLevy() {
+  const el = document.getElementById('set-levy');
+  if (!el) {
+    return;
+  }
+  const lv = getSettings().levy || {};
+  el.innerHTML =
+    '<div class="hr-form-2col">' +
+    field(
+      'set-levy-red',
+      L('Reduced levy (SAR/mo)', 'المقابل المخفّض (ر.س/شهر)'),
+      lv.reduced ?? 700,
+      { type: 'number', dir: 'ltr', extra: 'min="0"' }
+    ) +
+    field(
+      'set-levy-std',
+      L('Standard levy (SAR/mo)', 'المقابل المعياري (ر.س/شهر)'),
+      lv.standard ?? 800,
+      { type: 'number', dir: 'ltr', extra: 'min="0"' }
+    ) +
+    '</div>';
+}
+
+// ── P6: expense categories (live override via expenseCats) ────────────────
+function renderExpCats() {
+  const el = document.getElementById('set-expcats');
+  if (!el) {
+    return;
+  }
+  const lists = customLists();
+  const rows = (lists.expenseCats || getSeed('expenseCategories')).map(r => ({ ...r }));
+  const draw = () => {
+    el.innerHTML = `<table class="hr-table"><thead><tr><th>${L('Code', 'الرمز')}</th><th>${L('EN', 'EN')}</th><th>${L('AR', 'AR')}</th><th>${L('Limit', 'السقف')}</th><th>${L('Receipt', 'إيصال')}</th><th>${L('VAT', 'ضريبة')}</th><th></th></tr></thead><tbody>
+      ${rows
+        .map(
+          (r, i) => `<tr>
+        <td data-label="${L('Code', 'الرمز')}"><input class="form-control" data-ec="${i}:code" value="${r.code}" dir="ltr"></td>
+        <td data-label="EN"><input class="form-control" data-ec="${i}:en" value="${r.en}"></td>
+        <td data-label="AR"><input class="form-control" data-ec="${i}:ar" value="${r.ar}"></td>
+        <td data-label="${L('Limit', 'السقف')}"><input class="form-control" data-ec="${i}:limit" type="number" min="0" value="${r.limit}" dir="ltr"></td>
+        <td data-label="${L('Receipt', 'إيصال')}"><input type="checkbox" data-ec="${i}:receipt"${r.receipt ? ' checked' : ''}></td>
+        <td data-label="${L('VAT', 'ضريبة')}"><input type="checkbox" data-ec="${i}:vat"${r.vat ? ' checked' : ''}></td>
+        <td data-label=""><button type="button" class="btn btn-ghost btn-sm" data-ec-del="${i}">×</button></td>
+      </tr>`
+        )
+        .join('')}</tbody></table>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button type="button" class="btn btn-outline btn-sm" id="set-ec-add">${L('Add category', 'إضافة فئة')}</button>
+        <button type="button" class="btn btn-primary btn-sm" id="set-ec-save">${L('Save categories', 'حفظ الفئات')}</button>
+      </div>`;
+    el.querySelector('#set-ec-add')?.addEventListener('click', () => {
+      rows.push({ code: '', en: '', ar: '', limit: 500, receipt: true, vat: true });
+      draw();
+    });
+    el.querySelectorAll('[data-ec-del]').forEach(b =>
+      b.addEventListener('click', () => {
+        rows.splice(Number(b.dataset.ecDel), 1);
+        draw();
+      })
+    );
+    el.querySelector('#set-ec-save')?.addEventListener('click', () => {
+      el.querySelectorAll('[data-ec]').forEach(inp => {
+        const [i, k] = inp.dataset.ec.split(':');
+        rows[Number(i)][k] =
+          inp.type === 'checkbox'
+            ? inp.checked
+            : k === 'limit'
+              ? Number(inp.value) || 0
+              : inp.value.trim();
+      });
+      if (rows.some(r => !r.code || !r.en) || new Set(rows.map(r => r.code)).size !== rows.length) {
+        showToast(L('Codes must be filled and unique', 'الرموز مطلوبة وفريدة'), {
+          variant: 'warning'
+        });
+        return;
+      }
+      const l2 = customLists();
+      l2.expenseCats = rows;
+      saveCustomLists(l2);
+      showToast(
+        L(
+          'Categories saved — Expenses page uses them now',
+          'حُفظت الفئات — صفحة المصاريف تستخدمها الآن'
+        ),
+        { variant: 'success' }
+      );
+    });
+  };
+  draw();
+}
+
+// ── P6: approval chains (stored + effective preview; server enforces) ─────
+const CHAIN_FLOWS = ['leave', 'timesheet', 'expense', 'offer'];
+
+function chainBase() {
+  const stored = getSettings().chains || {};
+  const out = {};
+  for (const f of CHAIN_FLOWS) {
+    if (Array.isArray(stored[f])) {
+      out[f] = stored[f].map(s => ({ role: s.role, sla: s.sla ?? 2 }));
+    } else {
+      const seed = APPROVAL_CHAINS.find(c => c.flow === f);
+      const steps = seed
+        ? seed.steps
+        : f === 'expense'
+          ? ['manager', 'finance']
+          : ['hr', 'manager'];
+      out[f] = steps.map(role => ({ role, sla: 2 }));
+    }
+  }
+  return out;
+}
+
+function renderChains() {
+  const el = document.getElementById('set-chains');
+  if (!el) {
+    return;
+  }
+  const chains = chainBase();
+  const roles = ROLES.map(r => r.code);
+  const draw = () => {
+    el.innerHTML =
+      CHAIN_FLOWS.map(f => {
+        const steps = chains[f];
+        return `<div class="hr-card" style="padding:12px;margin-bottom:10px">
+        <strong dir="ltr">${f}</strong>
+        <div style="font-size:12px;color:var(--text-muted);margin:4px 0 8px" dir="ltr">${steps.map(s => `${s.role} (${s.sla}d)`).join(' → ') || '—'}</div>
+        ${steps
+          .map(
+            (s, i) => `<div style="display:flex;gap:8px;margin-bottom:6px">
+          <select class="form-control" data-ch="${f}:${i}:role">${roles.map(r => `<option value="${r}"${s.role === r ? ' selected' : ''}>${r}</option>`).join('')}</select>
+          <input class="form-control" data-ch="${f}:${i}:sla" type="number" min="1" value="${s.sla}" dir="ltr" style="max-width:90px" title="SLA days">
+          <button type="button" class="btn btn-ghost btn-sm" data-ch-del="${f}:${i}">×</button>
+        </div>`
+          )
+          .join('')}
+        <button type="button" class="btn btn-outline btn-sm" data-ch-add="${f}">+ ${L('Step', 'خطوة')}</button>
+      </div>`;
+      }).join('') +
+      `<button type="button" class="btn btn-primary btn-sm" id="set-ch-save">${L('Save chains', 'حفظ السلاسل')}</button>
+      <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">🔒 ${L('Effective chain is previewed above each flow; the server enforces it on submit.', 'السلسلة الفعالة معروضة أعلى كل مسار؛ والخادم يُنفذها عند الإرسال.')}</p>`;
+    el.querySelectorAll('[data-ch-add]').forEach(b =>
+      b.addEventListener('click', () => {
+        el.querySelectorAll('[data-ch]').forEach(inp => syncStep(inp, chains));
+        chains[b.dataset.chAdd].push({ role: 'manager', sla: 2 });
+        draw();
+      })
+    );
+    el.querySelectorAll('[data-ch-del]').forEach(b =>
+      b.addEventListener('click', () => {
+        el.querySelectorAll('[data-ch]').forEach(inp => syncStep(inp, chains));
+        const [f, i] = b.dataset.chDel.split(':');
+        chains[f].splice(Number(i), 1);
+        draw();
+      })
+    );
+    el.querySelector('#set-ch-save')?.addEventListener('click', () => {
+      el.querySelectorAll('[data-ch]').forEach(inp => syncStep(inp, chains));
+      saveSettings({ chains });
+      draw();
+      showToast(L('Chains saved', 'حُفظت السلاسل'), { variant: 'success' });
+    });
+  };
+  draw();
+}
+
+function syncStep(inp, chains) {
+  const [f, i, k] = inp.dataset.ch.split(':');
+  const step = chains[f]?.[Number(i)];
+  if (step) {
+    step[k] = k === 'sla' ? Math.max(1, Number(inp.value) || 1) : inp.value;
+  }
+}
+
+// ── P6: quick links into the admin pages ─────────────────────────────────
+function renderLinks() {
+  const el = document.getElementById('set-links');
+  if (!el) {
+    return;
+  }
+  el.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn btn-outline btn-sm" href="hr_roles.html">${L('Roles & access', 'الأدوار والصلاحيات')}</a>
+    <a class="btn btn-outline btn-sm" href="hr_departments.html">${L('Departments', 'الإدارات')}</a>
+    <a class="btn btn-outline btn-sm" href="hr_audit.html">${L('Audit log', 'سجل التدقيق')}</a>
+    <a class="btn btn-outline btn-sm" href="hr_reports.html">${L('Reports', 'التقارير')}</a>
+  </div>`;
+}
+
 function collectAndSave() {
   const val = id => document.getElementById(id)?.value ?? '';
   const next = {
@@ -281,6 +501,16 @@ function collectAndSave() {
     licence: {
       scope: val('set-lic-scope') || 'both',
       strictAjeer: document.getElementById('set-lic-strict')?.checked !== false
+    },
+    eosb: {
+      basis: val('set-eosb-basis') || 'basic',
+      capMonths: Number(val('set-eosb-cap')) || 0,
+      payDaysEmployer: Number(val('set-eosb-emp')) || 7,
+      payDaysResign: Number(val('set-eosb-res')) || 14
+    },
+    levy: {
+      reduced: Number(val('set-levy-red')) || 700,
+      standard: Number(val('set-levy-std')) || 800
     },
     language: val('set-deflang') || 'en'
   };
@@ -303,7 +533,12 @@ function renderAll() {
   renderNitaqat(s);
   renderLicence(s);
   renderLang(s);
+  renderEosb();
+  renderLevy();
+  renderExpCats();
+  renderChains();
   renderDepts();
+  renderLinks();
   renderExport();
   renderDanger();
   applyI18n(document.querySelector('[data-hr-settings]') || document);

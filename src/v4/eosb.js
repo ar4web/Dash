@@ -2,16 +2,16 @@
 // Art. 84: ½ month per year for the first 5 years, 1 month after, pro-rata.
 // Art. 85 (2026 nuance): the resignation haircut applies ONLY to fixed-term
 // resignation; Art. 80 dismissal forfeits the award. Wage basis + cap come
-// from SEED_EOSB (counsel-configured). Settlement = EOSB + unused leave +
+// from getEosbConfig() (counsel-configured). Settlement = EOSB + unused leave +
 // outstanding salary + repatriation ticket — tax-free in KSA (§0.9).
 
 import { showToast } from './toast.js';
 import { showModal } from './modal.js';
 import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { fmtSAR } from './hr-locale.js';
-import { calcEOSB, annualEntitlement, yearsBetween } from './hr-statutory.js';
+import { calcEOSB, annualEntitlement, yearsBetween, getEosbConfig } from './hr-statutory.js';
 import { getSeed } from './hr-api.js';
-import { SEED_EOSB, SEED_COMPANY } from './hr-seed.js';
+import { SEED_COMPANY } from './hr-seed.js';
 import { exportData, exportCSV } from './import-export.js';
 
 let booted = false;
@@ -45,8 +45,8 @@ function basisOf(e, basis) {
 }
 
 function capped(net, wage) {
-  if (SEED_EOSB.capMonths > 0) {
-    return Math.min(net, wage * SEED_EOSB.capMonths);
+  if (getEosbConfig().capMonths > 0) {
+    return Math.min(net, wage * getEosbConfig().capMonths);
   }
   return net;
 }
@@ -75,7 +75,7 @@ function calcResult() {
   const e = emp(document.getElementById('eo-emp')?.value);
   const end = document.getElementById('eo-end')?.value || new Date().toISOString().slice(0, 10);
   const reason = document.getElementById('eo-reason')?.value || 'termination';
-  const basis = document.getElementById('eo-basis')?.value || SEED_EOSB.basis;
+  const basis = document.getElementById('eo-basis')?.value || getEosbConfig().basis;
   if (!e) {
     return null;
   }
@@ -84,8 +84,8 @@ function calcResult() {
   const net = capped(r.net, wage);
   const payDays =
     reason === 'resignation' || reason === 'resignation-fixed'
-      ? SEED_EOSB.payDaysResign
-      : SEED_EOSB.payDaysEmployer;
+      ? getEosbConfig().payDaysResign
+      : getEosbConfig().payDaysEmployer;
   const payBy = new Date(`${end}T00:00:00`);
   payBy.setDate(payBy.getDate() + payDays);
   return { e, end, reason, basis, wage, r, net, payBy: payBy.toISOString().slice(0, 10) };
@@ -111,7 +111,7 @@ function renderCalc() {
     <div class="hr-kv"><span>${L('Gross award (Art. 84)', 'المكافأة (مادة 84)')}</span><strong dir="ltr">${fmtSAR(c.r.gross)}</strong></div>
     <div class="hr-kv"><span>${L('Haircut / factor', 'الحسم / المعامل')}</span><strong>${factorLbl} · <span dir="ltr">${fmtSAR(c.r.haircut)}</span></strong></div>
     <div class="hr-kv" style="font-size:16px"><span><strong>${L('Net EOSB', 'صافي المكافأة')}</strong></span><strong dir="ltr">${fmtSAR(c.net)}</strong></div>
-    ${SEED_EOSB.capMonths > 0 ? `<div class="hr-note">⚠️ ${L(`Cap applied: ${SEED_EOSB.capMonths} months`, `طُبق الحد: ${SEED_EOSB.capMonths} أشهر`)}</div>` : ''}
+    ${getEosbConfig().capMonths > 0 ? `<div class="hr-note">⚠️ ${L(`Cap applied: ${getEosbConfig().capMonths} months`, `طُبق الحد: ${getEosbConfig().capMonths} أشهر`)}</div>` : ''}
     <div class="hr-note">🗓️ ${L('Pay by', 'تُدفع قبل')} <span dir="ltr">${c.payBy}</span> · ${reasonLabel(c.reason)}</div>`;
 }
 
@@ -120,7 +120,7 @@ function renderCalc() {
 function accrualRows() {
   const today = new Date().toISOString().slice(0, 10);
   return getSeed('employees').map(e => {
-    const wage = basisOf(e, SEED_EOSB.basis);
+    const wage = basisOf(e, getEosbConfig().basis);
     const years = yearsBetween(e.join, today);
     const r = calcEOSB({ basic: wage, joinDate: e.join, endDate: today, endReason: 'termination' });
     const monthly = (wage * (years < 5 ? 0.5 : 1)) / 12;
@@ -186,7 +186,7 @@ function settlementVals() {
   }
   const end = document.getElementById('es-end')?.value || new Date().toISOString().slice(0, 10);
   const reason = document.getElementById('es-reason')?.value || 'termination';
-  const wage = basisOf(e, SEED_EOSB.basis);
+  const wage = basisOf(e, getEosbConfig().basis);
   const full = (e.basic || 0) + (e.housing || 0) + (e.transport || 0);
   const r = calcEOSB({ basic: wage, joinDate: e.join, endDate: end, endReason: reason });
   const eosb = capped(r.net, wage);
@@ -272,7 +272,7 @@ export function initEosb() {
   const eb = document.getElementById('eo-basis');
   if (eb && !eb.options.length) {
     eb.innerHTML = `<option value="basic">${L('Basic wage', 'الأجر الأساسي')}</option>
-      <option value="basic+housing"${SEED_EOSB.basis === 'basic+housing' ? ' selected' : ''}>${L('Basic + housing', 'أساسي + سكن')}</option>`;
+      <option value="basic+housing"${getEosbConfig().basis === 'basic+housing' ? ' selected' : ''}>${L('Basic + housing', 'أساسي + سكن')}</option>`;
   }
   const today = new Date().toISOString().slice(0, 10);
   const ee = document.getElementById('eo-end');

@@ -13,7 +13,8 @@ import {
   GOSI_CUTOFF,
   LEVY_TABLE,
   LEAVE_TYPES,
-  BLOCKED_DEDUCTIONS
+  BLOCKED_DEDUCTIONS,
+  SEED_EOSB
 } from './hr-seed.js';
 
 export const SETTINGS_KEY = 'hr:settings:v1';
@@ -94,6 +95,12 @@ export function getStatutoryConfig() {
     },
     leave: LEAVE_TYPES
   };
+}
+
+// EOSB wage basis + cap + pay-day clocks (counsel-configured in Settings).
+export function getEosbConfig() {
+  const s = storedSettings();
+  return { ...SEED_EOSB, ...(s.eosb || {}) };
 }
 
 // ── Dates ────────────────────────────────────────────────────────────────

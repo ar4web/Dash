@@ -33,7 +33,16 @@ import {
   JOBS,
   CANDIDATES,
   INTERVIEWS,
-  OFFERS
+  OFFERS,
+  GOALS,
+  REVIEWS,
+  FEEDBACK,
+  TRAININGS,
+  DEPARTMENTS,
+  ROLES,
+  ROLE_SCOPES,
+  AUDIT_LOG,
+  ANNOUNCEMENTS
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -67,7 +76,16 @@ const SEED_MAP = {
   jobs: JOBS,
   candidates: CANDIDATES,
   interviews: INTERVIEWS,
-  offers: OFFERS
+  offers: OFFERS,
+  goals: GOALS,
+  reviews: REVIEWS,
+  feedback: FEEDBACK,
+  trainings: TRAININGS,
+  departments: DEPARTMENTS,
+  roles: ROLES,
+  roleScopes: ROLE_SCOPES,
+  auditLog: AUDIT_LOG,
+  announcements: ANNOUNCEMENTS
 };
 
 const API_MAP = {
@@ -101,7 +119,15 @@ const API_MAP = {
   jobs: { path: '/api/hr/jobs', listKey: 'jobs' },
   candidates: { path: '/api/hr/candidates', listKey: 'candidates' },
   interviews: { path: '/api/hr/interviews', listKey: 'interviews' },
-  offers: { path: '/api/hr/offers', listKey: 'offers' }
+  offers: { path: '/api/hr/offers', listKey: 'offers' },
+  goals: { path: '/api/hr/goals', listKey: 'goals' },
+  reviews: { path: '/api/hr/reviews', listKey: 'reviews' },
+  feedback: { path: '/api/hr/feedback', listKey: 'items' },
+  trainings: { path: '/api/hr/trainings', listKey: 'trainings' },
+  departments: { path: '/api/hr/departments', listKey: 'departments' },
+  roles: { path: '/api/hr/roles', listKey: 'roles' },
+  auditLog: { path: '/api/hr/audit', listKey: 'entries' },
+  announcements: { path: '/api/hr/announcements', listKey: 'items' }
 };
 
 function overlayRows(name) {
@@ -154,7 +180,11 @@ export function patchSeedRow(name, row, patch) {
 /** Seeds merged with local overlay (seed mode only). Overlay rows whose key
  *  matches a seed row act as patches; unknown keys append as new rows. */
 export function getSeed(name) {
-  const base = (SEED_MAP[name] || []).slice();
+  const raw = SEED_MAP[name];
+  if (raw && !Array.isArray(raw)) {
+    return raw; // object seeds (e.g. roleScopes) carry no row overlays
+  }
+  const base = (raw || []).slice();
   const extra = overlayRows(name);
   if (!extra.length) {
     return base;

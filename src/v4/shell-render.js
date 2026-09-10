@@ -71,6 +71,20 @@ export const NAV = [
       { key: 'hr-pipeline', href: 'hr_pipeline.html', text: 'Pipeline', icon: 'kanban' },
       { key: 'hr-interviews', href: 'hr_interviews.html', text: 'Interviews', icon: 'calendar' },
       { key: 'hr-offers', href: 'hr_offers.html', text: 'Offers', icon: 'mail' },
+      { key: 'hr-goals', href: 'hr_goals.html', text: 'Goals', icon: 'target' },
+      { key: 'hr-reviews', href: 'hr_reviews.html', text: 'Reviews', icon: 'charts' },
+      { key: 'hr-feedback', href: 'hr_feedback.html', text: 'Feedback', icon: 'chat' },
+      { key: 'hr-trainings', href: 'hr_trainings.html', text: 'Trainings', icon: 'media' },
+      { key: 'hr-departments', href: 'hr_departments.html', text: 'Departments', icon: 'projects' },
+      { key: 'hr-roles', href: 'hr_roles.html', text: 'Roles & access', icon: 'settings' },
+      { key: 'hr-audit', href: 'hr_audit.html', text: 'Audit log', icon: 'pages' },
+      {
+        key: 'hr-announcements',
+        href: 'hr_announcements.html',
+        text: 'Announcements',
+        icon: 'bell'
+      },
+      { key: 'hr-reports', href: 'hr_reports.html', text: 'Reports', icon: 'charts' },
       { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings', icon: 'settings' }
     ]
   },
@@ -285,7 +299,9 @@ export const ICONS = {
   percent:
     '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>',
   contract:
-    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>'
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>',
+  target:
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>'
 };
 
 const CHEVRON =

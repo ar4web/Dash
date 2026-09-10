@@ -40,8 +40,20 @@ function empName(code) {
   return currentLang() === 'ar' ? e.nameAr || e.nameEn : e.nameEn;
 }
 
+export function expenseCats() {
+  try {
+    const o = JSON.parse(localStorage.getItem('hr:custom-lists') || '{}');
+    if (Array.isArray(o.expenseCats) && o.expenseCats.length) {
+      return o.expenseCats;
+    }
+  } catch (_e) {
+    /* ignore */
+  }
+  return getSeed('expenseCategories');
+}
+
 function catOf(code) {
-  return getSeed('expenseCategories').find(c => c.code === code);
+  return expenseCats().find(c => c.code === code);
 }
 
 function catLabel(code) {
@@ -218,7 +230,7 @@ function renderAll() {
 }
 
 function openClaimModal() {
-  const cats = getSeed('expenseCategories');
+  const cats = expenseCats();
   const emps = getSeed('employees');
   const clients = getSeed('clients');
   const today = new Date().toISOString().slice(0, 10);

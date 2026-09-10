@@ -775,3 +775,94 @@ html[dir="rtl"] .org-node {
     padding: 0;
   }
 }
+
+// ── P6: goals / reviews / feedback / trainings / reports ────────────────
+.hr-note {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 8px 0 0;
+}
+
+.hr-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+}
+
+.hr-wall {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.hr-bar {
+  display: inline-block;
+  width: 120px;
+  max-width: 40%;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--border, #e5e7eb);
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.hr-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--primary, #2a7ae2);
+  border-radius: 99px;
+}
+
+.hr-kpi-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.hr-kpi {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.hr-kpi-v {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.hr-kpi-l {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.hr-funnel-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 48px;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 13px;
+}
+
+.hr-funnel-row .hr-bar {
+  width: 100%;
+  max-width: none;
+}
+
+.hr-check-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.hr-check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}

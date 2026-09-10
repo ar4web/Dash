@@ -29,11 +29,23 @@ export const SEED_LICENCE = {
 };
 
 export const DEPARTMENTS = [
-  { code: 'OPS', en: 'Operations', ar: 'التشغيل' },
-  { code: 'HR', en: 'Human Resources', ar: 'الموارد البشرية' },
-  { code: 'FIN', en: 'Finance', ar: 'المالية' },
-  { code: 'PRO', en: 'Government Relations', ar: 'العلاقات الحكومية' },
-  { code: 'REC', en: 'Recruitment', ar: 'التوظيف' }
+  { code: 'OPS', en: 'Operations', ar: 'التشغيل', head: 'EMP-0004', costCenter: 'CC-100' },
+  {
+    code: 'HR',
+    en: 'Human Resources',
+    ar: 'الموارد البشرية',
+    head: 'EMP-0001',
+    costCenter: 'CC-200'
+  },
+  { code: 'FIN', en: 'Finance', ar: 'المالية', head: 'EMP-0002', costCenter: 'CC-300' },
+  {
+    code: 'PRO',
+    en: 'Government Relations',
+    ar: 'العلاقات الحكومية',
+    head: 'EMP-0003',
+    costCenter: 'CC-400'
+  },
+  { code: 'REC', en: 'Recruitment', ar: 'التوظيف', head: 'EMP-0005', costCenter: 'CC-500' }
 ];
 
 export const PROFESSIONS = [
@@ -3750,5 +3762,490 @@ export const OFFERS = [
     validUntil: '2026-08-25',
     status: 'accepted',
     templateVer: 3
+  }
+];
+
+// ── P6: performance, training, org, audit, broadcasts ──────────────────────
+
+export const GOALS = [
+  {
+    id: 'G-2026-01',
+    owner: 'EMP-0006',
+    titleEn: 'Site attendance rate',
+    titleAr: 'نسبة الحضور الموقعي',
+    metric: '%',
+    target: 98,
+    current: 96.5,
+    due: '2026-12-31',
+    status: 'active'
+  },
+  {
+    id: 'G-2026-02',
+    owner: 'EMP-0003',
+    titleEn: 'Saudization pipeline',
+    titleAr: 'مسار السعودة',
+    metric: 'Saudi hires',
+    target: 6,
+    current: 2,
+    due: '2026-12-31',
+    status: 'at-risk'
+  },
+  {
+    id: 'G-2026-03',
+    owner: 'EMP-0010',
+    titleEn: 'Trade certification',
+    titleAr: 'شهادة مهنية',
+    metric: 'certificates',
+    target: 1,
+    current: 1,
+    due: '2026-09-30',
+    status: 'done'
+  },
+  {
+    id: 'G-2026-04',
+    owner: 'EMP-0001',
+    titleEn: 'Qiwa documentation rate',
+    titleAr: 'نسبة توثيق قوى',
+    metric: '% authenticated',
+    target: 100,
+    current: 92,
+    due: '2026-12-31',
+    status: 'active'
+  },
+  {
+    id: 'G-2026-05',
+    owner: 'EMP-0007',
+    titleEn: 'Defensive-driving course',
+    titleAr: 'دورة القيادة الوقائية',
+    metric: 'courses',
+    target: 1,
+    current: 0,
+    due: '2026-11-30',
+    status: 'draft'
+  }
+];
+
+export const REVIEWS = [
+  {
+    id: 'RV-2026-001',
+    emp: 'EMP-0006',
+    cycle: '2026-H1',
+    status: 'published',
+    selfRating: 4,
+    selfNotes: 'Strong attendance, one late arrival in May.',
+    mgrRating: 4,
+    mgrNotes: 'Reliable driver; recommend advanced course.',
+    finalRating: 4,
+    publishedAt: '2026-07-10',
+    ackedAt: ''
+  },
+  {
+    id: 'RV-2026-002',
+    emp: 'EMP-0003',
+    cycle: '2026-H2',
+    status: 'manager',
+    selfRating: 5,
+    selfNotes: 'Delivered 2 Saudi hires against a tough market.',
+    mgrRating: 0,
+    mgrNotes: '',
+    finalRating: 0,
+    publishedAt: '',
+    ackedAt: ''
+  },
+  {
+    id: 'RV-2026-003',
+    emp: 'EMP-0010',
+    cycle: '2026-H2',
+    status: 'self',
+    selfRating: 0,
+    selfNotes: '',
+    mgrRating: 0,
+    mgrNotes: '',
+    finalRating: 0,
+    publishedAt: '',
+    ackedAt: ''
+  },
+  {
+    id: 'RV-2026-004',
+    emp: 'EMP-0001',
+    cycle: '2026-H2',
+    status: 'draft',
+    selfRating: 0,
+    selfNotes: '',
+    mgrRating: 0,
+    mgrNotes: '',
+    finalRating: 0,
+    publishedAt: '',
+    ackedAt: ''
+  }
+];
+
+export const FEEDBACK = [
+  {
+    id: 'FB-2026-011',
+    from: 'EMP-0001',
+    to: 'EMP-0006',
+    kind: 'praise',
+    date: '2026-09-02',
+    textEn: 'Covered a second site run on short notice — thank you.',
+    textAr: 'غطى رحلة موقع ثانية في وقت قصير — شكرًا لك.'
+  },
+  {
+    id: 'FB-2026-012',
+    from: 'EMP-0003',
+    to: 'EMP-0010',
+    kind: 'praise',
+    date: '2026-08-28',
+    textEn: 'Trade test passed first attempt.',
+    textAr: 'اجتاز اختبار المهنة من أول محاولة.'
+  },
+  {
+    id: 'FB-2026-013',
+    from: 'EMP-0001',
+    to: 'EMP-0007',
+    kind: 'coaching',
+    date: '2026-08-20',
+    textEn: 'Log trip sheets daily — two were filed late.',
+    textAr: 'سجّل كشوف الرحلات يوميًا — تأخر اثنان.'
+  },
+  {
+    id: 'FB-2026-014',
+    from: 'EMP-0002',
+    to: 'EMP-0003',
+    kind: 'praise',
+    date: '2026-08-15',
+    textEn: 'Expense reports are consistently clean.',
+    textAr: 'تقارير المصروفات سليمة باستمرار.'
+  },
+  {
+    id: 'FB-2026-015',
+    from: 'EMP-0004',
+    to: 'EMP-0001',
+    kind: 'coaching',
+    date: '2026-08-10',
+    textEn: 'Qiwa renewals need a weekly checklist, not monthly.',
+    textAr: 'تجديدات قوى تحتاج قائمة أسبوعية لا شهرية.'
+  }
+];
+
+export const TRAININGS = [
+  {
+    id: 'T-2026-01',
+    titleEn: 'Site safety induction',
+    titleAr: 'التعريف بالسلامة الموقعية',
+    provider: 'Internal HSE',
+    date: '2026-08-18',
+    hours: 4,
+    cost: 0,
+    status: 'done',
+    attendees: [
+      'EMP-0006',
+      'EMP-0007',
+      'EMP-0008',
+      'EMP-0009',
+      'EMP-0010',
+      'EMP-0011',
+      'EMP-0012',
+      'EMP-0013'
+    ]
+  },
+  {
+    id: 'T-2026-02',
+    titleEn: 'Defensive driving',
+    titleAr: 'القيادة الوقائية',
+    provider: 'Dallah Driving',
+    date: '2026-10-05',
+    hours: 8,
+    cost: 2400,
+    status: 'planned',
+    attendees: ['EMP-0006', 'EMP-0007']
+  },
+  {
+    id: 'T-2026-03',
+    titleEn: 'First aid basics',
+    titleAr: 'أساسيات الإسعافات',
+    provider: 'Saudi Red Crescent',
+    date: '2026-07-22',
+    hours: 6,
+    cost: 1800,
+    status: 'done',
+    attendees: ['EMP-0003', 'EMP-0004', 'EMP-0010']
+  }
+];
+
+// RBAC roles (seed-mode UX only — the server enforces). Rank: lower = stronger.
+export const ROLES = [
+  { code: 'admin', en: 'Administrator', ar: 'مدير النظام', rank: 1 },
+  { code: 'hr', en: 'HR Officer', ar: 'موظف موارد بشرية', rank: 2 },
+  { code: 'ops', en: 'Operations Coordinator', ar: 'منسق التشغيل', rank: 3 },
+  { code: 'payroll', en: 'Payroll Officer', ar: 'موظف الرواتب', rank: 4 },
+  { code: 'pro', en: 'PRO', ar: 'المعقب', rank: 5 },
+  { code: 'finance', en: 'Finance (read)', ar: 'المالية (قراءة)', rank: 6 },
+  { code: 'manager', en: 'Manager', ar: 'مدير', rank: 7 },
+  { code: 'site-supervisor', en: 'Site Supervisor', ar: 'مشرف موقع', rank: 8 },
+  { code: 'employee', en: 'Employee', ar: 'موظف', rank: 9 }
+];
+
+// Module scopes per role ('*' = all). Keys match sidebar data-page keys.
+export const ROLE_SCOPES = {
+  admin: ['*'],
+  hr: [
+    'hr-dashboard',
+    'hr-employees',
+    'hr-sa-compliance',
+    'hr-my-space',
+    'hr-onboarding',
+    'hr-visas',
+    'hr-residency',
+    'hr-tracker',
+    'hr-documents',
+    'hr-org',
+    'hr-attendance',
+    'hr-shifts',
+    'hr-timesheets',
+    'hr-leave',
+    'hr-holidays',
+    'hr-leave-calendar',
+    'hr-approvals',
+    'hr-my-team',
+    'hr-clients',
+    'hr-requests',
+    'hr-assignments',
+    'hr-ajeer',
+    'hr-invoices',
+    'hr-payroll',
+    'hr-gosi',
+    'hr-wps',
+    'hr-eosb',
+    'hr-expenses',
+    'hr-contracts',
+    'hr-templates',
+    'hr-jobs',
+    'hr-candidates',
+    'hr-pipeline',
+    'hr-interviews',
+    'hr-offers',
+    'hr-goals',
+    'hr-reviews',
+    'hr-feedback',
+    'hr-trainings',
+    'hr-departments',
+    'hr-announcements',
+    'hr-reports',
+    'hr-settings'
+  ],
+  ops: [
+    'hr-dashboard',
+    'hr-tracker',
+    'hr-requests',
+    'hr-assignments',
+    'hr-ajeer',
+    'hr-clients',
+    'hr-attendance',
+    'hr-timesheets',
+    'hr-shifts',
+    'hr-leave',
+    'hr-approvals',
+    'hr-documents',
+    'hr-contracts',
+    'hr-announcements',
+    'hr-my-space'
+  ],
+  payroll: [
+    'hr-dashboard',
+    'hr-employees',
+    'hr-payroll',
+    'hr-gosi',
+    'hr-wps',
+    'hr-eosb',
+    'hr-expenses',
+    'hr-reports',
+    'hr-announcements',
+    'hr-my-space'
+  ],
+  pro: [
+    'hr-dashboard',
+    'hr-employees',
+    'hr-visas',
+    'hr-residency',
+    'hr-onboarding',
+    'hr-documents',
+    'hr-announcements',
+    'hr-my-space'
+  ],
+  finance: [
+    'hr-dashboard',
+    'hr-invoices',
+    'hr-payroll',
+    'hr-gosi',
+    'hr-expenses',
+    'hr-eosb',
+    'hr-reports',
+    'hr-announcements',
+    'hr-my-space'
+  ],
+  manager: [
+    'hr-dashboard',
+    'hr-my-team',
+    'hr-approvals',
+    'hr-goals',
+    'hr-reviews',
+    'hr-feedback',
+    'hr-leave',
+    'hr-trainings',
+    'hr-announcements',
+    'hr-my-space'
+  ],
+  'site-supervisor': [
+    'hr-dashboard',
+    'hr-attendance',
+    'hr-timesheets',
+    'hr-my-team',
+    'hr-announcements',
+    'hr-my-space'
+  ],
+  employee: [
+    'hr-my-space',
+    'hr-leave',
+    'hr-expenses',
+    'hr-feedback',
+    'hr-announcements',
+    'hr-trainings'
+  ]
+};
+
+export const AUDIT_LOG = [
+  {
+    id: 'AU-2026-091',
+    at: '2026-09-09T11:20:00',
+    actor: 'EMP-0001',
+    action: 'offer.accept',
+    entity: 'OF-2026-003',
+    detail: 'Candidate CD-2026-008 hired'
+  },
+  {
+    id: 'AU-2026-092',
+    at: '2026-09-08T15:02:00',
+    actor: 'EMP-0002',
+    action: 'invoice.pay',
+    entity: 'INV-2026-08-CL-002',
+    detail: 'Marked paid'
+  },
+  {
+    id: 'AU-2026-093',
+    at: '2026-09-08T09:41:00',
+    actor: 'EMP-0001',
+    action: 'expense.approve',
+    entity: 'EXP-2026-012',
+    detail: 'SAR 2,070 approved'
+  },
+  {
+    id: 'AU-2026-094',
+    at: '2026-09-04T13:15:00',
+    actor: 'EMP-0002',
+    action: 'expense.pay',
+    entity: 'EXP-2026-013',
+    detail: 'SAR 1,092.50 paid'
+  },
+  {
+    id: 'AU-2026-095',
+    at: '2026-09-03T10:05:00',
+    actor: 'EMP-0001',
+    action: 'expense.reject',
+    entity: 'EXP-2026-017',
+    detail: 'Personal fine — not reimbursable'
+  },
+  {
+    id: 'AU-2026-096',
+    at: '2026-09-02T12:30:00',
+    actor: 'EMP-0002',
+    action: 'payrun.pay',
+    entity: 'PR-2026-08',
+    detail: 'August run paid'
+  },
+  {
+    id: 'AU-2026-097',
+    at: '2026-09-01T10:00:00',
+    actor: 'EMP-0002',
+    action: 'wps.submit',
+    entity: 'PR-2026-08',
+    detail: 'SIF accepted by Mudad'
+  },
+  {
+    id: 'AU-2026-098',
+    at: '2026-08-30T14:22:00',
+    actor: 'EMP-0001',
+    action: 'contract.issue',
+    entity: 'CT-2026-006',
+    detail: 'Salary certificate issued'
+  },
+  {
+    id: 'AU-2026-099',
+    at: '2026-08-28T09:12:00',
+    actor: 'EMP-0001',
+    action: 'candidate.reject',
+    entity: 'CD-2026-006',
+    detail: 'No driving experience'
+  },
+  {
+    id: 'AU-2026-100',
+    at: '2026-08-25T16:44:00',
+    actor: 'EMP-0001',
+    action: 'settings.save',
+    entity: 'hr:settings:v1',
+    detail: 'Nitaqat target updated'
+  }
+];
+
+export const ANNOUNCEMENTS = [
+  {
+    id: 'AN-2026-011',
+    audience: 'all',
+    date: '2026-09-08',
+    expires: '2026-10-08',
+    status: 'published',
+    reads: ['EMP-0001', 'EMP-0002'],
+    titleEn: 'National Day holiday — Sep 23',
+    titleAr: 'إجازة اليوم الوطني — 23 سبتمبر',
+    bodyEn:
+      'Wednesday Sep 23 is a paid public holiday. Site rosters will be adjusted by supervisors.',
+    bodyAr: 'الأربعاء 23 سبتمبر إجازة رسمية مدفوعة. سيعدّل المشرفون جداول المواقع.'
+  },
+  {
+    id: 'AN-2026-012',
+    audience: 'site',
+    date: '2026-09-05',
+    expires: '2026-09-30',
+    status: 'published',
+    reads: [],
+    titleEn: 'Heat-stress protocol remains in force',
+    titleAr: 'بروتوكول الإجهاد الحراري سارٍ',
+    bodyEn:
+      'Midday outdoor work restrictions continue through September. Water stations must be stocked.',
+    bodyAr: 'تستمر قيود العمل الخارجي وقت الظهيرة خلال سبتمبر. يجب تجهيز محطات المياه.'
+  },
+  {
+    id: 'AN-2026-013',
+    audience: 'managers',
+    date: '2026-09-01',
+    expires: '2026-09-20',
+    status: 'published',
+    reads: ['EMP-0001'],
+    titleEn: 'H2 reviews open — self-assessments due Sep 25',
+    titleAr: 'تقييمات النصف الثاني — التقييم الذاتي حتى 25 سبتمبر',
+    bodyEn: 'Managers: release H2 review forms to your teams this week.',
+    bodyAr: 'المدراء: أتيحوا نماذج تقييم النصف الثاني لفرقكم هذا الأسبوع.'
+  },
+  {
+    id: 'AN-2026-014',
+    audience: 'all',
+    date: '2026-09-09',
+    expires: '2026-12-31',
+    status: 'draft',
+    reads: [],
+    titleEn: 'New expense limits (draft)',
+    titleAr: 'حدود المصروفات الجديدة (مسودة)',
+    bodyEn: 'Draft — pending finance sign-off.',
+    bodyAr: 'مسودة — بانتظار اعتماد المالية.'
   }
 ];
