@@ -103,6 +103,44 @@
     </div>
   </details>
 
+  <details class="card zone" open data-zone="leave">
+    <summary class="zone-head">
+      <span class="zone-title" data-i18n="hr.dashboard.zoneLeave">Vacation &amp; leave</span>
+      <span class="zone-meta" id="zone-leave-meta"></span>
+    </summary>
+    <div class="card-body">
+      <div class="row col-3" id="vac-cards"></div>
+      <div id="vac-list" style="margin-top:12px"></div>
+      <div class="row col-2" style="margin-top:12px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.returnEff">Return efficiency</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-sm" id="chart-return"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.overdueTitle">Overdue returns</div>
+          </div>
+          <div class="card-body">
+            <div id="overdue-table"></div>
+            <div class="chart-box chart-sm" id="chart-delayreasons" style="margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">
+          <div class="card-title" data-i18n="hr.dashboard.eligibleTitle">Eligible for vacation</div>
+        </div>
+        <div class="card-body">
+          <div class="table-scroll" id="eligible-table"></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <div class="row col-3" id="hr-kpis" style="margin-bottom:16px"></div>
 
   <div class="row col-2" style="margin-bottom:16px">

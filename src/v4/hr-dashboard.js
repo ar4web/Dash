@@ -13,10 +13,13 @@ import {
   execMoney,
   headcountByStatus,
   tenureBuckets,
-  separationSeries
+  separationSeries,
+  leaveWindows,
+  returnStats,
+  eligibleForVacation
 } from './hr-statutory.js';
 import { getSeed } from './hr-api.js';
-import { CLIENTS } from './hr-seed.js';
+import { CLIENTS, LEAVE_DELAY_REASONS } from './hr-seed.js';
 import { renderEchart } from './chart-helper.js';
 import { escapeHtml as esc } from './markup.js';
 
@@ -574,10 +577,191 @@ function renderS1() {
   );
 }
 
+function empName(code) {
+  const e = getSeed('employees').find(x => x.code === code);
+  if (!e) {
+    return code;
+  }
+  return currentLang() === 'ar' ? e.nameAr || e.nameEn : e.nameEn;
+}
+
+function delayReasonName(code) {
+  const d = LEAVE_DELAY_REASONS.find(x => x.code === code);
+  if (!d) {
+    return code;
+  }
+  return currentLang() === 'ar' ? d.ar : d.en;
+}
+
+function renderS2() {
+  if (!document.getElementById('vac-cards')) {
+    return;
+  }
+  const reqs = getSeed('leaveRequests');
+  const byId = id => reqs.find(r => r.id === id);
+  const w = leaveWindows(reqs, todayIso());
+
+  document.getElementById('vac-cards').innerHTML =
+    moneyCard({
+      icon: 'calendar',
+      color: 'blue',
+      label: t('hr.dashboard.vacNow'),
+      value: String(w.onVacation.length),
+      sub: t('hr.dashboard.heads'),
+      href: 'hr_leave.html'
+    }) +
+    moneyCard({
+      icon: 'clock',
+      color: 'yellow',
+      label: t('hr.dashboard.vacDeparting'),
+      value: String(w.departing.length),
+      sub: t('hr.dashboard.heads'),
+      href: 'hr_leave.html'
+    }) +
+    moneyCard({
+      icon: 'inbox',
+      color: 'green',
+      label: t('hr.dashboard.vacReturning'),
+      value: String(w.returning.length),
+      sub: t('hr.dashboard.heads'),
+      href: 'hr_leave.html'
+    });
+
+  const meta = document.getElementById('zone-leave-meta');
+  if (meta) {
+    meta.innerHTML = `<span class="status status-blue">${w.onVacation.length} ${esc(t('hr.dashboard.vacNow'))}</span>`;
+  }
+
+  const groups = [
+    { ids: w.onVacation, label: t('hr.dashboard.vacNow') },
+    { ids: w.departing, label: t('hr.dashboard.vacDeparting') },
+    { ids: w.returning, label: t('hr.dashboard.vacReturning') }
+  ];
+  document.getElementById('vac-list').innerHTML = groups
+    .map(
+      g =>
+        `<div class="vac-group"><div class="vac-group-head"><strong>${esc(g.label)}</strong><span class="status status-blue">${g.ids.length}</span></div>` +
+        (g.ids.length
+          ? `<div class="table-responsive"><table class="table hr-table"><tbody>` +
+            g.ids
+              .map(id => byId(id))
+              .filter(Boolean)
+              .map(
+                r => `<tr>
+        <td><a href="hr_employee.html?code=${encodeURIComponent(r.emp)}">${esc(empName(r.emp))}</a><br><small style="color:var(--text-muted)" dir="ltr">${esc(r.id)}</small></td>
+        <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(fmtDate(r.from))} → ${esc(fmtDate(r.to))}</td>
+        <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(String(r.days))} ${esc(t('common.days'))}</td>
+      </tr>`
+              )
+              .join('') +
+            `</tbody></table></div>`
+          : `<div class="hr-empty">${esc(t('common.noData'))}</div>`) +
+        `</div>`
+    )
+    .join('');
+
+  const rs = returnStats(reqs);
+  renderEchart(
+    document.getElementById('chart-return'),
+    tk => ({
+      tooltip: { trigger: 'item' },
+      legend: { bottom: 0, textStyle: { color: tk.textMuted, fontSize: 11 } },
+      series: [
+        {
+          type: 'pie',
+          radius: ['55%', '78%'],
+          center: ['50%', '44%'],
+          label: { show: false },
+          emphasis: { label: { show: true, fontSize: 13, fontWeight: 600 } },
+          data: [
+            { name: t('status.on-time'), value: rs.onTime, itemStyle: { color: tk.green } },
+            { name: t('status.overdue'), value: rs.overdue, itemStyle: { color: tk.red } }
+          ]
+        }
+      ]
+    }),
+    L(
+      `Return efficiency: ${rs.onTime} of ${rs.total} vacations ended on time (${rs.pct}%), ${rs.overdue} overdue.`,
+      `كفاءة العودة: ${rs.onTime} من ${rs.total} إجازات انتهت في موعدها (${rs.pct}٪)، ${rs.overdue} متأخرة.`
+    )
+  );
+
+  const overdue = reqs.filter(r => r.type === 'annual' && r.returnStatus === 'overdue');
+  const ot = document.getElementById('overdue-table');
+  if (ot) {
+    ot.innerHTML = overdue.length
+      ? `<div class="table-responsive"><table class="table hr-table"><tbody>` +
+        overdue
+          .map(r => {
+            const late = Math.max(
+              0,
+              Math.round((new Date(r.returnedAt) - new Date(r.to)) / 86400000)
+            );
+            return `<tr>
+      <td><a href="hr_employee.html?code=${encodeURIComponent(r.emp)}">${esc(empName(r.emp))}</a><br><small style="color:var(--text-muted)" dir="ltr">${esc(r.id)}</small></td>
+      <td><span class="status status-red">${late} ${esc(t('hr.dashboard.daysLate'))}</span><br><small style="color:var(--text-muted)">${esc(t('hr.dashboard.reason'))}: ${esc(delayReasonName(r.delayReason))}</small></td>
+    </tr>`;
+          })
+          .join('') +
+        `</tbody></table></div>`
+      : `<div class="hr-empty">${esc(t('common.noData'))}</div>`;
+  }
+
+  const reasons = LEAVE_DELAY_REASONS.map(d => ({
+    name: currentLang() === 'ar' ? d.ar : d.en,
+    v: overdue.filter(r => r.delayReason === d.code).length
+  })).filter(r => r.v > 0);
+  renderEchart(
+    document.getElementById('chart-delayreasons'),
+    tk => ({
+      tooltip: { trigger: 'axis' },
+      grid: { left: 8, right: 8, top: 8, bottom: 8, containLabel: true },
+      xAxis: { type: 'value', splitLine: { lineStyle: { color: tk.borderLight, type: [4, 3] } } },
+      yAxis: {
+        type: 'category',
+        data: reasons.map(r => r.name),
+        axisLabel: { color: tk.textMuted, fontSize: 11 }
+      },
+      series: [
+        {
+          type: 'bar',
+          data: reasons.map(r => r.v),
+          itemStyle: { color: tk.red, borderRadius: [0, 4, 4, 0] },
+          label: { show: true, position: 'right', color: tk.textMuted, fontSize: 11 }
+        }
+      ]
+    }),
+    L(
+      `Overdue by reason: ${reasons.map(r => `${r.name} ${r.v}`).join(', ') || 'none'}.`,
+      `التأخر حسب السبب: ${reasons.map(r => `${r.name} ${r.v}`).join('، ') || 'لا يوجد'}.`
+    ),
+    { rtl: 'hbar' }
+  );
+
+  const elig = eligibleForVacation(getSeed('employees'), reqs, todayIso());
+  const et = document.getElementById('eligible-table');
+  if (et) {
+    et.innerHTML =
+      `<div class="table-responsive"><table class="table hr-table"><tbody>` +
+      elig
+        .map(
+          x => `<tr>
+    <td><a href="hr_employee.html?code=${encodeURIComponent(x.code)}">${esc(empName(x.code))}</a></td>
+    <td dir="ltr" style="white-space:nowrap">${esc(String(x.left))} ${esc(t('common.days'))}</td>
+    <td dir="ltr" style="white-space:nowrap">${x.lastTo ? esc(fmtDate(x.lastTo)) : '—'}</td>
+    <td style="text-align:end"><a class="btn btn-outline btn-sm" href="hr_leave.html">${esc(t('hr.dashboard.request'))}</a></td>
+  </tr>`
+        )
+        .join('') +
+      `</tbody></table></div>`;
+  }
+}
+
 function renderAll() {
   renderHead();
   renderZoneA();
   renderS1();
+  renderS2();
   renderKpis();
   renderAlerts();
   renderExpiries();

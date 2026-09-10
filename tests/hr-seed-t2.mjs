@@ -23,7 +23,8 @@ import {
   headcountByStatus,
   tenureBuckets,
   execMoney,
-  separationSeries
+  separationSeries,
+  eligibleForVacation
 } from '../src/v4/hr-statutory.js';
 import { applyRtl } from '../src/v4/chart-helper.js';
 
@@ -85,6 +86,17 @@ eq('t2-vac-windows', leaveWindows(LEAVE_REQUESTS, TODAY), {
   returning: ['LV-2026-032', 'LV-2026-034']
 });
 eq('t2-return-stats', returnStats(LEAVE_REQUESTS), { total: 5, onTime: 3, overdue: 2, pct: 60 });
+{
+  const elig = eligibleForVacation(EMPLOYEES, LEAVE_REQUESTS, TODAY);
+  eq('t2-elig-count', elig.length, 19);
+  ok(
+    't2-elig-excludes',
+    !elig.some(x =>
+      ['EMP-0021', 'EMP-0025', 'EMP-0026', 'EMP-0027', 'EMP-0009', 'EMP-0014', 'EMP-0016', 'EMP-0019'].includes(x.code)
+    )
+  );
+  ok('t2-elig-sorted', elig.every((x, i) => i === 0 || elig[i - 1].left >= x.left));
+}
 ok(
   't2-delay-reasons',
   LEAVE_REQUESTS.filter(r => r.returnStatus === 'overdue').every(

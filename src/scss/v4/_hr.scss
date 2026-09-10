@@ -969,3 +969,17 @@ details.zone:not([open]) .zone-head::before {
     min-height: 230px;
   }
 }
+.vac-group {
+  margin-bottom: 4px;
+}
+.vac-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 2px 6px;
+  font-size: 13px;
+}
+.table-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+}

@@ -6,6 +6,8 @@ import { describe, test, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { initI18n, setLang, currentLang, t, applyBranding } from '../src/v4/i18n.js';
 import { mountShell } from '../src/v4/shell.js';
+import { leaveWindows, returnStats } from '../src/v4/hr-statutory.js';
+import { getSeed } from '../src/v4/hr-api.js';
 
 const R = process.cwd();
 const loaders = import.meta.glob('../src/v4/*.js');
@@ -367,11 +369,40 @@ describe('command center', () => {
     expect(card.textContent).toMatch(/Huroob|هروب/);
     expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
     const zones = [...document.querySelectorAll('details.zone[data-zone]')];
-    expect(zones.length).toBe(2);
+    expect(zones.length).toBe(3);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
     expect(localStorage.getItem('hr:ui:zone:money')).toBe('0');
+  });
+
+  test('§2 leave pipeline matches the engine', async () => {
+    await mountPage('hr_dashboard');
+    const w = leaveWindows(getSeed('leaveRequests'));
+    const cards = [...document.querySelectorAll('#vac-cards .stat-value')].map(e =>
+      Number(e.textContent)
+    );
+    expect(cards).toEqual([w.onVacation.length, w.departing.length, w.returning.length]);
+    const groups = [...document.querySelectorAll('#vac-list .vac-group')];
+    expect(groups.length).toBe(3);
+    expect(document.getElementById('zone-leave-meta').textContent).toContain(
+      String(w.onVacation.length)
+    );
+    const rs = returnStats(getSeed('leaveRequests'));
+    expect(document.getElementById('chart-return').getAttribute('aria-label')).toContain(
+      `${rs.pct}%`
+    );
+    const overdueRows = document.querySelectorAll('#overdue-table tbody tr');
+    expect(overdueRows.length).toBe(rs.overdue);
+    expect(document.getElementById('overdue-table').textContent).toMatch(
+      /Flight delay|تأخر رحلة الطيران/
+    );
+    expect(
+      document.getElementById('chart-delayreasons').getAttribute('aria-label')?.length
+    ).toBeGreaterThan(20);
+    const eligRows = document.querySelectorAll('#eligible-table tbody tr');
+    expect(eligRows.length).toBeGreaterThan(10);
+    expect(eligRows[0].querySelector('a[href="hr_leave.html"]')).toBeTruthy();
   });
 
   test('Arabic re-render flips chart summaries', async () => {

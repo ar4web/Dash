@@ -920,3 +920,37 @@ export function separationSeries(employees, onboarding, todayIso, windowMo = 6) 
     exited: months.map(m => (employees || []).filter(e => inMo(e.exitDate, m.ym)).length)
   };
 }
+
+// ── T2 §2 vacation eligibility (pure) ──────────────────────────────────────
+// Eligible now = payable (no exited/huroob) + probation done + annual
+// balance left + no active request (pending, or approved ending ≥ today).
+export function eligibleForVacation(employees, requests, todayIso) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const reqs = requests || [];
+  const out = [];
+  for (const e of employees || []) {
+    if (!e || e.st === 'exited' || e.st === 'huroob' || e.st === 'probation') {
+      continue;
+    }
+    const mine = reqs.filter(r => r.emp === e.code);
+    const active = mine.some(
+      r => r.status === 'pending' || (r.status === 'approved' && (r.to || '') >= today)
+    );
+    if (active) {
+      continue;
+    }
+    const pendingAnnual = mine
+      .filter(r => r.type === 'annual' && r.status === 'pending')
+      .reduce((s, r) => s + (r.days || 0), 0);
+    const bal = annualBalance(e.join, e.annualUsed || 0, pendingAnnual);
+    if (bal.left <= 0) {
+      continue;
+    }
+    const past = mine
+      .filter(r => r.type === 'annual' && r.status === 'approved')
+      .map(r => r.to || '')
+      .sort();
+    out.push({ code: e.code, left: bal.left, entitlement: bal.entitlement, lastTo: past[past.length - 1] || '' });
+  }
+  return out.sort((a, b) => b.left - a.left || (a.code < b.code ? -1 : 1));
+}
