@@ -150,7 +150,8 @@ function renderLicence(s) {
         ${opt('both', 'Both (service + labour)', 'كلاهما (خدمات + عمالة)')}
       </select></div>
     <div class="form-group"><label class="form-label">${L('Strict Ajeer default', 'التشدد الافتراضي لأجير')}</label>
-      <label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="set-lic-strict" ${s.licence.strictAjeer ? 'checked' : ''}> ${L('Block deployment when Ajeer permit is missing', 'منع التوزيع عند غياب تصريح أجير')}</label></div>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="set-lic-strict" ${s.licence.strictAjeer ? 'checked' : ''}> ${L('Block deployment when Ajeer permit is missing', 'منع التوزيع عند غياب تصريح أجير')}</label>
+      <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:8px"><input type="checkbox" id="set-lic-confirm" ${s.licence.confirmed ? 'checked' : ''}> ${L('Scope confirmed with legal counsel', 'تم تأكيد النطاق مع المستشار القانوني')}</label></div>
     </div>`;
 }
 
@@ -530,7 +531,8 @@ function collectAndSave() {
     },
     licence: {
       scope: val('set-lic-scope') || 'both',
-      strictAjeer: document.getElementById('set-lic-strict')?.checked !== false
+      strictAjeer: document.getElementById('set-lic-strict')?.checked !== false,
+      confirmed: document.getElementById('set-lic-confirm')?.checked === true
     },
     eosb: {
       basis: val('set-eosb-basis') || 'basic',

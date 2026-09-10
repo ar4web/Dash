@@ -28,6 +28,81 @@
     </div>
   </div>
 
+  <div class="dash-head" id="dash-head"></div>
+
+  <details class="card zone" open data-zone="money">
+    <summary class="zone-head">
+      <span class="zone-title" data-i18n="hr.dashboard.zoneMoney">Business health</span>
+      <span class="zone-meta" id="zone-money-meta"></span>
+    </summary>
+    <div class="card-body">
+      <div class="row col-4" id="money-cards"></div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">
+          <div class="card-title" data-i18n="hr.dashboard.runwayTitle">Contracted revenue vs current cost · 6 mo</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-box" id="chart-runway"></div>
+        </div>
+      </div>
+      <div class="row col-2" style="margin-top:12px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.topClients">Client margins</div>
+          </div>
+          <div class="card-body">
+            <div id="top-clients"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.net">Net after overhead</div>
+          </div>
+          <div class="card-body">
+            <div id="money-net"></div>
+          </div>
+        </div>
+      </div>
+      <p class="fine-print" id="money-formula"></p>
+    </div>
+  </details>
+
+  <details class="card zone" open data-zone="workforce">
+    <summary class="zone-head">
+      <span class="zone-title" data-i18n="hr.dashboard.zoneWorkforce">Workforce &amp; HR dynamics</span>
+      <span class="zone-meta" id="zone-workforce-meta"></span>
+    </summary>
+    <div class="card-body">
+      <div id="huroob-card"></div>
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.headcount">Headcount status</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-sm" id="chart-headcount"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.tenure">Tenure mix</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-sm" id="chart-tenure"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">
+          <div class="card-title" data-i18n="hr.dashboard.separation">Hired / boarded / exited · 6 mo</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-box chart-sm" id="chart-separation"></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <div class="row col-3" id="hr-kpis" style="margin-bottom:16px"></div>
 
   <div class="row col-2" style="margin-bottom:16px">

@@ -866,3 +866,106 @@ html[dir="rtl"] .org-node {
   align-items: center;
   font-size: 13px;
 }
+
+// ────────────────────────
+// T2 Command Center (hr_dashboard.html)
+// ────────────────────────
+.dash-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius);
+}
+.dash-dates {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+}
+.dash-dates strong {
+  font-size: 14px;
+}
+.dash-dates span {
+  color: var(--text-muted);
+}
+.dash-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+details.zone {
+  margin-bottom: 16px;
+}
+.zone-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+  border-bottom: 1px solid var(--border-color-light);
+}
+.zone-head::-webkit-details-marker {
+  display: none;
+}
+.zone-head::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-inline-end: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: rotate(45deg);
+  transition: transform 120ms;
+  flex-shrink: 0;
+}
+details.zone:not([open]) .zone-head::before {
+  transform: rotate(-45deg);
+}
+[dir="rtl"] details.zone:not([open]) .zone-head::before {
+  transform: rotate(135deg) scaleX(-1);
+}
+.zone-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.zone-meta {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.chart-box {
+  height: 300px;
+  min-height: 300px;
+}
+.chart-box.chart-sm {
+  height: 260px;
+  min-height: 260px;
+}
+.fine-print {
+  margin: 10px 2px 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.leaflet-container {
+  z-index: 0;
+  border-radius: var(--radius);
+  font-family: inherit;
+}
+@media (max-width: 640px) {
+  .chart-box {
+    height: 260px;
+    min-height: 260px;
+  }
+  .chart-box.chart-sm {
+    height: 230px;
+    min-height: 230px;
+  }
+}

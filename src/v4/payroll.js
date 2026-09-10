@@ -51,7 +51,9 @@ function cur() {
 
 function runLines(run) {
   const at = `${run.month}-15`;
-  return getSeed('employees').map(e => ({
+  return getSeed('employees')
+    .filter(e => e.st !== 'exited' && e.st !== 'huroob')
+    .map(e => ({
     e,
     line: calcPayLine(e, { ...((run.adjustments || {})[e.code] || {}), at })
   }));

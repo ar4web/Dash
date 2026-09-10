@@ -61,9 +61,154 @@ export const PROFESSIONS = [
   { code: 'specialist', en: 'Specialist', ar: 'أخصائي' }
 ];
 
+// — T2 Command Center seed extensions (v3 §2–§3, §6) —
+export const SKILLS = [
+  { code: 'heavy-driving', en: 'Heavy-vehicle driving', ar: 'قيادة المعدات الثقيلة' },
+  { code: 'light-driving', en: 'Light-vehicle driving', ar: 'قيادة المركبات الخفيفة' },
+  { code: 'route-planning', en: 'Route planning', ar: 'تخطيط المسارات' },
+  { code: 'deep-cleaning', en: 'Deep cleaning', ar: 'التنظيف العميق' },
+  { code: 'waste-handling', en: 'Waste handling', ar: 'التعامل مع النفايات' },
+  { code: 'housekeeping', en: 'Housekeeping', ar: 'التدبير المنزلي' },
+  { code: 'scaffolding', en: 'Scaffolding', ar: 'السقالات' },
+  { code: 'concrete-work', en: 'Concrete work', ar: 'أعمال الخرسانة' },
+  { code: 'site-safety', en: 'Site safety', ar: 'السلامة الموقعية' },
+  { code: 'blockwork', en: 'Blockwork', ar: 'البناء بالطوب' },
+  { code: 'tiling', en: 'Tiling', ar: 'التبليط' },
+  { code: 'plastering', en: 'Plastering', ar: 'اللياسة' },
+  { code: 'wiring', en: 'Electrical wiring', ar: 'التمديدات الكهربائية' },
+  { code: 'panel-maintenance', en: 'Panel maintenance', ar: 'صيانة اللوحات' },
+  { code: 'troubleshooting', en: 'Fault troubleshooting', ar: 'كشف الأعطال' },
+  { code: 'pipefitting', en: 'Pipefitting', ar: 'تركيب الأنابيب' },
+  { code: 'drainage', en: 'Drainage works', ar: 'أعمال الصرف' },
+  { code: 'fixture-install', en: 'Fixture installation', ar: 'تركيب الأدوات الصحية' },
+  { code: 'supervision', en: 'Team supervision', ar: 'الإشراف على الفريق' },
+  { code: 'reporting', en: 'Site reporting', ar: 'تقارير الموقع' },
+  { code: 'data-entry', en: 'Data entry', ar: 'إدخال البيانات' },
+  { code: 'filing', en: 'Filing & records', ar: 'الأرشفة' },
+  { code: 'reception', en: 'Reception', ar: 'الاستقبال' },
+  { code: 'recruitment', en: 'Recruitment', ar: 'الاستقطاب' },
+  { code: 'employee-relations', en: 'Employee relations', ar: 'علاقات الموظفين' },
+  { code: 'scheduling', en: 'Shift scheduling', ar: 'جدولة الورديات' },
+  { code: 'logistics', en: 'Logistics coordination', ar: 'تنسيق اللوجستيات' },
+  { code: 'government-relations', en: 'Government relations', ar: 'العلاقات الحكومية' },
+  { code: 'documentation', en: 'Documentation', ar: 'التوثيق' },
+  { code: 'payroll', en: 'Payroll processing', ar: 'معالجة الرواتب' },
+  { code: 'accounting', en: 'Accounting', ar: 'المحاسبة' },
+  { code: 'interviewing', en: 'Interviewing', ar: 'المقابلات' }
+];
+
+export const SPONSORS = [
+  {
+    id: 'HQ',
+    nameEn: 'Manpower Supply Co. — HQ',
+    nameAr: 'شركة توريد العمالة — المركز الرئيسي',
+    cr: '1010XXXXXX',
+    city: 'Riyadh'
+  },
+  {
+    id: 'BR-JED',
+    nameEn: 'Manpower Supply Co. — Jeddah Branch',
+    nameAr: 'شركة توريد العمالة — فرع جدة',
+    cr: '4030XXXXXX',
+    city: 'Jeddah'
+  }
+];
+
+export const LEAVE_DELAY_REASONS = [
+  { code: 'flight', en: 'Flight delay', ar: 'تأخر رحلة الطيران' },
+  { code: 'emergency', en: 'Family emergency', ar: 'ظرف عائلي طارئ' },
+  { code: 'transfer-delay', en: 'Transfer delay', ar: 'تأخر النقل' },
+  { code: 'other', en: 'Other', ar: 'أخرى' }
+];
+
+// owner = EMP code (personal) or role code (hr/pro/payroll/finance/manager).
+// done flips via the hr:import:tasks overlay (same import machinery as the rest).
+export const TASKS = [
+  {
+    id: 'TSK-01',
+    titleEn: 'Renew iqamas expiring within 30 days',
+    titleAr: 'تجديد الإقامات التي تنتهي خلال ٣٠ يومًا',
+    owner: 'pro',
+    due: '2026-09-15',
+    priority: 'high',
+    done: false,
+    link: 'hr_sa_compliance.html'
+  },
+  {
+    id: 'TSK-02',
+    titleEn: 'Close huroob case file (EMP-0027)',
+    titleAr: 'إغلاق ملف بلاغ الهروب (EMP-0027)',
+    owner: 'hr',
+    due: '2026-09-14',
+    priority: 'high',
+    done: false,
+    link: 'hr_employee.html?code=EMP-0027'
+  },
+  {
+    id: 'TSK-03',
+    titleEn: 'Approve leave LV-2026-031 (site coverage check)',
+    titleAr: 'اعتماد الإجازة LV-2026-031 (التحقق من تغطية الموقع)',
+    owner: 'manager',
+    due: '2026-09-12',
+    priority: 'medium',
+    done: false,
+    link: 'hr_leave.html'
+  },
+  {
+    id: 'TSK-04',
+    titleEn: 'Review August WPS SIF before Mudad upload',
+    titleAr: 'مراجعة ملف الأجور لشهر أغسطس قبل الرفع على مدد',
+    owner: 'payroll',
+    due: '2026-09-13',
+    priority: 'high',
+    done: false,
+    link: 'hr_wps.html'
+  },
+  {
+    id: 'TSK-05',
+    titleEn: 'Sign off EOSB settlement batch',
+    titleAr: 'اعتماد دفعة تسويات نهاية الخدمة',
+    owner: 'finance',
+    due: '2026-09-25',
+    priority: 'medium',
+    done: false,
+    link: 'hr_eosb.html'
+  },
+  {
+    id: 'TSK-06',
+    titleEn: 'Photograph the new Jeddah site roster board',
+    titleAr: 'تصوير لوحة كشف موقع جدة الجديد',
+    owner: 'EMP-0002',
+    due: '2026-09-18',
+    priority: 'low',
+    done: false,
+    link: 'hr_employees.html'
+  },
+  {
+    id: 'TSK-07',
+    titleEn: 'Confirm Nitaqat target with legal counsel',
+    titleAr: 'تأكيد مستهدف نطاقات مع المستشار القانوني',
+    owner: 'EMP-0001',
+    due: '2026-09-20',
+    priority: 'medium',
+    done: false,
+    link: 'hr_settings.html'
+  },
+  {
+    id: 'TSK-08',
+    titleEn: 'File July GOSI payment receipt',
+    titleAr: 'أرشفة إيصال سداد التأمينات لشهر يوليو',
+    owner: 'finance',
+    due: '2026-09-05',
+    priority: 'high',
+    done: false,
+    link: 'hr_gosi.html'
+  }
+];
+
 // Money = monthly SAR (major units in seed; engine converts to halalas).
 // q = Qiwa contract status: authenticated | sent | draft
-// st = active | probation | on-leave
+// st = active | probation | on-leave | exited | huroob
 export const EMPLOYEES = [
   // — Saudis (internal staff) —
   {
@@ -87,6 +232,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['employee-relations', 'documentation', 'recruitment'],
+    sponsor: 'HQ',
     phone: '+966 555 010 001',
     email: 'a.alotaibi@company.sa',
     av: 'primary'
@@ -112,6 +260,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['reporting', 'scheduling', 'logistics'],
+    sponsor: 'HQ',
     phone: '+966 555 010 002',
     email: 'k.dossari@company.sa',
     av: 'blue'
@@ -137,6 +288,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'F',
+    skills: ['government-relations', 'documentation'],
+    sponsor: 'HQ',
     phone: '+966 555 010 003',
     email: 'n.qahtani@company.sa',
     av: 'purple'
@@ -162,6 +316,9 @@ export const EMPLOYEES = [
     bank: 'Riyad Bank',
     q: 'sent',
     st: 'active',
+    gender: 'M',
+    skills: ['accounting', 'reporting', 'payroll'],
+    sponsor: 'HQ',
     phone: '+966 555 010 004',
     email: 'f.shammari@company.sa',
     av: 'green'
@@ -188,6 +345,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'F',
+    skills: ['documentation', 'recruitment', 'interviewing'],
+    sponsor: 'HQ',
     phone: '+966 555 010 005',
     email: 'r.harbi@company.sa',
     av: 'yellow'
@@ -213,6 +373,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['heavy-driving', 'light-driving'],
+    sponsor: 'HQ',
     client: 'CL-002',
     site: 'ST-003',
     phone: '+966 555 010 006',
@@ -239,6 +402,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['light-driving', 'route-planning', 'heavy-driving'],
+    sponsor: 'HQ',
     client: 'CL-002',
     site: 'ST-003',
     phone: '+966 555 010 007',
@@ -265,6 +431,11 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['route-planning', 'heavy-driving', 'light-driving'],
+    sponsor: 'BR-JED',
+    site: 'ST-004',
+    client: 'CL-001',
     phone: '+966 555 010 008',
     av: 'yellow',
     annualUsed: 0
@@ -289,6 +460,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['deep-cleaning', 'waste-handling'],
+    sponsor: 'HQ',
     client: 'CL-002',
     site: 'ST-003',
     phone: '+966 555 010 009',
@@ -315,6 +489,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['waste-handling', 'housekeeping', 'deep-cleaning'],
+    sponsor: 'HQ',
     client: 'CL-002',
     site: 'ST-003',
     phone: '+966 555 010 010',
@@ -341,6 +518,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'sent',
     st: 'active',
+    gender: 'M',
+    skills: ['housekeeping', 'deep-cleaning', 'waste-handling'],
+    sponsor: 'HQ',
     client: 'CL-002',
     site: 'ST-003',
     phone: '+966 555 010 011',
@@ -367,6 +547,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'on-leave',
+    gender: 'F',
+    skills: ['deep-cleaning', 'waste-handling'],
+    sponsor: 'HQ',
     phone: '+966 555 010 012',
     av: 'azure',
     annualUsed: 15
@@ -391,6 +574,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['concrete-work', 'site-safety', 'scaffolding'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-001',
     phone: '+966 555 010 013',
@@ -417,6 +603,9 @@ export const EMPLOYEES = [
     bank: '',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['site-safety', 'scaffolding', 'concrete-work'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-001',
     phone: '+966 555 010 014',
@@ -443,6 +632,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['scaffolding', 'concrete-work'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-002',
     phone: '+966 555 010 015',
@@ -469,6 +661,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['concrete-work', 'site-safety', 'scaffolding'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-002',
     phone: '+966 555 010 016',
@@ -495,6 +690,11 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['site-safety', 'scaffolding', 'concrete-work'],
+    sponsor: 'HQ',
+    site: 'ST-005',
+    client: 'CL-002',
     phone: '+966 555 010 017',
     av: 'yellow',
     annualUsed: 2
@@ -519,6 +719,9 @@ export const EMPLOYEES = [
     bank: 'Riyad Bank',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['blockwork', 'tiling'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-001',
     phone: '+966 555 010 018',
@@ -545,6 +748,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['tiling', 'plastering', 'blockwork'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-002',
     phone: '+966 555 010 019',
@@ -571,6 +777,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['troubleshooting', 'wiring', 'panel-maintenance'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-001',
     phone: '+966 555 010 020',
@@ -597,6 +806,11 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'draft',
     st: 'probation',
+    gender: 'M',
+    skills: ['wiring', 'panel-maintenance'],
+    sponsor: 'BR-JED',
+    site: 'ST-004',
+    client: 'CL-001',
     phone: '+966 555 010 021',
     av: 'blue',
     annualUsed: 0
@@ -621,6 +835,9 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['drainage', 'fixture-install', 'pipefitting'],
+    sponsor: 'HQ',
     client: 'CL-002',
     site: 'ST-003',
     phone: '+966 555 010 022',
@@ -647,6 +864,9 @@ export const EMPLOYEES = [
     bank: 'SNB',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['reporting', 'supervision', 'site-safety'],
+    sponsor: 'HQ',
     client: 'CL-001',
     site: 'ST-001',
     phone: '+966 555 010 023',
@@ -673,9 +893,110 @@ export const EMPLOYEES = [
     bank: 'Al Rajhi',
     q: 'authenticated',
     st: 'active',
+    gender: 'M',
+    skills: ['data-entry', 'filing'],
+    sponsor: 'HQ',
+    site: 'ST-006',
+    client: 'CL-001',
     phone: '+966 555 010 024',
     av: 'yellow',
     annualUsed: 5
+  },
+  {
+    code: 'EMP-0025',
+    nameEn: 'Amit Sharma',
+    nameAr: 'أميت شارما',
+    nat: 'India',
+    iqama: '2000000025',
+    iqamaExp: '2026-10-30',
+    prof: 'construction',
+    dept: 'OPS',
+    titleEn: 'Construction worker',
+    titleAr: 'عامل إنشاءات',
+    join: '2023-05-01',
+    entry: '2023-04-29',
+    basic: 1400,
+    housing: 350,
+    transport: 200,
+    iban: 'SA1000000000000000000025',
+    bank: 'Al Rajhi',
+    q: 'sent',
+    st: 'exited',
+    gender: 'M',
+    skills: ['scaffolding', 'concrete-work'],
+    sponsor: 'HQ',
+    exitDate: '2026-07-31',
+    exitReason: 'End of contract',
+    exitReasonAr: 'انتهاء العقد',
+    client: '',
+    site: '',
+    phone: '+966 555 010 025',
+    av: 'primary',
+    annualUsed: 20
+  },
+  {
+    code: 'EMP-0026',
+    nameEn: 'Ana Reyes',
+    nameAr: 'آنا رييس',
+    nat: 'Philippines',
+    iqama: '2000000026',
+    iqamaExp: '2027-01-20',
+    prof: 'cleaner',
+    dept: 'OPS',
+    titleEn: 'Cleaner',
+    titleAr: 'عامل نظافة',
+    join: '2024-02-10',
+    entry: '2024-02-08',
+    basic: 1200,
+    housing: 300,
+    transport: 200,
+    iban: 'SA1000000000000000000026',
+    bank: 'Al Rajhi',
+    q: 'authenticated',
+    st: 'exited',
+    gender: 'F',
+    skills: ['deep-cleaning', 'housekeeping'],
+    sponsor: 'HQ',
+    exitDate: '2026-08-15',
+    exitReason: 'Resignation',
+    exitReasonAr: 'استقالة',
+    client: '',
+    site: '',
+    phone: '+966 555 010 026',
+    av: 'primary',
+    annualUsed: 8
+  },
+  {
+    code: 'EMP-0027',
+    nameEn: 'Tariq Mehmood',
+    nameAr: 'طارق محمود',
+    nat: 'Pakistan',
+    iqama: '2000000027',
+    iqamaExp: '2026-12-01',
+    prof: 'driver',
+    dept: 'OPS',
+    titleEn: 'Driver',
+    titleAr: 'سائق',
+    join: '2024-11-01',
+    entry: '2024-10-30',
+    basic: 1800,
+    housing: 500,
+    transport: 300,
+    iban: 'SA1000000000000000000027',
+    bank: 'Al Rajhi',
+    q: 'draft',
+    st: 'huroob',
+    gender: 'M',
+    skills: ['light-driving', 'route-planning'],
+    sponsor: 'HQ',
+    reportedAt: '2026-09-08',
+    legalNote: 'Absconding report filed via Absher; passport held per Art. 40 file.',
+    legalNoteAr: 'تم رفع بلاغ هروب عبر أبشر؛ الجواز محفوظ في الملف حسب المادة ٤٠.',
+    client: '',
+    site: '',
+    phone: '+966 555 010 027',
+    av: 'primary',
+    annualUsed: 0
   }
 ];
 
@@ -689,6 +1010,8 @@ export const CLIENTS = [
     phone: '+966 555 020 001',
     email: 'sami@albina.example.sa',
     city: 'Riyadh',
+    lat: 24.7136,
+    lng: 46.6753,
     nitaqat: 'High Green',
     wpsOk: true,
     billingDay: 5,
@@ -703,6 +1026,8 @@ export const CLIENTS = [
     phone: '+966 555 020 002',
     email: 'dana@facilitycare.example.sa',
     city: 'Riyadh',
+    lat: 24.7742,
+    lng: 46.7385,
     nitaqat: 'Mid Green',
     wpsOk: true,
     billingDay: 10,
@@ -716,21 +1041,54 @@ export const SITES = [
     client: 'CL-001',
     nameEn: 'North Ring Site',
     nameAr: 'موقع الطريق الشمالي',
-    city: 'Riyadh'
+    city: 'Riyadh',
+    lat: 24.81,
+    lng: 46.68
   },
   {
     id: 'ST-002',
     client: 'CL-001',
     nameEn: 'Diriyah Project',
     nameAr: 'مشروع الدرعية',
-    city: 'Diriyah'
+    city: 'Diriyah',
+    lat: 24.732,
+    lng: 46.575
   },
   {
     id: 'ST-003',
     client: 'CL-002',
     nameEn: 'KAFD Tower FM',
     nameAr: 'برج كافد — إدارة المرافق',
-    city: 'Riyadh'
+    city: 'Riyadh',
+    lat: 24.767,
+    lng: 46.641
+  },
+  {
+    id: 'ST-004',
+    client: 'CL-001',
+    nameEn: 'Jeddah Corniche Tower',
+    nameAr: 'برج كورنيش جدة',
+    city: 'Jeddah',
+    lat: 21.5433,
+    lng: 39.1728
+  },
+  {
+    id: 'ST-005',
+    client: 'CL-002',
+    nameEn: 'Dammam North FM',
+    nameAr: 'الدمام الشمالية — إدارة المرافق',
+    city: 'Dammam',
+    lat: 26.4207,
+    lng: 50.0888
+  },
+  {
+    id: 'ST-006',
+    client: 'CL-001',
+    nameEn: 'Riyadh South Depot',
+    nameAr: 'مستودع جنوب الرياض',
+    city: 'Riyadh',
+    lat: 24.6,
+    lng: 46.75
   }
 ];
 
@@ -944,6 +1302,66 @@ export const ASSIGNMENTS = [
     consent: 'contract',
     ajeer: 'AJ-2026-114',
     ajeerExp: '2027-02-09',
+    status: 'active'
+  },
+  {
+    id: 'ASN-2026-015',
+    emp: 'EMP-0008',
+    client: 'CL-001',
+    site: 'ST-004',
+    req: 'REQ-2026-010',
+    start: '2026-07-01',
+    end: '2027-06-30',
+    rate: 3000,
+    service: 'labour',
+    consent: 'contract',
+    ajeer: 'AJ-2026-201',
+    ajeerExp: '2027-06-30',
+    status: 'active'
+  },
+  {
+    id: 'ASN-2026-016',
+    emp: 'EMP-0017',
+    client: 'CL-002',
+    site: 'ST-005',
+    req: 'REQ-2026-011',
+    start: '2026-08-01',
+    end: '2027-07-31',
+    rate: 3200,
+    service: 'labour',
+    consent: 'contract',
+    ajeer: 'AJ-2026-202',
+    ajeerExp: '2027-07-31',
+    status: 'active'
+  },
+  {
+    id: 'ASN-2026-017',
+    emp: 'EMP-0021',
+    client: 'CL-001',
+    site: 'ST-004',
+    req: 'REQ-2026-012',
+    start: '2026-08-15',
+    end: '2027-08-14',
+    rate: 3400,
+    service: 'labour',
+    consent: 'contract',
+    ajeer: 'AJ-2026-203',
+    ajeerExp: '2027-08-14',
+    status: 'active'
+  },
+  {
+    id: 'ASN-2026-018',
+    emp: 'EMP-0024',
+    client: 'CL-001',
+    site: 'ST-006',
+    req: 'REQ-2026-010',
+    start: '2026-09-01',
+    end: '2027-02-28',
+    rate: 3000,
+    service: 'labour',
+    consent: 'contract',
+    ajeer: 'AJ-2026-204',
+    ajeerExp: '2027-02-28',
     status: 'active'
   }
 ];
@@ -1484,6 +1902,30 @@ export const TRANSFERS = [
     released: true,
     completed: '2026-06-30',
     status: 'completed'
+  },
+  {
+    id: 'QX-2026-022',
+    ob: '',
+    nameEn: 'Omar Farouk',
+    nameAr: 'عمر فاروق',
+    from: 'Jeddah Towers Co.',
+    fee: 2000,
+    requested: '2026-09-05',
+    noticeEnd: '2026-11-04',
+    released: false,
+    status: 'requested'
+  },
+  {
+    id: 'QX-2026-020',
+    ob: 'OB-2026-021',
+    nameEn: 'Hassan Raza',
+    nameAr: 'حسن رضا',
+    from: 'Dammam Port Services',
+    fee: 4000,
+    requested: '2026-08-01',
+    noticeEnd: '2026-09-30',
+    released: false,
+    status: 'awaiting-release'
   }
 ];
 
@@ -2102,6 +2544,8 @@ export const LEAVE_REQUESTS = [
     from: '2026-07-05',
     to: '2026-07-16',
     days: 10,
+    returnedAt: '2026-07-16',
+    returnStatus: 'on-time',
     status: 'approved',
     step: 2,
     note: '',
@@ -2130,6 +2574,109 @@ export const LEAVE_REQUESTS = [
     step: 0,
     note: '',
     history: [{ by: 'manager', at: '2026-08-21', decision: 'rejected', note: 'Site coverage' }]
+  },
+  {
+    id: 'LV-2026-032',
+    emp: 'EMP-0014',
+    type: 'annual',
+    from: '2026-09-05',
+    to: '2026-09-19',
+    days: 11,
+    status: 'approved',
+    step: 2,
+    note: 'Annual vacation',
+    history: [
+      { by: 'manager', at: '2026-08-28', decision: 'approved', note: '' },
+      { by: 'hr', at: '2026-08-29', decision: 'approved', note: '' }
+    ]
+  },
+  {
+    id: 'LV-2026-033',
+    emp: 'EMP-0016',
+    type: 'annual',
+    from: '2026-09-20',
+    to: '2026-10-04',
+    days: 11,
+    status: 'approved',
+    step: 2,
+    note: 'Annual vacation',
+    history: [
+      { by: 'manager', at: '2026-09-02', decision: 'approved', note: '' },
+      { by: 'hr', at: '2026-09-03', decision: 'approved', note: '' }
+    ]
+  },
+  {
+    id: 'LV-2026-034',
+    emp: 'EMP-0019',
+    type: 'annual',
+    from: '2026-08-24',
+    to: '2026-09-14',
+    days: 16,
+    status: 'approved',
+    step: 2,
+    note: 'Annual vacation',
+    history: [
+      { by: 'manager', at: '2026-08-10', decision: 'approved', note: '' },
+      { by: 'hr', at: '2026-08-11', decision: 'approved', note: '' }
+    ]
+  },
+  {
+    id: 'LV-2026-026',
+    emp: 'EMP-0011',
+    type: 'annual',
+    from: '2026-06-01',
+    to: '2026-06-21',
+    days: 15,
+    status: 'approved',
+    step: 2,
+    returnedAt: '2026-06-21',
+    returnStatus: 'on-time',
+    note: '',
+    history: []
+  },
+  {
+    id: 'LV-2026-025',
+    emp: 'EMP-0013',
+    type: 'annual',
+    from: '2026-05-03',
+    to: '2026-05-24',
+    days: 15,
+    status: 'approved',
+    step: 2,
+    returnedAt: '2026-05-24',
+    returnStatus: 'on-time',
+    note: '',
+    history: []
+  },
+  {
+    id: 'LV-2026-024',
+    emp: 'EMP-0023',
+    type: 'annual',
+    from: '2026-07-10',
+    to: '2026-07-31',
+    days: 15,
+    status: 'approved',
+    step: 2,
+    returnedAt: '2026-08-05',
+    returnStatus: 'overdue',
+    delayReason: 'flight',
+    note: '',
+    history: []
+  },
+  {
+    id: 'LV-2026-023',
+    emp: 'EMP-0010',
+    type: 'annual',
+    from: '2026-04-05',
+    to: '2026-04-26',
+    days: 15,
+    status: 'approved',
+    step: 2,
+    returnedAt: '2026-04-29',
+    returnStatus: 'overdue',
+    delayReason: 'emergency',
+    note: '',
+    history: []
   }
 ];
 
@@ -2321,7 +2868,51 @@ export const AJEER_PERMITS = [
       { at: '2025-08-01', event: 'issued', by: 'PRO' },
       { at: '2026-07-30', event: 'returned', by: 'CL-002' }
     ]
-  }
+  },
+  _aj(
+    'AJ-2026-201',
+    'ASN-2026-015',
+    'EMP-0008',
+    'CL-001',
+    'ST-004',
+    'driver',
+    'labour',
+    '2026-07-01',
+    '2027-06-30'
+  ),
+  _aj(
+    'AJ-2026-202',
+    'ASN-2026-016',
+    'EMP-0017',
+    'CL-002',
+    'ST-005',
+    'construction',
+    'labour',
+    '2026-08-01',
+    '2027-07-31'
+  ),
+  _aj(
+    'AJ-2026-203',
+    'ASN-2026-017',
+    'EMP-0021',
+    'CL-001',
+    'ST-004',
+    'electrician',
+    'labour',
+    '2026-08-15',
+    '2027-08-14'
+  ),
+  _aj(
+    'AJ-2026-204',
+    'ASN-2026-018',
+    'EMP-0024',
+    'CL-001',
+    'ST-006',
+    'office',
+    'labour',
+    '2026-09-01',
+    '2027-02-28'
+  )
 ];
 
 // — P3: invoices (inputs only; amounts computed by the engine) —

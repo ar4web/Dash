@@ -13,20 +13,22 @@ const eq = (name, got, want) => {
   if (a !== b) {process.exitCode = 1;}
 };
 
-// tracker distribution (v2 contract): staff5/deployed13/renewal2/leave1/blocked1/probation1/bench1
+// tracker distribution (v3 contract): staff5/deployed14/renewal2/leave1/blocked2
+// (incl. huroob→blocked)/probation1/bench0/exited2 — +4 geo assignments deploy
+// the bench, +2 exits, +1 huroob (T2 seed extension).
 const dist = {};
 for (const e of EMPLOYEES) {
   const c = deriveTrack(e).col;
   dist[c] = (dist[c] || 0) + 1;
 }
 eq('track-staff', dist.staff || 0, 5);
-eq('track-deployed', dist.deployed || 0, 13);
+eq('track-deployed', dist.deployed || 0, 14);
 eq('track-renewal', dist.renewal || 0, 2);
 eq('track-on-leave', dist['on-leave'] || 0, 1);
-eq('track-blocked', dist.blocked || 0, 1);
+eq('track-blocked', dist.blocked || 0, 2);
 eq('track-probation', dist.probation || 0, 1);
-eq('track-bench', dist.bench || 0, 1);
-eq('track-exited', dist.exited || 0, 0);
+eq('track-bench', dist.bench || 0, 0);
+eq('track-exited', dist.exited || 0, 2);
 
 // expiryBand boundaries
 eq('band-expired', expiryBand(-5), 'expired');

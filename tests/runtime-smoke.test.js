@@ -311,3 +311,77 @@ describe('cross-talk', () => {
     expect(markerHit(DEFAULT_MARKER)).toBe(true);
   });
 });
+
+describe('command center', () => {
+  test('header + Zone A money render with live values', async () => {
+    await mountPage('hr_dashboard');
+    const head = document.getElementById('dash-head').textContent;
+    expect(head).toContain('1448');
+    expect(head).toContain('2026');
+    expect(head).toContain('3');
+    expect(document.querySelector('#dash-head a[href="hr_settings.html"]')).toBeTruthy();
+    const cards = [...document.querySelectorAll('#money-cards .stat-value')].map(
+      e => e.textContent
+    );
+    expect(cards.length).toBe(4);
+    expect(cards[0]).toContain('64,600');
+    expect(cards[2]).toContain('789');
+    expect(document.getElementById('zone-money-meta').textContent).toContain('1.22%');
+    // Thin-margin insight fires (1.22% < 5%).
+    expect(document.getElementById('money-net').textContent).toMatch(/5%|٥٪/);
+    expect(document.getElementById('money-formula').textContent).toContain('(18)');
+    const clients = [...document.querySelectorAll('#top-clients tbody tr')];
+    expect(clients.length).toBe(2);
+    expect(clients[0].textContent).toContain('Facility Care');
+  });
+
+  test('charts carry screen-reader summaries (canvas or fallback)', async () => {
+    await mountPage('hr_dashboard');
+    for (const id of ['chart-runway', 'chart-headcount', 'chart-tenure', 'chart-separation']) {
+      const el = document.getElementById(id);
+      expect(el.getAttribute('role')).toBe('img');
+      expect(el.getAttribute('aria-label')?.length).toBeGreaterThan(20);
+    }
+    // jsdom has no canvas: helper must degrade gracefully, not throw.
+    const deadline = Date.now() + 4000;
+    while (Date.now() < deadline) {
+      const states = ['chart-runway', 'chart-headcount', 'chart-tenure', 'chart-separation'].map(
+        id => document.getElementById(id)
+      );
+      if (
+        states.every(el => el.querySelector('canvas') || el.hasAttribute('data-chart-fallback'))
+      ) {
+        break;
+      }
+      await new Promise(r => setTimeout(r, 100));
+    }
+    for (const id of ['chart-runway', 'chart-headcount', 'chart-tenure', 'chart-separation']) {
+      const el = document.getElementById(id);
+      expect(el.querySelector('canvas') || el.getAttribute('data-chart-fallback')).toBeTruthy();
+    }
+  });
+
+  test('§1 huroob card links the case file; zones remember collapse', async () => {
+    await mountPage('hr_dashboard');
+    const card = document.getElementById('huroob-card');
+    expect(card.textContent).toMatch(/Huroob|هروب/);
+    expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
+    const zones = [...document.querySelectorAll('details.zone[data-zone]')];
+    expect(zones.length).toBe(2);
+    const money = document.querySelector('details.zone[data-zone="money"]');
+    money.open = false;
+    money.dispatchEvent(new Event('toggle'));
+    expect(localStorage.getItem('hr:ui:zone:money')).toBe('0');
+  });
+
+  test('Arabic re-render flips chart summaries', async () => {
+    await mountPage('hr_dashboard');
+    setLang('ar');
+    applyBranding();
+    expect(document.getElementById('chart-tenure').getAttribute('aria-label')).toContain(
+      'مدد الخدمة'
+    );
+    expect(document.getElementById('dash-head').textContent).toContain('نطاقات');
+    setLang('en');
+  });
+});

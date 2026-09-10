@@ -53,6 +53,13 @@ export function deriveTrack(emp) {
   if (emp.st === 'exited' || emp.st === 'inactive') {
     return { col: 'exited', tone: 'blue', detail: '' };
   }
+  if (emp.st === 'huroob') {
+    return {
+      col: 'blocked',
+      tone: 'red',
+      detail: L('Huroob — legal attention', 'هروب — يتطلب متابعة قانونية')
+    };
+  }
   if (emp.st === 'on-leave') {
     return { col: 'on-leave', tone: 'yellow', detail: '' };
   }

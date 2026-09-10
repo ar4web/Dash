@@ -40,7 +40,8 @@ export const DEFAULT_SETTINGS = {
   },
   licence: {
     scope: SEED_LICENCE.scope,
-    strictAjeer: SEED_LICENCE.strictAjeerGuards
+    strictAjeer: SEED_LICENCE.strictAjeerGuards,
+    confirmed: false
   },
   language: SEED_COMPANY.defaultLang || 'en'
 };
@@ -301,7 +302,7 @@ export function leaveTypes() {
 // Weighted: full-time Saudi = 1, part-time Saudi ≥ 3000 = 1/3.
 
 export function nitaqatEstimate(employees, targetPct = 0) {
-  const list = (employees || []).filter(e => e.st !== 'exited');
+  const list = (employees || []).filter(e => e.st !== 'exited' && e.st !== 'huroob');
   let saudiUnits = 0;
   let saudis = 0;
   let expats = 0;
@@ -717,4 +718,205 @@ export function nitaqatWageOk(isSaudi, basic) {
     return true;
   }
   return (Number(basic) || 0) >= nitaqatWageFloor();
+}
+
+// ── T2 dashboard windows (pure; todayIso injectable so tests never rot) ───
+
+// Vacation pipeline buckets for approved annual leaves. returning = anyone
+// whose last day off falls within the next 14 days (regardless of start).
+export function leaveWindows(requests, todayIso) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const plus14 = addDays(today, 14);
+  const annual = (requests || []).filter(r => r.type === 'annual' && r.status === 'approved');
+  const ids = rows => rows.map(r => r.id).sort();
+  return {
+    onVacation: ids(annual.filter(r => r.from <= today && today <= r.to)),
+    departing: ids(annual.filter(r => r.from > today && r.from <= plus14)),
+    returning: ids(annual.filter(r => r.to >= today && r.to <= plus14))
+  };
+}
+
+// Return efficiency over completed vacations (returnedAt set).
+export function returnStats(requests) {
+  const done = (requests || []).filter(r => r.type === 'annual' && r.returnedAt);
+  const onTime = done.filter(r => r.returnStatus === 'on-time').length;
+  const overdue = done.filter(r => r.returnStatus === 'overdue').length;
+  return {
+    total: done.length,
+    onTime,
+    overdue,
+    pct: done.length ? Math.round((onTime / done.length) * 100) : 100
+  };
+}
+
+// Headcount buckets for the §1 status ring (huroob/exited visible, not hidden).
+export function headcountByStatus(employees) {
+  const out = { active: 0, probation: 0, 'on-leave': 0, exited: 0, huroob: 0, other: 0 };
+  for (const e of employees || []) {
+    if (out[e.st] === undefined) {
+      out.other += 1;
+    } else {
+      out[e.st] += 1;
+    }
+  }
+  return out;
+}
+
+// Tenure buckets in whole years between join and today.
+export function tenureBuckets(employees, todayIso) {
+  const out = { lt1: 0, y1_3: 0, y3_5: 0, gte5: 0 };
+  for (const e of employees || []) {
+    if (e.st === 'exited' || e.st === 'huroob' || !e.join) {
+      continue;
+    }
+    const y = yearsBetween(e.join, todayIso || new Date().toISOString().slice(0, 10));
+    if (y < 1) {
+      out.lt1 += 1;
+    } else if (y < 3) {
+      out.y1_3 += 1;
+    } else if (y < 5) {
+      out.y3_5 += 1;
+    } else {
+      out.gte5 += 1;
+    }
+  }
+  return out;
+}
+
+// ── T2 executive money (Zone A). Pure; formula documented in UI footnote ───
+// margin = deployment billing − (payroll + expat levy + GOSI employer share)
+// Payroll/levy/GOSI cover payable headcount only (exited + huroob excluded).
+// Levy uses the reduced band only when a Nitaqat target is configured AND met;
+// otherwise the standard band (conservative, flagged in the footnote).
+export function execMoney({ employees, assignments, invoices, targetPct, todayIso } = {}) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const payable = (employees || []).filter(e => e.st !== 'exited' && e.st !== 'huroob');
+  const payOf = e => (e.basic || 0) + (e.housing || 0) + (e.transport || 0);
+  const active = (assignments || []).filter(a => a.status === 'active');
+  const gosiOf = e =>
+    calcGosi({
+      basic: e.basic,
+      housing: e.housing,
+      isSaudi: !!e.saudi,
+      enrolledOn: e.gosiOn || null,
+      at: today
+    }).employer;
+
+  const revenue = active.reduce((s, a) => s + (a.rate || 0), 0);
+  const payroll = payable.reduce((s, e) => s + payOf(e), 0);
+  const expatN = payable.filter(e => !e.saudi).length;
+  const nitaqat = nitaqatEstimate(employees, targetPct || 0);
+  const bandOk = (targetPct || 0) > 0 && nitaqat.pct >= (targetPct || 0);
+  const levyHead = levyFor(bandOk);
+  const levy = expatN * levyHead;
+  const gosiEmployer = r2(payable.reduce((s, e) => s + gosiOf(e), 0));
+  const cost = r2(payroll + levy + gosiEmployer);
+  const margin = r2(revenue - cost);
+  const crewCodes = new Set(active.map(a => a.emp));
+  const crew = payable.filter(e => crewCodes.has(e.code));
+  const crewPayroll = crew.reduce((s, e) => s + payOf(e), 0);
+  const crewLevy = crew.filter(e => !e.saudi).length * levyHead;
+  const crewGosi = r2(crew.reduce((s, e) => s + gosiOf(e), 0));
+  const crewCost = r2(crewPayroll + crewLevy + crewGosi);
+  const crewMargin = r2(revenue - crewCost);
+  const overhead = r2(cost - crewCost);
+  const receivables = r2(
+    (invoices || [])
+      .filter(v => v.status !== 'paid')
+      .reduce((s, v) => s + invoiceTotals(v.lines).total, 0)
+  );
+
+  const byClient = {};
+  for (const a of active) {
+    const c = (byClient[a.client] = byClient[a.client] || {
+      revenue: 0,
+      payroll: 0,
+      levy: 0,
+      gosi: 0,
+      heads: 0,
+      seen: new Set()
+    });
+    c.revenue += a.rate || 0;
+    const e = payable.find(x => x.code === a.emp);
+    if (e && !c.seen.has(e.code)) {
+      c.seen.add(e.code);
+      c.heads += 1;
+      c.payroll += payOf(e);
+      if (!e.saudi) {
+        c.levy += levyHead;
+      }
+      c.gosi = r2(c.gosi + gosiOf(e));
+    }
+  }
+  const perClient = Object.entries(byClient)
+    .map(([id, c]) => ({
+      id,
+      heads: c.heads,
+      revenue: c.revenue,
+      cost: r2(c.payroll + c.levy + c.gosi),
+      margin: r2(c.revenue - (c.payroll + c.levy + c.gosi))
+    }))
+    .sort((a, b) => b.margin - a.margin);
+
+  const runway = [];
+  for (let m = 0; m < 6; m++) {
+    const d = new Date(`${today.slice(0, 7)}-01T00:00:00`);
+    d.setMonth(d.getMonth() + m);
+    const from = fmtYMD(d);
+    const to = fmtYMD(new Date(d.getFullYear(), d.getMonth() + 1, 0));
+    const rev = active
+      .filter(a => (!a.start || a.start <= to) && (!a.end || a.end >= from))
+      .reduce((s, a) => s + (a.rate || 0), 0);
+    runway.push({
+      month: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+      revenue: rev,
+      cost
+    });
+  }
+
+  return {
+    revenue,
+    payroll,
+    levy,
+    levyHead,
+    bandOk,
+    expatN,
+    gosiEmployer,
+    cost,
+    margin,
+    marginPct: revenue ? r2((margin / revenue) * 100) : 0,
+    crewCost,
+    crewMargin,
+    crewMarginPct: revenue ? r2((crewMargin / revenue) * 100) : 0,
+    overhead,
+    crewHeads: crew.length,
+    overheadHeads: payable.length - crew.length,
+    receivables,
+    nitaqatPct: nitaqat.pct,
+    perClient,
+    runway
+  };
+}
+
+// ── T2 §1 separation series (pure; fixed window for tests) ─────────────────
+// Hired = joins in month (any current status). Boarded = onboarding cases
+// reaching final stage 10 that month. Exited = exitDate in month.
+export function separationSeries(employees, onboarding, todayIso, windowMo = 6) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const base = new Date(`${today.slice(0, 7)}-01T00:00:00`);
+  const months = [];
+  for (let i = windowMo - 1; i >= 0; i--) {
+    const x = new Date(base.getFullYear(), base.getMonth() - i, 1);
+    const ym = `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}`;
+    months.push({ ym, label: `${String(x.getMonth() + 1).padStart(2, '0')}/${String(x.getFullYear()).slice(2)}` });
+  }
+  const inMo = (iso, ym) => (iso || '').startsWith(ym);
+  return {
+    labels: months.map(m => m.label),
+    hired: months.map(m => (employees || []).filter(e => inMo(e.join, m.ym)).length),
+    boarded: months.map(
+      m => (onboarding || []).filter(o => o.stages && inMo(String(o.stages[10] || ''), m.ym)).length
+    ),
+    exited: months.map(m => (employees || []).filter(e => inMo(e.exitDate, m.ym)).length)
+  };
 }

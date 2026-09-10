@@ -31,7 +31,9 @@ function monthVal() {
 
 function rows() {
   const at = `${monthVal()}-15`;
-  return getSeed('employees').map(e => ({
+  return getSeed('employees')
+    .filter(e => e.st !== 'exited' && e.st !== 'huroob')
+    .map(e => ({
     e,
     g: calcGosi({
       basic: e.basic,

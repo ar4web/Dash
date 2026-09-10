@@ -42,7 +42,8 @@ import {
   ROLES,
   ROLE_SCOPES,
   AUDIT_LOG,
-  ANNOUNCEMENTS
+  ANNOUNCEMENTS,
+  TASKS
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -85,7 +86,8 @@ const SEED_MAP = {
   roles: ROLES,
   roleScopes: ROLE_SCOPES,
   auditLog: AUDIT_LOG,
-  announcements: ANNOUNCEMENTS
+  announcements: ANNOUNCEMENTS,
+  tasks: TASKS
 };
 
 const API_MAP = {
@@ -127,7 +129,8 @@ const API_MAP = {
   departments: { path: '/api/hr/departments', listKey: 'departments' },
   roles: { path: '/api/hr/roles', listKey: 'roles' },
   auditLog: { path: '/api/hr/audit', listKey: 'entries' },
-  announcements: { path: '/api/hr/announcements', listKey: 'items' }
+  announcements: { path: '/api/hr/announcements', listKey: 'items' },
+  tasks: { path: '/api/hr/tasks', listKey: 'tasks' }
 };
 
 function overlayRows(name) {

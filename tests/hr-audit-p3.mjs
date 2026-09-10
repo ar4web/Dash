@@ -74,7 +74,8 @@ const emps = new Set(seed.EMPLOYEES.map(e => e.code));
 const clients = new Set(seed.CLIENTS.map(c => c.id));
 const sites = new Set(seed.SITES.map(s => s.id));
 const asns = new Set(seed.ASSIGNMENTS.map(a => a.id));
-ok('seed-permits-14', seed.AJEER_PERMITS.length === 14);
+// V3: +4 geo demo permits (AJ-2026-201..204 mirror ASN-2026-015..018).
+ok('seed-permits-18', seed.AJEER_PERMITS.length === 18);
 ok(
   'seed-permits-xref',
   seed.AJEER_PERMITS.every(
