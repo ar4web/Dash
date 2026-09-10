@@ -205,73 +205,48 @@ export const NAV = [
               { key: 'level2', href: 'level2.html', text: 'Nested page' },
               { key: 'plain', href: 'plain_page.html', text: 'Blank' }
             ]
+          },
+          {
+            text: 'General',
+            i18n: 'navgroup.general',
+            children: [
+              { key: 'dashboard', href: 'index.html', text: 'Operations' },
+              { key: 'dashboard-2', href: 'index2.html', text: 'Analytics' },
+              { key: 'dashboard-3', href: 'index3.html', text: 'Sales' },
+              { key: 'dashboard-4', href: 'index4.html', text: 'System health' },
+              { key: 'forms', href: 'form.html', text: 'General' },
+              { key: 'form-advanced', href: 'form_advanced.html', text: 'Advanced controls' },
+              { key: 'form-buttons', href: 'form_buttons.html', text: 'Buttons' },
+              { key: 'form-upload', href: 'form_upload.html', text: 'Upload' },
+              { key: 'form-validation', href: 'form_validation.html', text: 'Validation' },
+              { key: 'form-wizards', href: 'form_wizards.html', text: 'Wizard' },
+              { key: 'tables', href: 'tables.html', text: 'Static' },
+              { key: 'tables-dynamic', href: 'tables_dynamic.html', text: 'Dynamic' },
+              { key: 'charts', href: 'chartjs.html', text: 'Chart cards' },
+              { key: 'echarts', href: 'echarts.html', text: 'ECharts gallery' },
+              { key: 'other-charts', href: 'other_charts.html', text: 'SVG charts' },
+              { key: 'calendar', href: 'calendar.html', text: 'Calendar' },
+              { key: 'map', href: 'map.html', text: 'Map' }
+            ]
+          },
+          {
+            text: 'Apps',
+            i18n: 'navgroup.apps',
+            children: [
+              {
+                key: 'chat',
+                href: 'chat.html',
+                text: 'Chat',
+                badge: { text: '3', cls: 'badge-teal' }
+              },
+              { key: 'inbox', href: 'inbox.html', text: 'Inbox' },
+              { key: 'kanban', href: 'kanban.html', text: 'Kanban' },
+              { key: 'files', href: 'file_manager.html', text: 'Files' },
+              { key: 'notifications', href: 'notifications.html', text: 'Notifications' }
+            ]
           }
         ]
       }
-    ]
-  },
-  {
-    label: 'General',
-    items: [
-      {
-        text: 'Dashboards',
-        icon: 'dashboard',
-        children: [
-          { key: 'dashboard', href: 'index.html', text: 'Operations' },
-          { key: 'dashboard-2', href: 'index2.html', text: 'Analytics' },
-          { key: 'dashboard-3', href: 'index3.html', text: 'Sales' },
-          { key: 'dashboard-4', href: 'index4.html', text: 'System health' }
-        ]
-      },
-      {
-        text: 'Forms',
-        icon: 'forms',
-        badge: { text: 'Hot', cls: 'badge-red' },
-        children: [
-          { key: 'forms', href: 'form.html', text: 'General' },
-          { key: 'form-advanced', href: 'form_advanced.html', text: 'Advanced controls' },
-          { key: 'form-buttons', href: 'form_buttons.html', text: 'Buttons' },
-          { key: 'form-upload', href: 'form_upload.html', text: 'Upload' },
-          { key: 'form-validation', href: 'form_validation.html', text: 'Validation' },
-          { key: 'form-wizards', href: 'form_wizards.html', text: 'Wizard' }
-        ]
-      },
-      {
-        text: 'Tables',
-        icon: 'tables',
-        children: [
-          { key: 'tables', href: 'tables.html', text: 'Static' },
-          { key: 'tables-dynamic', href: 'tables_dynamic.html', text: 'Dynamic' }
-        ]
-      },
-      {
-        text: 'Charts',
-        icon: 'charts',
-        badge: { text: 'New', cls: 'badge-teal' },
-        children: [
-          { key: 'charts', href: 'chartjs.html', text: 'Chart cards' },
-          { key: 'echarts', href: 'echarts.html', text: 'ECharts gallery' },
-          { key: 'other-charts', href: 'other_charts.html', text: 'SVG charts' }
-        ]
-      },
-      { key: 'calendar', href: 'calendar.html', text: 'Calendar', icon: 'calendar' },
-      { key: 'map', href: 'map.html', text: 'Map', icon: 'map' }
-    ]
-  },
-  {
-    label: 'Apps',
-    items: [
-      {
-        key: 'chat',
-        href: 'chat.html',
-        text: 'Chat',
-        icon: 'chat',
-        badge: { text: '3', cls: 'badge-teal' }
-      },
-      { key: 'inbox', href: 'inbox.html', text: 'Inbox', icon: 'mail' },
-      { key: 'kanban', href: 'kanban.html', text: 'Kanban', icon: 'kanban' },
-      { key: 'files', href: 'file_manager.html', text: 'Files', icon: 'files' },
-      { key: 'notifications', href: 'notifications.html', text: 'Notifications', icon: 'bell' }
     ]
   }
 ];

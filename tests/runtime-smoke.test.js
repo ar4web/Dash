@@ -143,15 +143,26 @@ describe('sidebar hierarchy', () => {
     const labels = [...document.querySelectorAll('.sidebar-nav .nav-label')].map(e =>
       e.textContent.trim()
     );
-    for (const gone of ['E-commerce', 'Projects', 'UI library', 'Admin', 'Layouts']) {
+    for (const gone of [
+      'E-commerce',
+      'Projects',
+      'UI library',
+      'Admin',
+      'Layouts',
+      'General',
+      'Apps'
+    ]) {
       expect(labels).not.toContain(gone);
     }
-    expect(labels).toContain('HR & Operations');
-    expect(document.querySelectorAll('.sidebar-nav .nav-subtree').length).toBe(5);
+    expect(labels).toEqual(['HR & Operations']);
+    expect(document.querySelectorAll('.sidebar-nav .nav-subtree').length).toBe(7);
     expect(
       document.querySelector('.sidebar-nav a.nav-sublink[href="orders.html"] .nav-text')
         ?.textContent
     ).toBe('All orders');
+    expect(
+      document.querySelector('.sidebar-nav a.nav-sublink[href="chat.html"] .badge')?.textContent
+    ).toBe('3');
     const first = document.querySelector('.sidebar-nav .nav-subtoggle');
     first.click();
     expect(first.closest('.nav-subtree').classList.contains('open')).toBe(true);
@@ -168,6 +179,13 @@ describe('sidebar hierarchy', () => {
       document.querySelector('.sidebar-nav a.nav-sublink[href="orders.html"] .nav-text')
         ?.textContent
     ).toBe('All orders');
+    expect(
+      document.querySelector('.sidebar-nav a.nav-sublink[href="calendar.html"] .nav-text')
+        ?.textContent
+    ).toBe(t('nav.calendar'));
+    expect(
+      document.querySelector('.sidebar-nav a.nav-sublink[href="form.html"] .nav-text')?.textContent
+    ).toBe('General');
     setLang('en');
     await mountPage('orders');
     expect(
