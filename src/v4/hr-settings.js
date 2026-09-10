@@ -42,6 +42,26 @@ function field(id, label, value, opts = {}) {
     <input class="form-control" id="${id}" value="${(value ?? '').toString().replace(/"/g, '&quot;')}" ${opts.dir ? `dir="${opts.dir}"` : ''} ${opts.type ? `type="${opts.type}"` : ''} ${opts.extra || ''}></div>`;
 }
 
+// Cap stored logos at 256px PNG so brand uploads can't blow the 5MB
+// localStorage quota (quota errors are silent by design).
+function downscaleLogo(dataUrl, done) {
+  const img = new Image();
+  img.onload = () => {
+    try {
+      const k = Math.min(1, 256 / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * k));
+      c.height = Math.max(1, Math.round(img.height * k));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      done(c.toDataURL('image/png'));
+    } catch (_e) {
+      done(dataUrl);
+    }
+  };
+  img.onerror = () => done(dataUrl);
+  img.src = dataUrl;
+}
+
 function renderBrand(s) {
   const el = document.getElementById('set-brand');
   if (!el) {
@@ -77,12 +97,14 @@ function renderBrand(s) {
     }
     const r = new FileReader();
     r.onload = () => {
-      const prev = el.querySelector('#set-logo-preview');
-      if (prev) {
-        prev.src = r.result;
-        prev.style.display = '';
-      }
-      el.dataset.logo = r.result;
+      downscaleLogo(String(r.result || ''), dataUrl => {
+        const prev = el.querySelector('#set-logo-preview');
+        if (prev) {
+          prev.src = dataUrl;
+          prev.style.display = '';
+        }
+        el.dataset.logo = dataUrl;
+      });
     };
     r.readAsDataURL(f);
   });

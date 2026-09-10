@@ -9,6 +9,7 @@ import { calcGosi, calcEOSB, daysUntil, annualEntitlement, ajeerCheck } from './
 import { getSeed } from './hr-api.js';
 import { exportData } from './import-export.js';
 import { DEPARTMENTS, PROFESSIONS, CLIENTS, SITES } from './hr-seed.js';
+import { escapeHtml as esc } from './markup.js';
 
 const AV = {
   primary: 'var(--primary)',
@@ -63,6 +64,10 @@ function kv(k, v) {
   return `<div class="hr-kv"><span>${k}</span><strong>${v}</strong></div>`;
 }
 
+function kvd(k, v) {
+  return `<div class="hr-kv"><span>${k}</span><strong>${esc(v ?? '')}</strong></div>`;
+}
+
 function tabButtons() {
   const tabs = [
     ['overview', L('Overview', 'نظرة عامة')],
@@ -89,14 +94,14 @@ function renderHeader(e) {
   const client = CLIENTS.find(c => c.id === e.client);
   el.innerHTML = `
     <div class="hr-360-top">
-      <div class="cell-avatar" style="width:64px;height:64px;font-size:22px;background:${AV[e.av] || 'var(--primary)'};color:white">${initialsOf(e.nameEn)}</div>
+      <div class="cell-avatar" style="width:64px;height:64px;font-size:22px;background:${AV[e.av] || 'var(--primary)'};color:white">${esc(initialsOf(e.nameEn))}</div>
       <div style="flex:1;min-width:0">
-        <h2 class="page-title" style="margin:0">${currentLang() === 'ar' ? e.nameAr || e.nameEn : e.nameEn}</h2>
-        <div style="color:var(--text-muted);font-size:13px">${currentLang() === 'ar' ? e.nameEn : e.nameAr || ''} · ${e.code}</div>
+        <h2 class="page-title" style="margin:0">${esc(currentLang() === 'ar' ? e.nameAr || e.nameEn : e.nameEn)}</h2>
+        <div style="color:var(--text-muted);font-size:13px">${esc(currentLang() === 'ar' ? e.nameEn : e.nameAr || '')} · ${esc(e.code)}</div>
         <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="status status-${e.st === 'active' ? 'green' : 'yellow'}">${t(`status.${e.st}`)}</span>
-          <span class="status status-blue">${e.nat}</span>
-          ${client ? `<span class="status status-green">${t('status.deployed')} · ${currentLang() === 'ar' ? client.nameAr : client.nameEn}</span>` : e.saudi ? '' : `<span class="status status-blue">${t('status.bench')}</span>`}
+          <span class="status status-${e.st === 'active' ? 'green' : 'yellow'}">${esc(t(`status.${e.st}`))}</span>
+          <span class="status status-blue">${esc(e.nat)}</span>
+          ${client ? `<span class="status status-green">${t('status.deployed')} · ${esc(currentLang() === 'ar' ? client.nameAr : client.nameEn)}</span>` : e.saudi ? '' : `<span class="status status-blue">${t('status.bench')}</span>`}
         </div>
       </div>
       <div class="page-actions" style="margin:0">
@@ -156,34 +161,34 @@ function renderBody(e) {
   if (activeTab === 'overview') {
     html =
       '<div class="hr-kv-grid">' +
-      kv(L('Employee code', 'الرمز'), e.code) +
-      kv(L('Nationality', 'الجنسية'), e.nat) +
-      kv(
+      kvd(L('Employee code', 'الرمز'), e.code) +
+      kvd(L('Nationality', 'الجنسية'), e.nat) +
+      kvd(
         e.saudi ? L('National ID', 'الهوية الوطنية') : L('Iqama', 'الإقامة'),
         e.saudi ? e.nid || '—' : e.iqama || '—'
       ) +
-      kv(L('Phone', 'الجوال'), e.phone || '—') +
-      kv(L('Email', 'البريد'), e.email || '—') +
-      kv(L('Join date', 'تاريخ الالتحاق'), `${fmtDate(e.join)} · ${fmtHijri(e.join)}`) +
-      (e.entry ? kv(L('KSA entry', 'دخول المملكة'), fmtDate(e.entry)) : '') +
-      kv('Qiwa', t(`status.${e.q}`)) +
+      kvd(L('Phone', 'الجوال'), e.phone || '—') +
+      kvd(L('Email', 'البريد'), e.email || '—') +
+      kvd(L('Join date', 'تاريخ الالتحاق'), `${fmtDate(e.join)} · ${fmtHijri(e.join)}`) +
+      (e.entry ? kvd(L('KSA entry', 'دخول المملكة'), fmtDate(e.entry)) : '') +
+      kvd('Qiwa', t(`status.${e.q}`)) +
       '</div>';
   } else if (activeTab === 'job') {
     html =
       '<div class="hr-kv-grid">' +
-      kv(L('Department', 'الإدارة'), deptName(e.dept)) +
-      kv(L('Title', 'المسمى'), currentLang() === 'ar' ? e.titleAr || e.titleEn : e.titleEn) +
-      kv(L('Profession', 'المهنة'), profName(e.prof)) +
-      kv(L('Basic salary', 'الأساسي'), fmtSAR(e.basic)) +
-      kv(L('Housing', 'السكن'), fmtSAR(e.housing)) +
-      kv(L('Transport', 'المواصلات'), fmtSAR(e.transport)) +
+      kvd(L('Department', 'الإدارة'), deptName(e.dept)) +
+      kvd(L('Title', 'المسمى'), currentLang() === 'ar' ? e.titleAr || e.titleEn : e.titleEn) +
+      kvd(L('Profession', 'المهنة'), profName(e.prof)) +
+      kvd(L('Basic salary', 'الأساسي'), fmtSAR(e.basic)) +
+      kvd(L('Housing', 'السكن'), fmtSAR(e.housing)) +
+      kvd(L('Transport', 'المواصلات'), fmtSAR(e.transport)) +
       kv(L('Total', 'الإجمالي'), `<b>${fmtSAR(total)}</b>`) +
-      kv(L('EOSB accrued (est.)', 'مستحق نهاية الخدمة (تقديري)'), fmtSAR(eosb.net)) +
+      kvd(L('EOSB accrued (est.)', 'مستحق نهاية الخدمة (تقديري)'), fmtSAR(eosb.net)) +
       '</div>';
   } else if (activeTab === 'gosi') {
     html =
       '<div class="hr-kv-grid">' +
-      kv(
+      kvd(
         L('GOSI no.', 'رقم التأمينات'),
         e.gosi || (e.saudi ? '—' : L('Expat — employer 2%', 'أجنبي — 2% صاحب العمل'))
       ) +
@@ -195,24 +200,24 @@ function renderBody(e) {
             ? L('Old (fixed 9%)', 'قديم (9% ثابت)')
             : `${L('New', 'جديد')} (${Math.round(g.pensionRate * 100)}%)`
       ) +
-      kv(L('Contributory wage', 'أجر الاشتراك'), fmtSAR(g.base)) +
-      kv(L('Employee share', 'حصة الموظف'), fmtSAR(g.employee)) +
-      kv(L('Employer share', 'حصة صاحب العمل'), fmtSAR(g.employer)) +
+      kvd(L('Contributory wage', 'أجر الاشتراك'), fmtSAR(g.base)) +
+      kvd(L('Employee share', 'حصة الموظف'), fmtSAR(g.employee)) +
+      kvd(L('Employer share', 'حصة صاحب العمل'), fmtSAR(g.employer)) +
       '</div>';
   } else if (activeTab === 'residency') {
     html = e.saudi
-      ? `<div class="hr-kv-grid">${kv(L('National ID', 'الهوية الوطنية'), e.nid || '—')}</div>`
+      ? `<div class="hr-kv-grid">${kvd(L('National ID', 'الهوية الوطنية'), e.nid || '—')}</div>`
       : '<div class="hr-kv-grid">' +
-        kv(L('Iqama no.', 'رقم الإقامة'), e.iqama || '—') +
+        kvd(L('Iqama no.', 'رقم الإقامة'), e.iqama || '—') +
         kv(L('Iqama expiry', 'انتهاء الإقامة'), expBadge(e.iqamaExp)) +
-        kv(L('Profession on Iqama', 'المهنة في الإقامة'), profName(e.prof)) +
+        kvd(L('Profession on Iqama', 'المهنة في الإقامة'), profName(e.prof)) +
         kv(
           'IBAN',
           e.iban
-            ? maskIban(e.iban)
+            ? esc(maskIban(e.iban))
             : `<span class="status status-red">${t('status.missing')}</span>`
         ) +
-        kv(L('Bank', 'البنك'), e.bank || '—') +
+        kvd(L('Bank', 'البنك'), e.bank || '—') +
         '</div>';
   } else if (activeTab === 'deployment') {
     html = assigns.length
@@ -224,10 +229,10 @@ function renderBody(e) {
             const c = CLIENTS.find(x => x.id === a.client);
             const s = SITES.find(x => x.id === a.site);
             const gate = ajeerCheck(a, e, c);
-            return `<tr><td data-label="#">${a.id}<div style="font-size:11.5px;color:var(--text-muted)">${fmtSAR(a.rate)}/${L('mo', 'شهر')}</div></td>
-        <td data-label="${L('Client', 'العميل')}">${c ? (currentLang() === 'ar' ? c.nameAr : c.nameEn) : a.client}<div style="font-size:11.5px;color:var(--text-muted)">${s ? (currentLang() === 'ar' ? s.nameAr : s.nameEn) : ''}</div></td>
-        <td data-label="${L('Period', 'الفترة')}" style="font-size:12.5px">${fmtDate(a.start)} → ${fmtDate(a.end)}</td>
-        <td data-label="Ajeer">${a.ajeer ? `<span class="status status-green">${a.ajeer}</span><div style="font-size:11.5px;color:var(--text-muted)">${fmtDate(a.ajeerExp)}</div>` : `<span class="status status-red">${t('status.missing')}</span>`}</td>
+            return `<tr><td data-label="#">${esc(a.id)}<div style="font-size:11.5px;color:var(--text-muted)">${esc(fmtSAR(a.rate))}/${L('mo', 'شهر')}</div></td>
+        <td data-label="${L('Client', 'العميل')}">${esc(c ? (currentLang() === 'ar' ? c.nameAr : c.nameEn) : a.client)}<div style="font-size:11.5px;color:var(--text-muted)">${esc(s ? (currentLang() === 'ar' ? s.nameAr : s.nameEn) : '')}</div></td>
+        <td data-label="${L('Period', 'الفترة')}" style="font-size:12.5px">${esc(fmtDate(a.start))} → ${esc(fmtDate(a.end))}</td>
+        <td data-label="Ajeer">${a.ajeer ? `<span class="status status-green">${esc(a.ajeer)}</span><div style="font-size:11.5px;color:var(--text-muted)">${esc(fmtDate(a.ajeerExp))}</div>` : `<span class="status status-red">${t('status.missing')}</span>`}</td>
         <td data-label="${L('Gate', 'الفحص')}">${gate.ok ? `<span class="status status-green">${t('status.valid')}</span>` : `<span class="status status-red">${gate.reasons.length} ⚠</span><div style="font-size:11.5px;color:var(--text-muted)">${gate.reasons.join(', ')}</div>`}</td></tr>`;
           })
           .join('') +
@@ -238,8 +243,8 @@ function renderBody(e) {
     const used = e.annualUsed || 0;
     html =
       '<div class="hr-kv-grid">' +
-      kv(L('Annual entitlement', 'رصيد السنوية'), `${ent} ${t('common.days')}`) +
-      kv(L('Annual used', 'المستخدم'), `${used} ${t('common.days')}`) +
+      kvd(L('Annual entitlement', 'رصيد السنوية'), `${ent} ${t('common.days')}`) +
+      kvd(L('Annual used', 'المستخدم'), `${used} ${t('common.days')}`) +
       kv(L('Annual left', 'المتبقي'), `<b>${Math.max(0, ent - used)} ${t('common.days')}</b>`) +
       `</div><p style="color:var(--text-muted);font-size:12.5px;margin-top:12px">${L('Full leave engine ships in P2.', 'محرك الإجازات الكامل في المرحلة P2.')}</p>`;
   } else {
@@ -250,7 +255,7 @@ function renderBody(e) {
         'PDF',
         t('status.valid')
       ],
-      [L('Qiwa contract record', 'سجل عقد قوى'), '—', t(`status.${e.q}`)]
+      [L('Qiwa contract record', 'سجل عقد قوى'), '—', esc(t(`status.${e.q}`))]
     ];
     html =
       `<div class="table-responsive"><table class="table hr-table"><thead><tr><th>${L('Document', 'المستند')}</th><th>${L('Type', 'النوع')}</th><th>${t('common.status')}</th></tr></thead><tbody>` +

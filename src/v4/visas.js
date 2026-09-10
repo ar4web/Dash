@@ -10,6 +10,7 @@ import { daysUntil, expiryBand } from './hr-statutory.js';
 import { getSeed, saveImportedRows, patchSeedRow } from './hr-api.js';
 import { exportData, templateCSV, templateXLSX, importFile } from './import-export.js';
 import { AGENTS, VISA_BLOCKS, PROFESSIONS } from './hr-seed.js';
+import { escapeHtml as esc } from './markup.js';
 
 let booted = false;
 let statusFilter = '';
@@ -97,12 +98,12 @@ function renderBlocks() {
       const pct = Math.min(100, Math.round((used / Math.max(1, b.qty)) * 100));
       const ag = AGENTS.find(a => a.id === b.agent);
       return `<tr>
-      <td data-label="${L('Block', 'المجموعة')}" dir="ltr">${b.id}</td>
-      <td data-label="${L('Profession', 'المهنة')}">${profName(b.profession)}</td>
-      <td data-label="${L('Quota', 'الحصة')}"><div class="hr-bar-top"><span>${used} / ${b.qty}</span></div>
+      <td data-label="${L('Block', 'المجموعة')}" dir="ltr">${esc(b.id)}</td>
+      <td data-label="${L('Profession', 'المهنة')}">${esc(profName(b.profession))}</td>
+      <td data-label="${L('Quota', 'الحصة')}"><div class="hr-bar-top"><span>${used} / ${esc(b.qty)}</span></div>
         <div class="hr-bar-track"><div class="hr-bar-fill" style="width:${pct}%;background:var(--primary)"></div></div></td>
       <td data-label="${L('Expires', 'الانتهاء')}">${bandBadge(b.expires)}</td>
-      <td data-label="${L('Agent', 'الوكيل')}" style="font-size:12.5px">${ag ? ag.name : b.agent}</td>
+      <td data-label="${L('Agent', 'الوكيل')}" style="font-size:12.5px">${esc(ag ? ag.name : b.agent)}</td>
       <td data-label="${L('Cost/visa', 'التكلفة')}">${fmtSAR(b.costPerVisa)}</td>
     </tr>`;
     }).join('') +
@@ -123,20 +124,20 @@ function renderRegister() {
     visibleVisas()
       .map(v => {
         const who = v.emp
-          ? `<a href="hr_employee.html?code=${v.emp}">${empName(v.emp)}</a>`
+          ? `<a href="hr_employee.html?code=${encodeURIComponent(v.emp)}">${esc(empName(v.emp))}</a>`
           : v.ob
-            ? `<a href="hr_onboarding.html?case=${v.ob}">${obName(v.ob)}</a>`
+            ? `<a href="hr_onboarding.html?case=${encodeURIComponent(v.ob)}">${esc(obName(v.ob))}</a>`
             : '<span style="color:var(--text-muted)">—</span>';
         const blk = VISA_BLOCKS.find(b => b.id === v.block);
         return `<tr>
-      <td data-label="${L('Visa', 'التأشيرة')}" dir="ltr">${v.no}<div style="font-size:11.5px;color:var(--text-muted)">${v.type}</div></td>
+      <td data-label="${L('Visa', 'التأشيرة')}" dir="ltr">${esc(v.no)}<div style="font-size:11.5px;color:var(--text-muted)">${esc(v.type)}</div></td>
       <td data-label="${L('Worker', 'العامل')}">${who}</td>
-      <td data-label="${L('Profession', 'المهنة')}" style="font-size:12.5px">${profName(blk ? blk.profession : '')}</td>
-      <td data-label="${L('Issued', 'الإصدار')}" style="font-size:12.5px">${fmtDate(v.issued)}</td>
+      <td data-label="${L('Profession', 'المهنة')}" style="font-size:12.5px">${esc(profName(blk ? blk.profession : ''))}</td>
+      <td data-label="${L('Issued', 'الإصدار')}" style="font-size:12.5px">${esc(fmtDate(v.issued))}</td>
       <td data-label="${L('Valid until', 'صالحة حتى')}">${bandBadge(v.validUntil)}</td>
-      <td data-label="${L('Entry', 'الدخول')}" style="font-size:12.5px">${v.entry ? fmtDate(v.entry) : '—'}</td>
-      <td data-label="${t('common.status')}"><span class="status status-${VISA_CLS[v.status] || 'blue'}">${t(`status.${v.status}`)}</span></td>
-      <td data-label="">${v.status === 'awaiting' ? `<button class="btn btn-outline btn-sm" data-arrive="${v.no}">${t('common.arrival')}</button>` : ''}</td>
+      <td data-label="${L('Entry', 'الدخول')}" style="font-size:12.5px">${v.entry ? esc(fmtDate(v.entry)) : '—'}</td>
+      <td data-label="${t('common.status')}"><span class="status status-${VISA_CLS[v.status] || 'blue'}">${esc(t(`status.${v.status}`))}</span></td>
+      <td data-label="">${v.status === 'awaiting' ? `<button class="btn btn-outline btn-sm" data-arrive="${esc(v.no)}">${t('common.arrival')}</button>` : ''}</td>
     </tr>`;
       })
       .join('') ||
@@ -157,7 +158,7 @@ function openArrivalModal(no) {
   }
   const today = new Date().toISOString().slice(0, 10);
   showModal({
-    title: `${t('common.arrival')} · ${no}`,
+    title: `${t('common.arrival')} · ${esc(no)}`,
     body: `<div class="form-group" style="margin-bottom:0"><label class="form-label" for="va-entry">${L('Entry date (passport stamp)', 'تاريخ الدخول (ختم الجواز)')}</label>
       <input class="form-control" id="va-entry" type="date" value="${v.entry || today}" dir="ltr"></div>`,
     actions: [
@@ -286,7 +287,7 @@ function openImportModal() {
       }
       const errHtml = res.errors
         .slice(0, 10)
-        .map(e => `<div>row ${e.row} · ${e.field} · ${e.message}</div>`)
+        .map(e => `<div>row ${esc(e.row)} · ${esc(e.field)} · ${esc(e.message)}</div>`)
         .join('');
       box.innerHTML = `<span class="status status-${res.errors.length ? 'red' : 'green'}">${res.rows.length} rows · ${res.errors.length} errors</span><div style="margin-top:8px;color:var(--text-muted)">${errHtml}</div>`;
     } catch (_err) {

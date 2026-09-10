@@ -7,6 +7,7 @@ import { showToast } from './toast.js';
 import { showModal } from './modal.js';
 import { t, currentLang } from './i18n.js';
 import { importFile, templateCSV, templateXLSX } from './import-export.js';
+import { escapeHtml as esc } from './markup.js';
 
 export function openImportModal({ titleEn, titleAr, filename, schema, example, onImport }) {
   const lang = currentLang();
@@ -86,7 +87,7 @@ export function openImportModal({ titleEn, titleAr, filename, schema, example, o
       }
       const errHtml = res.errors
         .slice(0, 10)
-        .map(e => `<div>row ${e.row} · ${e.field} · ${e.message}</div>`)
+        .map(e => `<div>row ${esc(e.row)} · ${esc(e.field)} · ${esc(e.message)}</div>`)
         .join('');
       box.innerHTML = `<span class="status status-${res.errors.length ? 'red' : 'green'}">${res.rows.length} rows · ${res.errors.length} errors</span><div style="margin-top:8px;color:var(--text-muted)">${errHtml}</div>`;
     } catch (_err) {

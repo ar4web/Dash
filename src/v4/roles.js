@@ -86,6 +86,15 @@ export function viewedRole() {
   }
 }
 
+/** Gateway entry: remember the chosen role (honest preview, not auth). */
+export function setViewedRole(role) {
+  try {
+    localStorage.setItem(VIEW_KEY, role);
+  } catch (_e) {
+    /* private mode */
+  }
+}
+
 // Sidebar ask: can this page key be shown for the preview role?
 export function canShow(page) {
   const scopes = roleScopes();

@@ -211,6 +211,63 @@ describe('sidebar hierarchy', () => {
   });
 });
 
+describe('security', () => {
+  test('imported row values render inert (stored-XSS overlay)', async () => {
+    await mountPage('hr_employees');
+    localStorage.setItem(
+      'hr:import:employees',
+      JSON.stringify([
+        {
+          code: 'X"><img src=c onerror="window.__xss=1">',
+          nameEn: '<img src=x onerror="window.__xss=1">',
+          nameAr: '<svg onload="window.__xss=1">',
+          nat: '<b>bold</b>',
+          prof: '"><img src=p>',
+          dept: 'HR',
+          st: 'active',
+          q: '"><img src=q>',
+          saudi: false,
+          client: ''
+        }
+      ])
+    );
+    // Re-run inits so the overlay row renders (same pattern as the AR tests).
+    const html = readFileSync(`${R}/production/hr_employees.html`, 'utf8');
+    for (const m of html.matchAll(/from '(\/src\/v4\/[a-z0-9-]+\.js)'/g)) {
+      const key = `../src/v4/${m[1].split('/').pop().replace(/\.js$/, '')}.js`;
+      const mod = await loaders[key]();
+      for (const [k, v] of Object.entries(mod)) {
+        if (k.startsWith('init') && typeof v === 'function') {
+          v();
+        }
+      }
+    }
+    expect(document.querySelector('#emp-rows img')).toBeNull();
+    expect(document.querySelector('#emp-rows b')).toBeNull();
+    const body = document.querySelector('#emp-rows').textContent;
+    expect(body).toContain('<img src=x');
+    expect(body).toContain('<svg onload');
+    expect(body).toContain('<b>bold</b>');
+    const link = document.querySelector('#emp-rows a[href*="hr_employee.html?code=X"]');
+    expect(link?.getAttribute('href')).toContain('X%22%3E');
+    expect(window.__xss).toBeUndefined();
+  });
+
+  test('gateway lists roles and remembers the pick', async () => {
+    await mountPage('landing');
+    expect(document.querySelector('.sidebar-nav')).toBeNull();
+    const cards = [...document.querySelectorAll('#gw-roles .gw-card')];
+    expect(cards.length).toBe(9);
+    document.querySelector('#gw-roles [data-role="employee"]').click();
+    expect(localStorage.getItem('hr:role-view')).toBe('employee');
+    document.querySelector('#gw-lang [data-lang="ar"]').click();
+    expect(document.querySelector('#gw-roles [data-role="admin"] strong')?.textContent).toBe(
+      'مدير النظام'
+    );
+    setLang('en');
+  });
+});
+
 describe.each(pages)('%s renders', page => {
   test('EN: sidebar + root + content, no errors', async () => {
     await mountPage(page);

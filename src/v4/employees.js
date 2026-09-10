@@ -10,6 +10,7 @@ import { daysUntil, nitaqatEstimate } from './hr-statutory.js';
 import { getSeed, saveImportedRows } from './hr-api.js';
 import { exportData, templateCSV, templateXLSX, importFile } from './import-export.js';
 import { DEPARTMENTS, PROFESSIONS, CLIENTS, SITES } from './hr-seed.js';
+import { escapeHtml as esc } from './markup.js';
 
 const AV = {
   primary: 'var(--primary)',
@@ -153,23 +154,23 @@ function renderRows() {
       .map(e => {
         const dep = deployOf(e);
         return `
-    <tr data-code="${e.code}">
+    <tr data-code="${esc(e.code)}">
       <td data-label="✓"><input type="checkbox" class="row-cb" aria-label="Select row"></td>
       <td data-label="${L('Worker', 'الموظف')}">
         <div class="cell-customer">
-          <div class="cell-avatar" style="background:${AV[e.av] || 'var(--primary)'};color:white">${initialsOf(e.nameEn)}</div>
+          <div class="cell-avatar" style="background:${AV[e.av] || 'var(--primary)'};color:white">${esc(initialsOf(e.nameEn))}</div>
           <div>
-            <div class="cell-strong"><a href="hr_employee.html?code=${e.code}">${currentLang() === 'ar' ? e.nameAr || e.nameEn : e.nameEn}</a></div>
-            <div style="font-size:11.5px;color:var(--text-muted)">${e.code} · ${currentLang() === 'ar' ? e.nameEn || '' : e.nameAr || ''}</div>
+            <div class="cell-strong"><a href="hr_employee.html?code=${encodeURIComponent(e.code)}">${esc(currentLang() === 'ar' ? e.nameAr || e.nameEn : e.nameEn)}</a></div>
+            <div style="font-size:11.5px;color:var(--text-muted)">${esc(e.code)} · ${esc(currentLang() === 'ar' ? e.nameEn || '' : e.nameAr || '')}</div>
           </div>
         </div>
       </td>
-      <td data-label="${L('Nationality', 'الجنسية')}" style="font-size:12.5px">${e.nat}</td>
-      <td data-label="${L('Profession', 'المهنة')}" style="font-size:12.5px">${profName(e.prof)}<div style="font-size:11.5px;color:var(--text-muted)">${deptName(e.dept)}</div></td>
-      <td data-label="${L('Deployment', 'التوزيع')}"><span class="status status-${dep.cls}">${dep.label}</span></td>
+      <td data-label="${L('Nationality', 'الجنسية')}" style="font-size:12.5px">${esc(e.nat)}</td>
+      <td data-label="${L('Profession', 'المهنة')}" style="font-size:12.5px">${esc(profName(e.prof))}<div style="font-size:11.5px;color:var(--text-muted)">${esc(deptName(e.dept))}</div></td>
+      <td data-label="${L('Deployment', 'التوزيع')}"><span class="status status-${esc(dep.cls)}">${esc(dep.label)}</span></td>
       <td data-label="${L('Iqama', 'الإقامة')}">${iqamaBadge(e)}</td>
-      <td data-label="Qiwa"><span class="status status-${QIWA_CLS[e.q] || 'blue'}">${t(`status.${e.q}`)}</span></td>
-      <td data-label=""><button class="card-opt-btn" data-row-menu data-code="${e.code}" aria-label="More"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="3" r="1.2"/><circle cx="8" cy="8" r="1.2"/><circle cx="8" cy="13" r="1.2"/></svg></button></td>
+      <td data-label="Qiwa"><span class="status status-${QIWA_CLS[e.q] || 'blue'}">${esc(t(`status.${e.q}`))}</span></td>
+      <td data-label=""><button class="card-opt-btn" data-row-menu data-code="${esc(e.code)}" aria-label="More"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="3" r="1.2"/><circle cx="8" cy="8" r="1.2"/><circle cx="8" cy="13" r="1.2"/></svg></button></td>
     </tr>`;
       })
       .join('') ||
@@ -315,7 +316,7 @@ function openImportModal() {
       }
       const errHtml = res.errors
         .slice(0, 10)
-        .map(e => `<div>row ${e.row} · ${e.field} · ${e.message}</div>`)
+        .map(e => `<div>row ${esc(e.row)} · ${esc(e.field)} · ${esc(e.message)}</div>`)
         .join('');
       box.innerHTML = `<span class="status status-${res.errors.length ? 'red' : 'green'}">${res.rows.length} rows · ${res.errors.length} errors</span><div style="margin-top:8px;color:var(--text-muted)">${errHtml}</div>`;
       // stash pending where the confirm action can reach it

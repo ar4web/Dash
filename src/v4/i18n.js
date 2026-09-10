@@ -131,6 +131,12 @@ const STR = {
     'common.xlsx': 'Excel',
     'common.pdfPrint': 'PDF / Print',
     'common.chooseFile': 'Choose file',
+    'common.gatewayTitle': 'Who is signing in?',
+    'common.gatewaySub':
+      'Pick your role to enter. No passwords on this device — access is granted by your administrator.',
+    'common.gatewayModules': 'modules',
+    'common.gatewayHint': 'You can switch roles anytime from Roles & access.',
+    'common.gatewayFoot': 'Internal tool · Single-device preview',
     'common.template': 'Template',
     'common.of': 'of',
     'common.days': 'days',
@@ -701,6 +707,12 @@ const STR = {
     'common.xlsx': 'إكسل',
     'common.pdfPrint': 'PDF / طباعة',
     'common.chooseFile': 'اختر ملفًا',
+    'common.gatewayTitle': 'من الذي يسجّل الدخول؟',
+    'common.gatewaySub':
+      'اختر دورك للدخول. لا توجد كلمات مرور على هذا الجهاز — الصلاحيات تُمنح من المدير.',
+    'common.gatewayModules': 'وحدة',
+    'common.gatewayHint': 'يمكنك تبديل الدور في أي وقت من الأدوار والصلاحيات.',
+    'common.gatewayFoot': 'أداة داخلية · معاينة لجهاز واحد',
     'common.template': 'قالب',
     'common.of': 'من',
     'common.days': 'يوم',
@@ -1182,6 +1194,15 @@ export function t(key) {
   return (STR[lang] && STR[lang][key]) || STR.en[key] || key;
 }
 
+/** Brand/logo URLs may only be remote images or image data-URLs (bounded). */
+export function isSafeMediaUrl(url) {
+  const u = String(url || '').trim();
+  if (!u || u.length > 700000) {
+    return false;
+  }
+  return u.startsWith('https://') || u.startsWith('http://') || u.startsWith('data:image/');
+}
+
 export function applyI18n(root = document) {
   const lang = currentLang();
   root.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1324,7 +1345,7 @@ export function applyBranding() {
   }
   const icon = document.querySelector('.sidebar-brand .brand-icon');
   if (icon) {
-    if (raw.company.logo) {
+    if (raw.company.logo && isSafeMediaUrl(raw.company.logo)) {
       icon.innerHTML = '';
       const img = document.createElement('img');
       img.src = raw.company.logo;
