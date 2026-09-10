@@ -664,3 +664,57 @@ html[dir="rtl"] .org-node {
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
+
+/* ---- P3: billing ---- */
+
+.inv-doc {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.inv-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inv-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+@media print {
+  body.inv-print .main,
+  body.inv-print .sidebar,
+  body.inv-print .topbar {
+    display: none !important;
+  }
+
+  body.inv-print .modal-backdrop {
+    position: static;
+    background: none;
+    padding: 0;
+  }
+
+  body.inv-print .modal-dialog {
+    box-shadow: none;
+    max-width: none;
+    margin: 0;
+  }
+
+  body.inv-print .modal-header,
+  body.inv-print .modal-footer {
+    display: none !important;
+  }
+
+  body.inv-print .modal-body {
+    padding: 0;
+  }
+
+  body.inv-print .inv-doc {
+    border: none;
+    padding: 0;
+  }
+}

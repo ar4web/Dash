@@ -452,3 +452,61 @@ export function timesheetDay(totalMin, { ramadan = false, weekendDay = false } =
   const otMin = weekendDay ? totalMin : Math.max(0, totalMin - cap);
   return { regMin, otMin, violation: totalMin > MAX_DAY_HOURS * 60 };
 }
+
+// — P3: billing + Ajeer —
+export const VAT_RATE = 0.15;
+
+const r2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+
+// Monthly-rate billing: daily = rate/30, OT at 1.5x the hourly slice.
+export function invoiceLine(rate, days, otH) {
+  const daily = rate / 30;
+  const reg = daily * (days || 0);
+  const otRate = (daily / 8) * OT_RATE;
+  const ot = otRate * (otH || 0);
+  return { daily: r2(daily), reg: r2(reg), otRate: r2(otRate), ot: r2(ot), total: r2(reg + ot) };
+}
+
+export function invoiceTotals(lines) {
+  const sub = (lines || []).reduce((s, l) => s + invoiceLine(l.rate, l.days, l.otH).total, 0);
+  const vat = sub * VAT_RATE;
+  return { sub: r2(sub), vat: r2(vat), total: r2(sub + vat) };
+}
+
+export function permitStatus(exp, todayIso) {
+  if (!exp) {
+    return 'missing';
+  }
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  if (exp < today) {
+    return 'expired';
+  }
+  return daysUntil(exp, today) <= 30 ? 'expiring' : 'active';
+}
+
+// Beneficiary must return the worker within 1 working day (Fri/Sat skipped).
+export function returnDeadline(returnedAt) {
+  const d = new Date(`${returnedAt}T00:00:00`);
+  do {
+    d.setDate(d.getDate() + 1);
+  } while (d.getDay() === 5 || d.getDay() === 6);
+  return d.toISOString().slice(0, 10);
+}
+
+export function professionMatch(permitProf, empProf) {
+  return !!permitProf && permitProf === empProf;
+}
+
+// Licence scope guard (D11–D12): service vs labour vs both.
+export function licenceScopeOk(scope, service) {
+  return scope === 'both' || scope === service;
+}
+
+// Due date = billingDay of the month after the service month (clamped to 28).
+export function invoiceDue(month, billingDay) {
+  const [y, m] = month.split('-').map(Number);
+  const d = new Date(y, m, 1); // first day of next month (m is 0-based next)
+  const day = Math.min(Math.max(1, billingDay || 5), 28);
+  d.setDate(day);
+  return d.toISOString().slice(0, 10);
+}

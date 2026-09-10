@@ -22,7 +22,9 @@ import {
   SITE_SHIFTS,
   ATTENDANCE,
   TIMESHEETS,
-  LEAVE_REQUESTS
+  LEAVE_REQUESTS,
+  AJEER_PERMITS,
+  INVOICES
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -45,7 +47,9 @@ const SEED_MAP = {
   siteShifts: SITE_SHIFTS,
   attendance: ATTENDANCE,
   timesheets: TIMESHEETS,
-  leaveRequests: LEAVE_REQUESTS
+  leaveRequests: LEAVE_REQUESTS,
+  ajeerPermits: AJEER_PERMITS,
+  invoices: INVOICES
 };
 
 const API_MAP = {
@@ -68,7 +72,9 @@ const API_MAP = {
   siteShifts: { path: '/api/hr/site-shifts', listKey: 'mappings' },
   attendance: { path: '/api/hr/attendance', listKey: 'rows' },
   timesheets: { path: '/api/hr/timesheets', listKey: 'sheets' },
-  leaveRequests: { path: '/api/hr/leave-requests', listKey: 'requests' }
+  leaveRequests: { path: '/api/hr/leave-requests', listKey: 'requests' },
+  ajeerPermits: { path: '/api/hr/ajeer', listKey: 'permits' },
+  invoices: { path: '/api/hr/invoices', listKey: 'invoices' }
 };
 
 function overlayRows(name) {

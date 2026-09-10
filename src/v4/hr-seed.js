@@ -2128,3 +2128,241 @@ export const APPROVAL_CHAINS = [
 ];
 
 export const ACTOR_ROLES = ['manager', 'site-supervisor', 'hr', 'ops', 'admin'];
+
+// — P3: Ajeer permits (one e-contract per deployment; Decision 60339) —
+function _aj(no, asn, emp, client, site, prof, service, issued, exp, history) {
+  return {
+    no,
+    asn,
+    emp,
+    client,
+    site,
+    prof,
+    service,
+    issued,
+    exp,
+    status: 'active',
+    history: history || [{ at: issued, event: 'issued', by: 'PRO' }]
+  };
+}
+
+export const AJEER_PERMITS = [
+  _aj(
+    'AJ-2026-101',
+    'ASN-2026-001',
+    'EMP-0006',
+    'CL-002',
+    'ST-003',
+    'driver',
+    'labour',
+    '2025-12-28',
+    '2026-12-31'
+  ),
+  _aj(
+    'AJ-2026-102',
+    'ASN-2026-002',
+    'EMP-0007',
+    'CL-002',
+    'ST-003',
+    'driver',
+    'labour',
+    '2025-12-28',
+    '2026-12-31'
+  ),
+  _aj(
+    'AJ-2026-103',
+    'ASN-2026-003',
+    'EMP-0009',
+    'CL-002',
+    'ST-003',
+    'cleaner',
+    'labour',
+    '2026-01-25',
+    '2027-01-31'
+  ),
+  _aj(
+    'AJ-2026-104',
+    'ASN-2026-004',
+    'EMP-0010',
+    'CL-002',
+    'ST-003',
+    'cleaner',
+    'labour',
+    '2026-01-25',
+    '2027-01-31'
+  ),
+  _aj(
+    'AJ-2026-105',
+    'ASN-2026-005',
+    'EMP-0011',
+    'CL-002',
+    'ST-003',
+    'cleaner',
+    'labour',
+    '2026-02-22',
+    '2027-02-28'
+  ),
+  _aj(
+    'AJ-2026-106',
+    'ASN-2026-006',
+    'EMP-0013',
+    'CL-001',
+    'ST-001',
+    'construction',
+    'labour',
+    '2026-01-05',
+    '2026-12-31',
+    [
+      { at: '2026-01-05', event: 'issued', by: 'PRO' },
+      { at: '2026-07-02', event: 'profession-verified', by: 'PRO' }
+    ]
+  ),
+  _aj(
+    'AJ-2026-107',
+    'ASN-2026-007',
+    'EMP-0014',
+    'CL-001',
+    'ST-001',
+    'construction',
+    'labour',
+    '2026-01-05',
+    '2026-12-31'
+  ),
+  _aj(
+    'AJ-2026-108',
+    'ASN-2026-008',
+    'EMP-0015',
+    'CL-001',
+    'ST-002',
+    'construction',
+    'labour',
+    '2026-03-25',
+    '2027-03-31'
+  ),
+  _aj(
+    'AJ-2026-110',
+    'ASN-2026-010',
+    'EMP-0018',
+    'CL-001',
+    'ST-001',
+    'mason',
+    'labour',
+    '2026-01-05',
+    '2026-12-31'
+  ),
+  _aj(
+    'AJ-2026-111',
+    'ASN-2026-011',
+    'EMP-0019',
+    'CL-001',
+    'ST-002',
+    'mason',
+    'labour',
+    '2026-05-25',
+    '2026-09-25'
+  ),
+  _aj(
+    'AJ-2026-112',
+    'ASN-2026-012',
+    'EMP-0020',
+    'CL-001',
+    'ST-001',
+    'electrician',
+    'labour',
+    '2026-02-03',
+    '2027-02-09'
+  ),
+  _aj(
+    'AJ-2026-113',
+    'ASN-2026-013',
+    'EMP-0022',
+    'CL-002',
+    'ST-003',
+    'plumber',
+    'labour',
+    '2026-03-03',
+    '2027-03-09'
+  ),
+  _aj(
+    'AJ-2026-114',
+    'ASN-2026-014',
+    'EMP-0023',
+    'CL-001',
+    'ST-001',
+    'foreman',
+    'labour',
+    '2026-02-03',
+    '2027-02-09'
+  ),
+  {
+    no: 'AJ-2025-318',
+    asn: '',
+    emp: 'EMP-0016',
+    client: 'CL-002',
+    site: 'ST-003',
+    prof: 'construction',
+    service: 'labour',
+    issued: '2025-08-01',
+    exp: '2026-07-31',
+    status: 'returned',
+    history: [
+      { at: '2025-08-01', event: 'issued', by: 'PRO' },
+      { at: '2026-07-30', event: 'returned', by: 'CL-002' }
+    ]
+  }
+];
+
+// — P3: invoices (inputs only; amounts computed by the engine) —
+export const INVOICES = [
+  {
+    id: 'INV-2026-08-CL-001',
+    client: 'CL-001',
+    month: '2026-08',
+    status: 'issued',
+    issuedAt: '2026-09-03',
+    dueAt: '2026-09-05',
+    paidAt: '',
+    lines: [
+      { emp: 'EMP-0013', site: 'ST-001', days: 22, regH: 176, otH: 4, rate: 3200, sheet: '' },
+      { emp: 'EMP-0018', site: 'ST-001', days: 22, regH: 176, otH: 8, rate: 4200, sheet: '' }
+    ]
+  },
+  {
+    id: 'INV-2026-08-CL-002',
+    client: 'CL-002',
+    month: '2026-08',
+    status: 'paid',
+    issuedAt: '2026-09-05',
+    dueAt: '2026-09-10',
+    paidAt: '2026-09-08',
+    lines: [
+      {
+        emp: 'EMP-0006',
+        site: 'ST-003',
+        days: 22,
+        regH: 176,
+        otH: 6,
+        rate: 3500,
+        sheet: 'TS-2026-W36-ST3'
+      },
+      {
+        emp: 'EMP-0007',
+        site: 'ST-003',
+        days: 22,
+        regH: 176,
+        otH: 2,
+        rate: 3500,
+        sheet: 'TS-2026-W36-ST3'
+      },
+      {
+        emp: 'EMP-0009',
+        site: 'ST-003',
+        days: 22,
+        regH: 176,
+        otH: 0,
+        rate: 2800,
+        sheet: 'TS-2026-W36-ST3'
+      }
+    ]
+  }
+];

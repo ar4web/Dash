@@ -54,6 +54,11 @@ export const NAV = [
       },
       { key: 'hr-approvals', href: 'hr_approvals.html', text: 'Approvals', icon: 'shield' },
       { key: 'hr-my-team', href: 'hr_my_team.html', text: 'My team', icon: 'users' },
+      { key: 'hr-clients', href: 'hr_clients.html', text: 'Clients', icon: 'shop' },
+      { key: 'hr-requests', href: 'hr_requests.html', text: 'Manpower requests', icon: 'mail' },
+      { key: 'hr-assignments', href: 'hr_assignments.html', text: 'Assignments', icon: 'map' },
+      { key: 'hr-ajeer', href: 'hr_ajeer.html', text: 'Ajeer permits', icon: 'doc' },
+      { key: 'hr-invoices', href: 'hr_invoices.html', text: 'Invoices', icon: 'receipt' },
       { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings', icon: 'settings' }
     ]
   },
