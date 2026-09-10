@@ -127,6 +127,14 @@ ok(
 );
 ok('t2-gender-mix', EMPLOYEES.some(e => e.gender === 'F') && EMPLOYEES.some(e => e.gender === 'M'));
 ok('t2-sponsors-2', SPONSORS.length === 2 && SPONSORS.every(p => p.cr && p.nameEn && p.nameAr));
+eq('t2-nats-6', [...new Set(EMPLOYEES.map(e => e.nat))].length, 6);
+eq('t2-gender-4-23', [EMPLOYEES.filter(e => e.gender === 'F').length, EMPLOYEES.filter(e => e.gender === 'M').length], [4, 23]);
+{
+  const hc = {};
+  ASSIGNMENTS.filter(a => a.status === 'active').forEach(a => { hc[a.site] = (hc[a.site] || 0) + 1; });
+  eq('t2-site-hc', hc, { 'ST-003': 6, 'ST-001': 5, 'ST-002': 3, 'ST-004': 2, 'ST-005': 1, 'ST-006': 1 });
+}
+eq('t2-sponsor-split', [EMPLOYEES.filter(e => e.sponsor === 'HQ').length, EMPLOYEES.filter(e => e.sponsor === 'BR-JED').length], [25, 2]);
 ok(
   't2-new-assigns-clean',
   ASSIGNMENTS.filter(a => a.id >= 'ASN-2026-015').every(a => {

@@ -19,8 +19,9 @@ import {
   eligibleForVacation
 } from './hr-statutory.js';
 import { getSeed } from './hr-api.js';
-import { CLIENTS, LEAVE_DELAY_REASONS } from './hr-seed.js';
+import { CLIENTS, LEAVE_DELAY_REASONS, SITES, SKILLS, SPONSORS, PROFESSIONS } from './hr-seed.js';
 import { renderEchart } from './chart-helper.js';
+import { renderSiteMap } from './map-helper.js';
 import { escapeHtml as esc } from './markup.js';
 
 let booted = false;
@@ -273,10 +274,10 @@ function renderHead() {
     <div class="dash-chips">
       <span class="status status-${tone}">${esc(t('hr.dashboard.nitaqat'))} ${esc(String(n.pct))}%${s.nitaqat.target > 0 ? ` / ${esc(String(s.nitaqat.target))}%` : ''}</span>
       ${
-        left
-          ? `<a class="status status-yellow" href="hr_settings.html" style="text-decoration:none">${left} ${esc(t('hr.dashboard.setupSteps'))}</a>`
-          : `<span class="status status-green">${esc(L('All set', 'تم الإعداد'))}</span>`
-      }
+  left
+    ? `<a class="status status-yellow" href="hr_settings.html" style="text-decoration:none">${left} ${esc(t('hr.dashboard.setupSteps'))}</a>`
+    : `<span class="status status-green">${esc(L('All set', 'تم الإعداد'))}</span>`
+}
     </div>`;
 }
 
@@ -426,10 +427,10 @@ function renderZoneA() {
         <div class="hr-bar-top"><span>${esc(t('hr.dashboard.net'))}</span><strong style="color:var(--${money.margin >= 0 ? 'green' : 'red'})">${esc(fmtSAR(money.margin))}</strong></div>
       </div>
       ${
-        money.crewMarginPct < 5
-          ? `<a class="hr-alert hr-alert-red" href="hr_client_dashboard.html"><span class="status status-red">${esc(t('common.urgent'))}</span><span>${esc(t('hr.dashboard.thinMargin'))}</span></a>`
-          : ''
-      }`;
+  money.crewMarginPct < 5
+    ? `<a class="hr-alert hr-alert-red" href="hr_client_dashboard.html"><span class="status status-red">${esc(t('common.urgent'))}</span><span>${esc(t('hr.dashboard.thinMargin'))}</span></a>`
+    : ''
+}`;
   }
 
   const formula = document.getElementById('money-formula');
@@ -642,7 +643,7 @@ function renderS2() {
       g =>
         `<div class="vac-group"><div class="vac-group-head"><strong>${esc(g.label)}</strong><span class="status status-blue">${g.ids.length}</span></div>` +
         (g.ids.length
-          ? `<div class="table-responsive"><table class="table hr-table"><tbody>` +
+          ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
             g.ids
               .map(id => byId(id))
               .filter(Boolean)
@@ -654,9 +655,9 @@ function renderS2() {
       </tr>`
               )
               .join('') +
-            `</tbody></table></div>`
+            '</tbody></table></div>'
           : `<div class="hr-empty">${esc(t('common.noData'))}</div>`) +
-        `</div>`
+        '</div>'
     )
     .join('');
 
@@ -690,7 +691,7 @@ function renderS2() {
   const ot = document.getElementById('overdue-table');
   if (ot) {
     ot.innerHTML = overdue.length
-      ? `<div class="table-responsive"><table class="table hr-table"><tbody>` +
+      ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
         overdue
           .map(r => {
             const late = Math.max(
@@ -703,7 +704,7 @@ function renderS2() {
     </tr>`;
           })
           .join('') +
-        `</tbody></table></div>`
+        '</tbody></table></div>'
       : `<div class="hr-empty">${esc(t('common.noData'))}</div>`;
   }
 
@@ -742,7 +743,7 @@ function renderS2() {
   const et = document.getElementById('eligible-table');
   if (et) {
     et.innerHTML =
-      `<div class="table-responsive"><table class="table hr-table"><tbody>` +
+      '<div class="table-responsive"><table class="table hr-table"><tbody>' +
       elig
         .map(
           x => `<tr>
@@ -753,7 +754,232 @@ function renderS2() {
   </tr>`
         )
         .join('') +
-      `</tbody></table></div>`;
+      '</tbody></table></div>';
+  }
+}
+
+function profName(code) {
+  const p = PROFESSIONS.find(x => x.code === code);
+  if (!p) {
+    return code;
+  }
+  return currentLang() === 'ar' ? p.ar : p.en;
+}
+
+function skillName(code) {
+  const k = SKILLS.find(x => x.code === code);
+  if (!k) {
+    return code;
+  }
+  return currentLang() === 'ar' ? k.ar : k.en;
+}
+
+function siteName(id) {
+  const s2 = SITES.find(x => x.id === id);
+  if (!s2) {
+    return id;
+  }
+  return currentLang() === 'ar' ? s2.nameAr || s2.nameEn : s2.nameEn;
+}
+
+function payableEmps() {
+  return getSeed('employees').filter(e => e.st !== 'exited' && e.st !== 'huroob');
+}
+
+function activeAssigns() {
+  return getSeed('assignments').filter(a => a.status === 'active');
+}
+
+function renderRoster(siteId) {
+  const box = document.getElementById('site-roster');
+  if (!box) {
+    return;
+  }
+  box.dataset.site = siteId || '';
+  const rows = activeAssigns().filter(a => !siteId || a.site === siteId);
+  box.innerHTML =
+    `<div class="vac-group-head"><strong>${esc(siteId ? siteName(siteId) : t('hr.dashboard.selectSite'))}</strong>` +
+    (siteId ? `<span class="status status-blue">${rows.length}</span>` : '') +
+    '</div>' +
+    (siteId
+      ? rows.length
+        ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+          rows
+            .map(
+              a => `<tr>
+      <td><a href="hr_employee.html?code=${encodeURIComponent(a.emp)}">${esc(empName(a.emp))}</a><br><small style="color:var(--text-muted)">${esc(profName((getSeed('employees').find(e => e.code === a.emp) || {}).prof))}</small></td>
+      <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(fmtSAR(a.rate))}</td>
+    </tr>`
+            )
+            .join('') +
+          '</tbody></table></div>'
+        : `<div class="hr-empty">${esc(t('common.noData'))}</div>`
+      : '');
+}
+
+function donutOption(tk, slices) {
+  return {
+    tooltip: { trigger: 'item' },
+    legend: { bottom: 0, textStyle: { color: tk.textMuted, fontSize: 11 } },
+    series: [
+      {
+        type: 'pie',
+        radius: ['55%', '78%'],
+        center: ['50%', '44%'],
+        label: { show: false },
+        emphasis: { label: { show: true, fontSize: 13, fontWeight: 600 } },
+        data: slices.map(s2 => ({ name: s2.name, value: s2.v, itemStyle: { color: s2.c(tk) } }))
+      }
+    ]
+  };
+}
+
+function renderS3() {
+  if (!document.getElementById('site-map')) {
+    return;
+  }
+  const emps = payableEmps();
+  const assigns = activeAssigns();
+  const hcOf = id => assigns.filter(a => a.site === id).length;
+
+  const cities = {};
+  SITES.forEach(s2 => {
+    cities[s2.city] = (cities[s2.city] || 0) + hcOf(s2.id);
+  });
+  document.getElementById('city-chips').innerHTML = Object.entries(cities)
+    .sort((a, b) => b[1] - a[1])
+    .map(([c, n]) => `<span class="status status-blue">${esc(c)} · ${n}</span>`)
+    .join('');
+
+  const meta = document.getElementById('zone-geo-meta');
+  if (meta) {
+    meta.innerHTML = `<span class="status status-blue">${SITES.length} ${esc(t('hr.dashboard.mapSites'))} · ${Object.keys(cities).length} ${esc(L('cities', 'مدن'))}</span>`;
+  }
+
+  renderSiteMap(document.getElementById('site-map'), {
+    sites: SITES,
+    clients: CLIENTS,
+    headcountOf: hcOf,
+    labels: {
+      sites: t('hr.dashboard.mapSites'),
+      clients: t('hr.dashboard.mapClients'),
+      workers: t('hr.dashboard.mapWorkers')
+    },
+    onSelect: renderRoster
+  });
+  const roster = document.getElementById('site-roster');
+  const current = roster && roster.dataset.site;
+  const fallback = [...SITES].sort((a, b) => hcOf(b.id) - hcOf(a.id))[0];
+  renderRoster(current && SITES.some(s2 => s2.id === current) ? current : fallback.id);
+
+  const nats = {};
+  emps.forEach(e => {
+    nats[e.nat] = (nats[e.nat] || 0) + 1;
+  });
+  const palette = [tk => tk.primary, tk => tk.blue, tk => tk.purple, tk => tk.yellow, tk => tk.green, tk => tk.red, tk => tk.azure];
+  const natSlices = Object.entries(nats)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, v], i) => ({ name, v, c: palette[i % palette.length] }));
+  renderEchart(
+    document.getElementById('chart-nationality'),
+    tk => donutOption(tk, natSlices),
+    L(
+      `Nationalities (${emps.length}): ${natSlices.map(s2 => `${s2.name} ${s2.v}`).join(', ')}.`,
+      `الجنسيات (${emps.length}): ${natSlices.map(s2 => `${s2.name} ${s2.v}`).join('، ')}.`
+    )
+  );
+
+  const saudis = emps.filter(e => e.saudi).length;
+  renderEchart(
+    document.getElementById('chart-saudiexp'),
+    tk =>
+      donutOption(tk, [
+        { name: t('hr.employees.saudi'), v: saudis, c: x => x.green },
+        { name: t('hr.employees.expat'), v: emps.length - saudis, c: x => x.blue }
+      ]),
+    L(
+      `Saudi ${saudis}, expat ${emps.length - saudis}.`,
+      `سعودي ${saudis}، أجنبي ${emps.length - saudis}.`
+    )
+  );
+
+  const females = emps.filter(e => e.gender === 'F').length;
+  renderEchart(
+    document.getElementById('chart-gender'),
+    tk =>
+      donutOption(tk, [
+        { name: t('hr.dashboard.male'), v: emps.length - females, c: x => x.blue },
+        { name: t('hr.dashboard.female'), v: females, c: x => x.purple }
+      ]),
+    L(
+      `Gender: male ${emps.length - females}, female ${females}.`,
+      `الجنس: ذكر ${emps.length - females}، أنثى ${females}.`
+    )
+  );
+
+  const profs = {};
+  emps.forEach(e => {
+    profs[e.prof] = (profs[e.prof] || 0) + 1;
+  });
+  const profRows = Object.entries(profs).sort((a, b) => b[1] - a[1]);
+  renderEchart(
+    document.getElementById('chart-profession'),
+    tk => ({
+      tooltip: { trigger: 'axis' },
+      grid: { left: 8, right: 8, top: 8, bottom: 8, containLabel: true },
+      xAxis: { type: 'value', splitLine: { lineStyle: { color: tk.borderLight, type: [4, 3] } } },
+      yAxis: {
+        type: 'category',
+        data: profRows.map(([p]) => profName(p)),
+        axisLabel: { color: tk.textMuted, fontSize: 11 }
+      },
+      series: [
+        {
+          type: 'bar',
+          data: profRows.map(([, v]) => v),
+          itemStyle: { color: tk.purple, borderRadius: [0, 4, 4, 0] },
+          label: { show: true, position: 'right', color: tk.textMuted, fontSize: 11 }
+        }
+      ]
+    }),
+    L(
+      `Professions: ${profRows.map(([p, v]) => `${profName(p)} ${v}`).join(', ')}.`,
+      `المهن: ${profRows.map(([p, v]) => `${profName(p)} ${v}`).join('، ')}.`
+    ),
+    { rtl: 'hbar' }
+  );
+
+  const mx = document.getElementById('sponsor-matrix');
+  if (mx) {
+    mx.innerHTML =
+      '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+      SPONSORS.map(p => {
+        const n = emps.filter(e => e.sponsor === p.id).length;
+        const nm = currentLang() === 'ar' ? p.nameAr : p.nameEn;
+        return `<tr>
+    <td><strong>${esc(nm)}</strong><br><small style="color:var(--text-muted)" dir="ltr">CR ${esc(p.cr)} · ${esc(p.city)}</small></td>
+    <td dir="ltr" style="text-align:end"><span class="status status-blue">${n} ${esc(t('hr.dashboard.heads'))}</span></td>
+  </tr>`;
+      }).join('') +
+      '</tbody></table></div>';
+  }
+
+  const counts = {};
+  emps.forEach(e => {
+    (e.skills || []).forEach(k => {
+      counts[k] = (counts[k] || 0) + 1;
+    });
+  });
+  const max = Math.max(1, ...Object.values(counts));
+  const cloud = document.getElementById('skills-cloud');
+  if (cloud) {
+    cloud.innerHTML = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(
+        ([k, v]) =>
+          `<span class="skill-tag" title="${v}" style="font-size:${11 + Math.round((v / max) * 7)}px">${esc(skillName(k))} <small>${v}</small></span>`
+      )
+      .join('');
   }
 }
 
@@ -762,6 +988,7 @@ function renderAll() {
   renderZoneA();
   renderS1();
   renderS2();
+  renderS3();
   renderKpis();
   renderAlerts();
   renderExpiries();

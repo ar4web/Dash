@@ -983,3 +983,36 @@ details.zone:not([open]) .zone-head::before {
   max-height: 300px;
   overflow-y: auto;
 }
+.map-box {
+  height: 340px;
+  min-height: 340px;
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+.skill-tag {
+  padding: 4px 12px;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color-light);
+  border-radius: 999px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.skill-tag small {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+@media (max-width: 640px) {
+  .map-box {
+    height: 280px;
+    min-height: 280px;
+  }
+}

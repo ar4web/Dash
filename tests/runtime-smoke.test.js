@@ -369,7 +369,7 @@ describe('command center', () => {
     expect(card.textContent).toMatch(/Huroob|هروب/);
     expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
     const zones = [...document.querySelectorAll('details.zone[data-zone]')];
-    expect(zones.length).toBe(3);
+    expect(zones.length).toBe(4);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
@@ -403,6 +403,32 @@ describe('command center', () => {
     const eligRows = document.querySelectorAll('#eligible-table tbody tr');
     expect(eligRows.length).toBeGreaterThan(10);
     expect(eligRows[0].querySelector('a[href="hr_leave.html"]')).toBeTruthy();
+  });
+
+  test('§3 geo renders map data, roster and mixes', async () => {
+    await mountPage('hr_dashboard');
+    const map = document.getElementById('site-map');
+    expect(map.getAttribute('data-marker-count')).toBe('6');
+    expect(map.getAttribute('data-client-pins')).toBe('2');
+    expect(map.getAttribute('aria-label')).toContain('6');
+    const roster = document.getElementById('site-roster');
+    expect(roster.textContent).toContain('KAFD');
+    expect(roster.querySelectorAll('tbody tr').length).toBe(6);
+    expect(document.getElementById('city-chips').textContent).toContain('Riyadh');
+    expect(document.getElementById('zone-geo-meta').textContent).toContain('6');
+    for (const id of ['chart-nationality', 'chart-saudiexp', 'chart-gender', 'chart-profession']) {
+      const el = document.getElementById(id);
+      expect(el.getAttribute('role')).toBe('img');
+      expect(el.getAttribute('aria-label')?.length).toBeGreaterThan(10);
+    }
+    expect(document.getElementById('chart-nationality').getAttribute('aria-label')).toContain(
+      '(24)'
+    );
+    const mx = [...document.querySelectorAll('#sponsor-matrix tbody tr')];
+    expect(mx.length).toBe(2);
+    expect(mx[0].textContent).toContain('22');
+    expect(mx[1].textContent).toContain('2');
+    expect(document.querySelectorAll('#skills-cloud .skill-tag').length).toBeGreaterThan(10);
   });
 
   test('Arabic re-render flips chart summaries', async () => {
