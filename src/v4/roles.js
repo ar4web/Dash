@@ -28,7 +28,7 @@ export const ROLE_MODULES = [
   },
   {
     group: 'hr.navgroup.compliance',
-    pages: ['hr-sa-compliance', 'hr-visas', 'hr-residency', 'hr-contracts', 'hr-eosb']
+    pages: ['hr-sa-compliance', 'hr-visas', 'hr-residency', 'hr-contracts']
   },
   {
     group: 'hr.navgroup.time',
@@ -36,11 +36,15 @@ export const ROLE_MODULES = [
   },
   {
     group: 'hr.navgroup.operations',
-    pages: ['hr-clients', 'hr-requests', 'hr-assignments', 'hr-ajeer', 'hr-expenses']
+    pages: ['hr-clients', 'hr-requests', 'hr-assignments', 'hr-ajeer']
   },
   {
-    group: 'hr.navgroup.money',
-    pages: ['hr-payroll', 'hr-gosi', 'hr-wps', 'hr-invoices']
+    group: 'hr.navgroup.employee',
+    pages: ['hr-payroll', 'hr-gosi', 'hr-wps', 'hr-eosb']
+  },
+  {
+    group: 'hr.navgroup.accounts',
+    pages: ['hr-invoices', 'hr-expenses']
   },
   {
     group: 'hr.navgroup.hiring',

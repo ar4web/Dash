@@ -9,11 +9,19 @@
 import { showToast } from './toast.js';
 import { showModal } from './modal.js';
 
-const STORAGE_KEY = 'gentelella:settings';
+const STORAGE_KEY = 'dash:settings';
+const LEGACY_STORAGE_KEY = 'gentelella:settings';
 
 function load() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === null) {
+      raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (raw !== null) {
+        localStorage.setItem(STORAGE_KEY, raw);
+      }
+    }
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch (_e) {
     return {};

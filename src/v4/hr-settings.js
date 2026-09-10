@@ -55,6 +55,11 @@ function renderBrand(s) {
     field('set-cname-ar', L('Company name (AR)', 'اسم الشركة (عربي)'), s.company.nameAr) +
     field('set-cr', L('CR number', 'السجل التجاري'), s.company.cr, { dir: 'ltr' }) +
     field('set-addr', L('Address', 'العنوان'), s.company.address) +
+    field('set-primary', L('Brand color', 'لون العلامة'), s.company.primary, {
+      dir: 'ltr',
+      type: 'color',
+      extra: 'style="height:38px;padding:4px;cursor:pointer"'
+    }) +
     `</div>
     <div class="form-group"><label class="form-label">${L('Logo', 'الشعار')}</label>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -63,7 +68,7 @@ function renderBrand(s) {
           <input type="file" id="set-logo" accept="image/*" hidden></label>
         <button type="button" class="btn btn-ghost btn-sm" id="set-logo-clear">${L('Remove', 'إزالة')}</button>
       </div>
-      <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">${L('PNG or SVG, stored locally. Empty = default Dash mark.', 'PNG أو SVG، يُحفظ محليًا. فارغ = علامة داش الافتراضية.')}</p>
+      <p style="font-size:11.5px;color:var(--text-muted);margin:6px 0 0">${L('PNG or SVG, stored locally. Empty = company initial.', 'PNG أو SVG، يُحفظ محليًا. فارغ = الحرف الأول للشركة.')}</p>
     </div>`;
   el.querySelector('#set-logo')?.addEventListener('change', e => {
     const f = e.target.files[0];
@@ -491,6 +496,9 @@ function collectAndSave() {
       nameAr: val('set-cname-ar').trim(),
       cr: val('set-cr').trim(),
       address: val('set-addr').trim(),
+      primary: /^#[0-9a-fA-F]{6}$/.test(val('set-primary').trim())
+        ? val('set-primary').trim()
+        : getSettings().company.primary,
       logo: document.getElementById('set-brand')?.dataset.logo ?? getSettings().company.logo
     },
     nitaqat: {

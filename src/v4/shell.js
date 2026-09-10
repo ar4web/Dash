@@ -44,7 +44,28 @@ function injectShellIfMissing() {
 // others. The chosen state persists across navigation via sessionStorage so
 // the sidebar doesn't snap back to "auto-open" when the user moves to a child
 // page that's not in their preferred group.
-const SUBMENU_STATE_KEY = 'gentelella:nav-open';
+const SUBMENU_STATE_KEY = 'dash:nav-open';
+
+// One-time migration of pre-rebrand storage keys (gentelella:* -> dash:*).
+function migrateStorageKeys() {
+  const moves = [
+    [sessionStorage, 'gentelella:nav-open', SUBMENU_STATE_KEY],
+    [localStorage, 'gentelella:sidebar-rail', RAIL_KEY]
+  ];
+  for (const [store, oldK, newK] of moves) {
+    try {
+      if (store.getItem(newK) === null) {
+        const v = store.getItem(oldK);
+        if (v !== null) {
+          store.setItem(newK, v);
+        }
+      }
+      store.removeItem(oldK);
+    } catch (_e) {
+      /* private mode */
+    }
+  }
+}
 
 function getStoredOpenIndex() {
   try {
@@ -116,7 +137,7 @@ function bindNavSubToggles() {
 
 // Sidebar toggle — desktop collapses to a 64px rail; mobile opens a drawer.
 // Same button, viewport-aware behavior. Rail state persists in localStorage.
-const RAIL_KEY = 'gentelella:sidebar-rail';
+const RAIL_KEY = 'dash:sidebar-rail';
 
 function isDesktop() { return window.matchMedia('(min-width: 769px)').matches; }
 
@@ -547,6 +568,7 @@ export function mountShell() {
   if (body.dataset.shell !== 'admin') {return;}
 
   injectShellIfMissing();
+  migrateStorageKeys();
   bindNavSubmenus();
   bindNavSubToggles();
   bindSidebarToggle();

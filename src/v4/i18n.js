@@ -4,6 +4,7 @@
 // Persisted per browser (hr:lang); default comes from Settings (language).
 
 import { NAV } from './shell-render.js';
+import { SEED_COMPANY } from './hr-seed.js';
 
 export const LANG_KEY = 'hr:lang';
 export const LANG_EVENT = 'hr:langchange';
@@ -516,7 +517,8 @@ const STR = {
     'hr.navgroup.compliance': 'Compliance',
     'hr.navgroup.time': 'Time & Leave',
     'hr.navgroup.operations': 'Operations',
-    'hr.navgroup.money': 'Money',
+    'hr.navgroup.employee': 'Employee',
+    'hr.navgroup.accounts': 'Accounts',
     'hr.navgroup.hiring': 'Hiring',
     'hr.navgroup.growth': 'Growth',
     'hr.navgroup.portals': 'Portals',
@@ -1085,7 +1087,8 @@ const STR = {
     'hr.navgroup.compliance': 'الامتثال',
     'hr.navgroup.time': 'الوقت والإجازات',
     'hr.navgroup.operations': 'العمليات',
-    'hr.navgroup.money': 'المالية',
+    'hr.navgroup.employee': 'الموظف',
+    'hr.navgroup.accounts': 'الحسابات',
     'hr.navgroup.hiring': 'التوظيف',
     'hr.navgroup.growth': 'النمو',
     'hr.navgroup.portals': 'البوابات',
@@ -1280,17 +1283,41 @@ export function applyShellI18n() {
 
 /** Apply owner brand (name + logo) to the sidebar. Only when saved in Settings. */
 export function applyBranding() {
-  let raw;
+  let stored = null;
   try {
-    raw = JSON.parse(localStorage.getItem('hr:settings:v1') || 'null');
+    stored = JSON.parse(localStorage.getItem('hr:settings:v1') || 'null');
   } catch (_e) {
-    return;
+    /* private mode */
   }
-  if (!raw || !raw.company || !raw.company.nameEn) {
+  const sc = (stored && stored.company) || {};
+  const raw = {
+    company: {
+      nameEn: sc.nameEn || SEED_COMPANY.nameEn,
+      nameAr: sc.nameAr || SEED_COMPANY.nameAr,
+      logo: sc.logo || SEED_COMPANY.logoUrl,
+      primary: sc.primary || SEED_COMPANY.primary
+    }
+  };
+  if (!raw.company.nameEn) {
     return;
   }
   const lang = currentLang();
   const name = lang === 'ar' ? raw.company.nameAr || raw.company.nameEn : raw.company.nameEn;
+  // White-label: browser tab + theme color follow the company profile.
+  const base = (document.title.split('|')[0] || '').trim() || name;
+  document.title = `${base} | ${String(name).replace(/\|/g, ' ')}`;
+  const hex = raw.company.primary;
+  if (/^#[0-9a-fA-F]{6}$/.test(hex || '')) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const dk = [r, g, b].map(v => Math.round(v * 0.85));
+    const root = document.documentElement.style;
+    root.setProperty('--primary', hex);
+    root.setProperty('--primary-lt', `rgba(${r},${g},${b},0.06)`);
+    root.setProperty('--primary-dk', `rgb(${dk[0]},${dk[1]},${dk[2]})`);
+    root.setProperty('--sidebar-active', `rgba(${r},${g},${b},0.08)`);
+  }
   const brandName = document.querySelector('.sidebar-brand .brand-name');
   if (brandName) {
     brandName.textContent = name;

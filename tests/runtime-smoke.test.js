@@ -4,7 +4,7 @@
 // Run: npm run test:runtime
 import { describe, test, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
-import { initI18n, setLang, currentLang, t } from '../src/v4/i18n.js';
+import { initI18n, setLang, currentLang, t, applyBranding } from '../src/v4/i18n.js';
 import { mountShell } from '../src/v4/shell.js';
 
 const R = process.cwd();
@@ -119,7 +119,7 @@ describe('sidebar hierarchy', () => {
   test('HR NAV: 10 icon-bearing parents, 46 keyed leaves, all translated', async () => {
     const { NAV, ICONS } = await import('../src/v4/shell-render.js');
     const hr = NAV.find(g => g.label.includes('HR'));
-    expect(hr.items.length).toBe(10);
+    expect(hr.items.length).toBe(11);
     const leaves = hr.items.flatMap(p => (p.children || []).filter(c => c.key));
     expect(leaves.length).toBe(46);
     expect(new Set(leaves.map(l => l.key)).size).toBe(46);
@@ -191,6 +191,23 @@ describe('sidebar hierarchy', () => {
     expect(
       document.querySelector('.sidebar-nav .nav-subtree.open .nav-subtoggle .nav-text')?.textContent
     ).toBe('E-commerce');
+  });
+
+  test('white-label branding applies from company profile', async () => {
+    await mountPage('hr_dashboard');
+    applyBranding();
+    expect(document.title).toContain('Manpower Supply Co.');
+    expect(document.querySelector('.sidebar-brand .brand-name')?.textContent).toBe(
+      'Manpower Supply Co.'
+    );
+    expect(document.documentElement.style.getPropertyValue('--primary')).toBe('#1ABB9C');
+    setLang('ar');
+    // Stale LANG_EVENT listeners from earlier mounts re-run applyI18n(document)
+    // (their `|| document` fallback) after setLang's branding — a jsdom-only
+    // artifact; re-apply to assert the composed end state.
+    applyBranding();
+    expect(document.title).toContain('شركة توريد العمالة');
+    setLang('en');
   });
 });
 

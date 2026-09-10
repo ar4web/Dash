@@ -53,8 +53,7 @@ export const NAV = [
           { key: 'hr-sa-compliance', href: 'hr_sa_compliance.html', text: 'SA Compliance' },
           { key: 'hr-visas', href: 'hr_visas.html', text: 'Visas' },
           { key: 'hr-residency', href: 'hr_residency.html', text: 'Residency & renewals' },
-          { key: 'hr-contracts', href: 'hr_contracts.html', text: 'Contract maker' },
-          { key: 'hr-eosb', href: 'hr_eosb.html', text: 'EOSB & settlement' }
+          { key: 'hr-contracts', href: 'hr_contracts.html', text: 'Contract maker' }
         ]
       },
       {
@@ -77,19 +76,27 @@ export const NAV = [
           { key: 'hr-clients', href: 'hr_clients.html', text: 'Clients' },
           { key: 'hr-requests', href: 'hr_requests.html', text: 'Manpower requests' },
           { key: 'hr-assignments', href: 'hr_assignments.html', text: 'Assignments' },
-          { key: 'hr-ajeer', href: 'hr_ajeer.html', text: 'Ajeer permits' },
-          { key: 'hr-expenses', href: 'hr_expenses.html', text: 'Expenses' }
+          { key: 'hr-ajeer', href: 'hr_ajeer.html', text: 'Ajeer permits' }
         ]
       },
       {
-        text: 'Money',
-        icon: 'wallet',
-        i18n: 'hr.navgroup.money',
+        text: 'Employee',
+        icon: 'id',
+        i18n: 'hr.navgroup.employee',
         children: [
           { key: 'hr-payroll', href: 'hr_payroll.html', text: 'Pay runs' },
           { key: 'hr-gosi', href: 'hr_gosi.html', text: 'GOSI' },
           { key: 'hr-wps', href: 'hr_wps.html', text: 'WPS & Mudad' },
-          { key: 'hr-invoices', href: 'hr_invoices.html', text: 'Invoices' }
+          { key: 'hr-eosb', href: 'hr_eosb.html', text: 'EOSB & settlement' }
+        ]
+      },
+      {
+        text: 'Accounts',
+        icon: 'wallet',
+        i18n: 'hr.navgroup.accounts',
+        children: [
+          { key: 'hr-invoices', href: 'hr_invoices.html', text: 'Invoices' },
+          { key: 'hr-expenses', href: 'hr_expenses.html', text: 'Expenses' }
         ]
       },
       {
@@ -389,8 +396,8 @@ export function renderSidebar(activeKey) {
   return `
     <aside class="sidebar" aria-label="Primary navigation">
       <div class="sidebar-brand">
-        <div class="brand-icon">G</div>
-        <div class="brand-name">Gentelella <small>v4</small></div>
+        <div class="brand-icon">D</div>
+        <div class="brand-name">Dash</div>
       </div>
       <nav class="sidebar-nav">${groups}</nav>
       <div class="sidebar-footer">

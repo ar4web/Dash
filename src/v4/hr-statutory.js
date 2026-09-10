@@ -30,7 +30,8 @@ export const DEFAULT_SETTINGS = {
     nameAr: SEED_COMPANY.nameAr,
     cr: SEED_COMPANY.crNo,
     address: SEED_COMPANY.addressEn,
-    logo: SEED_COMPANY.logoUrl
+    logo: SEED_COMPANY.logoUrl,
+    primary: SEED_COMPANY.primary
   },
   nitaqat: {
     activity: SEED_NITAQAT.activity,
