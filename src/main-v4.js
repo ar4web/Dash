@@ -8,8 +8,10 @@ import { initTables } from './v4/tables.js';
 import { openMenu, DEFAULT_CARD_MENU } from './v4/menus.js';
 import { initCommandPalette } from './v4/command-palette.js';
 import { initPageActions } from './v4/page-actions.js';
+import { initI18n } from './v4/i18n.js';
 
 mountShell();
+initI18n();
 initCharts();
 initTables();
 initCommandPalette();

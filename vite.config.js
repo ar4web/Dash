@@ -339,6 +339,8 @@ export default defineConfig(({ command }) => ({
     open: '/production/index.html',
     port: Number(process.env.PORT) || 9173,
     host: true,
+    // Allow cloud-preview hosts (e.g. *.e2b.app) to load the dev server.
+    allowedHosts: ['.e2b.app'],
     // /api/* → examples/express-sqlite (when running). Falls through 404 if
     // the example backend isn't up — frontend pages stay on seed data.
     // Override the target with API_URL if your backend lives elsewhere.
@@ -360,7 +362,9 @@ export default defineConfig(({ command }) => ({
   preview: {
     open: '/production/index.html',
     port: Number(process.env.PREVIEW_PORT) || 9174,
-    host: true
+    host: true,
+    // Allow cloud-preview hosts (e.g. *.e2b.app) to load the preview server.
+    allowedHosts: ['.e2b.app']
   },
   optimizeDeps: {
     include: ['echarts', 'datatables.net', 'leaflet'],

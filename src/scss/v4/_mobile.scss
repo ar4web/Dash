@@ -1,0 +1,57 @@
+// HR + Operations — mobile-first rules. 360px is the gate: every P0 flow must
+// work one-handed at 360×740 with no horizontal page scroll (tables scroll
+// inside .table-responsive instead).
+
+@media (max-width: 640px) {
+  .hr-kv-grid,
+  .hr-form-2col {
+    grid-template-columns: 1fr;
+  }
+
+  .hr-360-top {
+    flex-wrap: wrap;
+  }
+
+  .hr-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .page-header-row {
+    flex-wrap: wrap;
+  }
+
+  .page-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .page-actions .btn,
+  .page-actions .form-control {
+    flex: 1 1 auto;
+  }
+
+  .sticky-savebar .btn {
+    width: 100%;
+  }
+}
+
+// 360px gate: stat cards stack, toolbar controls go full width.
+@media (max-width: 480px) {
+  .row.col-2,
+  .row.col-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .users-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .users-filters .search-box,
+  .users-filters .form-control {
+    width: 100%;
+  }
+}

@@ -1,0 +1,253 @@
+// HR + Operations — P0 component styles (key-value grids, tabs, alerts, 360 header).
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// Language toggle injected into the topbar (replaces external docs link).
+.tb-btn.tb-lang {
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 44px;
+  justify-content: center;
+}
+
+// Breadcrumbs on detail pages.
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.crumbs a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--primary);
+}
+
+// Key-value readout grids (360 file, portals, compliance).
+.hr-kv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 24px;
+}
+
+.hr-kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 13px;
+}
+
+.hr-kv > span {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.hr-kv > strong {
+  font-weight: 600;
+  text-align: end;
+}
+
+// Tab strip (360 file, compliance).
+.hr-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.hr-tab {
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.hr-tab:hover {
+  background: var(--body-bg);
+  color: var(--text);
+}
+
+.hr-tab.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+// 360 / portal header row.
+.hr-360-top {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+// Dashboard alert rows.
+.hr-alert {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.hr-alert:last-child {
+  border-bottom: 0;
+}
+
+.hr-alert:hover {
+  color: var(--primary);
+}
+
+// Generic empty state.
+.hr-empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+// Two-column settings forms.
+.hr-form-2col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+
+// Department chips on settings.
+.hr-dept-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 8px 5px 12px;
+  margin: 0 8px 8px 0;
+  font-size: 12.5px;
+}
+
+.hr-dept-chip button {
+  border: 0;
+  background: var(--body-bg);
+  color: var(--text-muted);
+  border-radius: 999px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hr-dept-chip button:hover {
+  background: var(--red);
+  color: #fff;
+}
+
+// Leave balance ring on My space.
+.my-leave-ring {
+  width: 110px;
+  height: 110px;
+  margin: 4px auto 0;
+  border-radius: 50%;
+  border: 8px solid var(--primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-leave-ring strong {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.my-leave-ring span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+// Sticky save bar on settings.
+.sticky-savebar {
+  position: sticky;
+  bottom: 12px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+// Checkbox column in tables.
+.cb-col {
+  width: 34px;
+}
+
+// Danger panel.
+.panel-danger {
+  border-color: var(--red);
+}
+
+// Clickable stat cards.
+.hr-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.hr-card-link:hover {
+  border-color: var(--primary);
+}
+
+// Deployment mix bars (no chart lib needed).
+.hr-bar-row {
+  margin-bottom: 12px;
+}
+
+.hr-bar-row:last-child {
+  margin-bottom: 0;
+}
+
+.hr-bar-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  margin-bottom: 4px;
+}
+
+.hr-bar-top span {
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hr-bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--body-bg);
+  overflow: hidden;
+}
+
+.hr-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 300ms;
+}

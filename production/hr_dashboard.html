@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Dashboard | Gentelella 2026 v4</title>
+<link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script type="module" src="/src/main-v4.js"></script>
+</head>
+<body data-shell="admin" data-page="hr-dashboard" data-breadcrumb="Home > HR Dashboard">
+
+<main class="main">
+<div class="page-wrapper" data-hr-dashboard>
+
+  <div class="page-header">
+    <div class="page-header-row">
+      <div>
+        <div class="page-pretitle">HR &amp; Operations</div>
+        <h1 class="page-title" data-i18n="hr.nav.dashboard">HR Dashboard</h1>
+      </div>
+      <div class="page-actions">
+        <a class="btn btn-outline" href="hr_employees.html" data-i18n="hr.nav.employees">Employees</a>
+        <a class="btn btn-primary" href="hr_sa_compliance.html" data-i18n="hr.dashboard.openCompliance">Open compliance</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row col-3" id="hr-kpis" style="margin-bottom:16px"></div>
+
+  <div class="row col-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" data-i18n="hr.dashboard.alerts">Needs attention</div>
+        <div class="card-options">
+          <a class="btn btn-ghost btn-sm" href="hr_sa_compliance.html" data-i18n="common.open">Open</a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="hr-alerts"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" data-i18n="hr.dashboard.deployTitle">Deployment mix</div>
+      </div>
+      <div class="card-body">
+        <div id="hr-deploy"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" data-i18n="hr.dashboard.expiries">Upcoming Iqama expiries</div>
+      <div class="card-options">
+        <a class="btn btn-ghost btn-sm" href="hr_sa_compliance.html" data-i18n="common.viewAll">View all</a>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="hr-expiries"></div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script type="module">
+import { initHrDashboard } from '/src/v4/hr-dashboard.js';
+initHrDashboard();
+</script>
+
+</body>
+</html>
