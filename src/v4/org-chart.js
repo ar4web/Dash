@@ -3,7 +3,8 @@
 
 import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { initialsOf } from './hr-locale.js';
-import { getSeed } from './hr-api.js';
+import { getSeed, saveImportedRows } from './hr-api.js';
+import { openImportModal } from './import-modal.js';
 import { DEPARTMENTS } from './hr-seed.js';
 
 let booted = false;
@@ -130,6 +131,27 @@ export function initOrgChart() {
     return;
   }
   booted = true;
+  const orgSchema = [
+    { key: 'emp', en: 'Employee code', ar: 'رقم الموظف', required: true },
+    { key: 'mgr', en: 'Manager code (empty = top)', ar: 'رقم المدير' }
+  ];
+  document.getElementById('org-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import reporting lines (Excel / CSV)',
+      titleAr: 'استيراد خطوط التبعية (Excel / CSV)',
+      filename: 'org-links',
+      schema: orgSchema,
+      example: { emp: 'EMP-0013', mgr: 'EMP-0002' },
+      onImport: rows => {
+        saveImportedRows(
+          'orgLinks',
+          rows.map(r => ({ emp: r.emp, mgr: r.mgr || null }))
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('org-print')?.addEventListener('click', () => window.print());
   window.addEventListener(LANG_EVENT, renderAll);
 }

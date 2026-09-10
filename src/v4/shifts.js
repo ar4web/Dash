@@ -6,8 +6,9 @@ import { showModal } from './modal.js';
 import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { fmtDate } from './hr-locale.js';
 import { inRamadan } from './hr-statutory.js';
-import { getSeed, patchSeedRow } from './hr-api.js';
+import { getSeed, patchSeedRow, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 import { SITES, RAMADAN_PERIODS } from './hr-seed.js';
 
 let booted = false;
@@ -219,6 +220,57 @@ export function initShifts() {
       openMapModal(btn.dataset.map);
     }
   });
+  const shiftSchema = [
+    { key: 'id', en: 'Shift ID', ar: 'رمز الوردية', required: true },
+    { key: 'en', en: 'Name (EN)', ar: 'الاسم (إنجليزي)', required: true },
+    { key: 'ar', en: 'Name (AR)', ar: 'الاسم (عربي)' },
+    { key: 'start', en: 'Start (HH:MM)', ar: 'البداية' },
+    { key: 'end', en: 'End (HH:MM)', ar: 'النهاية' },
+    { key: 'breakMin', en: 'Break (min)', ar: 'الراحة', type: 'number' },
+    { key: 'days', en: 'Days (comma, sun..sat)', ar: 'الأيام' },
+    { key: 'ramadanStart', en: 'Ramadan start', ar: 'بداية رمضان' },
+    { key: 'ramadanEnd', en: 'Ramadan end', ar: 'نهاية رمضان' }
+  ];
+  document.getElementById('shift-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import shifts (Excel / CSV)',
+      titleAr: 'استيراد الورديات (Excel / CSV)',
+      filename: 'shifts',
+      schema: shiftSchema,
+      example: {
+        id: 'SH-NIGHT',
+        en: 'Night shift',
+        ar: 'وردية ليلية',
+        start: '22:00',
+        end: '06:00',
+        breakMin: '30',
+        days: 'sun,mon,tue,wed,thu',
+        ramadanStart: '22:00',
+        ramadanEnd: '04:00'
+      },
+      onImport: rows => {
+        saveImportedRows(
+          'shifts',
+          rows.map(r => ({
+            id: r.id,
+            en: r.en,
+            ar: r.ar || r.en,
+            start: r.start || '08:00',
+            end: r.end || '17:00',
+            breakMin: Number(r.breakMin) || 0,
+            days: (r.days || 'sun,mon,tue,wed,thu')
+              .split(',')
+              .map(d => d.trim())
+              .filter(Boolean),
+            ramadanStart: r.ramadanStart || r.start || '08:00',
+            ramadanEnd: r.ramadanEnd || r.end || '17:00'
+          }))
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('shift-export')?.addEventListener('click', () => {
     exportData(
       'xlsx',

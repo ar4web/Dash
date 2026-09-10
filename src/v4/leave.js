@@ -7,6 +7,7 @@ import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { leaveDays, annualBalance, sickTier, hajjEligible, yearsBetween } from './hr-statutory.js';
 import { getSeed, patchSeedRow, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 import { LEAVE_TYPES, HOLIDAYS } from './hr-seed.js';
 
 let booted = false;
@@ -225,8 +226,8 @@ function openRequestModal() {
   dlg.addEventListener('change', refresh);
 }
 
-function guard(type, from, to, days, cert) {
-  const e = current();
+function guard(type, from, to, days, cert, empRow) {
+  const e = empRow || current();
   const bad = msg => ({ ok: false, msg });
   if (!from || !to) {
     return bad(L('Dates are required', 'التواريخ مطلوبة'));
@@ -288,6 +289,68 @@ export function initLeave() {
     renderAll();
   });
   document.getElementById('lv-new')?.addEventListener('click', openRequestModal);
+  const lvSchema = [
+    { key: 'emp', en: 'Employee code', ar: 'رقم الموظف', required: true },
+    { key: 'type', en: 'Type code', ar: 'رمز النوع', required: true },
+    { key: 'from', en: 'From (YYYY-MM-DD)', ar: 'من', required: true, type: 'date' },
+    { key: 'to', en: 'To (YYYY-MM-DD)', ar: 'إلى', required: true, type: 'date' },
+    { key: 'note', en: 'Note', ar: 'ملاحظة' },
+    { key: 'cert', en: 'Certificate (yes/no)', ar: 'التقرير الطبي' }
+  ];
+  document.getElementById('lv-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import leave requests (Excel / CSV)',
+      titleAr: 'استيراد طلبات الإجازات (Excel / CSV)',
+      filename: 'leave-requests',
+      schema: lvSchema,
+      example: {
+        emp: 'EMP-0009',
+        type: 'annual',
+        from: '2026-10-05',
+        to: '2026-10-09',
+        note: '',
+        cert: ''
+      },
+      onImport: rows => {
+        const list = getSeed('employees');
+        let n = getSeed('leaveRequests').length + 32;
+        const out = [];
+        for (const r of rows) {
+          const e = list.find(x => x.code === r.emp);
+          if (!e) {
+            showToast(`${L('Unknown employee', 'موظف غير معروف')}: ${r.emp}`, {
+              variant: 'warning'
+            });
+            return false;
+          }
+          const cert = /^(1|y|yes|true)$/i.test((r.cert || '').trim());
+          const days = leaveDays(r.from, r.to, HOLIDAYS);
+          const v = guard(r.type, r.from, r.to, days, cert, e);
+          if (!v.ok) {
+            showToast(`${r.emp}: ${v.msg}`, { variant: 'warning' });
+            return false;
+          }
+          n += 1;
+          out.push({
+            id: `LV-2026-0${n}`,
+            emp: e.code,
+            type: r.type,
+            from: r.from,
+            to: r.to,
+            days,
+            cert,
+            status: 'pending',
+            step: 0,
+            note: r.note || '',
+            history: []
+          });
+        }
+        saveImportedRows('leaveRequests', out);
+        renderAll();
+        return out.length;
+      }
+    })
+  );
   document.getElementById('lv-export')?.addEventListener('click', () => {
     exportData(
       'xlsx',

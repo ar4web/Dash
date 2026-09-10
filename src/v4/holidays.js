@@ -8,6 +8,7 @@ import { fmtDate, fmtHijri } from './hr-locale.js';
 import { observedHoliday } from './hr-statutory.js';
 import { getSeed, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 
 let booted = false;
 let yearFilter = '';
@@ -143,6 +144,37 @@ export function initHolidays() {
     renderAll();
   });
   document.getElementById('hol-add')?.addEventListener('click', openAddModal);
+  const holSchema = [
+    { key: 'en', en: 'Name (EN)', ar: 'الاسم (إنجليزي)', required: true },
+    { key: 'ar', en: 'Name (AR)', ar: 'الاسم (عربي)' },
+    { key: 'start', en: 'Start (YYYY-MM-DD)', ar: 'البداية', required: true, type: 'date' },
+    { key: 'days', en: 'Days', ar: 'الأيام', type: 'number' },
+    { key: 'hijri', en: 'Hijri (YYYY-MM-DD)', ar: 'الهجري' }
+  ];
+  document.getElementById('hol-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import holidays (Excel / CSV)',
+      titleAr: 'استيراد العطل (Excel / CSV)',
+      filename: 'holidays',
+      schema: holSchema,
+      example: { en: 'Company day', ar: 'يوم الشركة', start: '2026-11-05', days: '1', hijri: '' },
+      onImport: rows => {
+        saveImportedRows(
+          'holidays',
+          rows.map(r => ({
+            id: `H-${r.start}`,
+            en: r.en,
+            ar: r.ar || r.en,
+            start: r.start,
+            days: Number(r.days) || 1,
+            hijri: r.hijri || ''
+          }))
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('hol-export')?.addEventListener('click', () => {
     exportData(
       'xlsx',

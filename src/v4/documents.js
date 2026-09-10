@@ -8,6 +8,7 @@ import { fmtDate } from './hr-locale.js';
 import { daysUntil, expiryBand } from './hr-statutory.js';
 import { getSeed, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 import { DOC_TYPES } from './hr-seed.js';
 
 let booted = false;
@@ -257,6 +258,44 @@ export function initDocuments() {
     renderRows();
   });
   document.getElementById('doc-upload')?.addEventListener('click', () => openUploadModal());
+  const docSchema = [
+    { key: 'title', en: 'Title', ar: 'العنوان', required: true },
+    { key: 'type', en: 'Type code', ar: 'رمز النوع', required: true },
+    { key: 'emp', en: 'Employee code', ar: 'رقم الموظف' },
+    { key: 'expires', en: 'Expiry (YYYY-MM-DD)', ar: 'الانتهاء', type: 'date' }
+  ];
+  document.getElementById('doc-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import vault rows (Excel / CSV)',
+      titleAr: 'استيراد صفوف المستودع (Excel / CSV)',
+      filename: 'documents',
+      schema: docSchema,
+      example: {
+        title: 'Iqama copy — new hire',
+        type: 'iqama',
+        emp: 'EMP-0006',
+        expires: '2027-03-14'
+      },
+      onImport: rows => {
+        const today = new Date().toISOString().slice(0, 10);
+        saveImportedRows(
+          'documents',
+          rows.map(r => ({
+            id: nextDocId(),
+            type: r.type,
+            emp: r.emp || '',
+            title: r.title,
+            uploaded: today,
+            expires: r.expires || '',
+            size: '—',
+            local: true
+          }))
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('doc-export')?.addEventListener('click', () => {
     exportData(
       'xlsx',

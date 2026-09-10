@@ -8,6 +8,7 @@ import { fmtSAR, fmtDate } from './hr-locale.js';
 import { daysUntil, expiryBand, renewalChecklist } from './hr-statutory.js';
 import { getSeed, patchSeedRow, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 
 let booted = false;
 let selected = '';
@@ -338,6 +339,45 @@ export function initResidency() {
     renderDetail();
     document.getElementById('res-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
+  const resSchema = [
+    { key: 'emp', en: 'Employee code', ar: 'رقم الموظف', required: true },
+    { key: 'passport', en: 'Passport no.', ar: 'رقم الجواز' },
+    { key: 'passportExp', en: 'Passport expiry (YYYY-MM-DD)', ar: 'انتهاء الجواز', type: 'date' },
+    { key: 'ins', en: 'Insurance provider', ar: 'شركة التأمين' },
+    { key: 'insExp', en: 'Insurance expiry (YYYY-MM-DD)', ar: 'انتهاء التأمين', type: 'date' },
+    { key: 'fines', en: 'Fines (SAR)', ar: 'المخالفات', type: 'number' }
+  ];
+  document.getElementById('res-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import residency docs (Excel / CSV)',
+      titleAr: 'استيراد مستندات الإقامة (Excel / CSV)',
+      filename: 'residency-docs',
+      schema: resSchema,
+      example: {
+        emp: 'EMP-0006',
+        passport: 'N100006',
+        passportExp: '2029-04-11',
+        ins: 'Bupa',
+        insExp: '2027-03-14',
+        fines: '0'
+      },
+      onImport: rows => {
+        saveImportedRows(
+          'residencyDocs',
+          rows.map(r => ({
+            emp: r.emp,
+            passport: r.passport || '',
+            passportExp: r.passportExp || '',
+            ins: r.ins || '',
+            insExp: r.insExp || '',
+            fines: Number(r.fines) || 0
+          }))
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('res-export')?.addEventListener('click', () => {
     const rows = expats().map(e => {
       const d = docsOf(e.code);

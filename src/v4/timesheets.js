@@ -7,6 +7,7 @@ import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { MAX_DAY_HOURS, RAMADAN_DAY_HOURS } from './hr-statutory.js';
 import { getSeed, patchSeedRow, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 import { SITES } from './hr-seed.js';
 
 let booted = false;
@@ -286,6 +287,57 @@ export function initTimesheets() {
     renderDetail();
   });
   document.getElementById('ts-new')?.addEventListener('click', openNewModal);
+  const tsSchema = [
+    { key: 'sheet', en: 'Sheet ID (draft)', ar: 'رمز الكشف', required: true },
+    { key: 'emp', en: 'Employee code', ar: 'رقم الموظف', required: true },
+    { key: 'days', en: 'Days', ar: 'الأيام', type: 'number' },
+    { key: 'regH', en: 'Regular hours', ar: 'الأساسي', type: 'number' },
+    { key: 'otH', en: 'OT hours', ar: 'الإضافي', type: 'number' }
+  ];
+  document.getElementById('ts-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import week lines (Excel / CSV)',
+      titleAr: 'استيراد سطور الأسبوع (Excel / CSV)',
+      filename: 'timesheet-lines',
+      schema: tsSchema,
+      example: { sheet: 'TS-2026-W37-ST1', emp: 'EMP-0013', days: '5', regH: '40', otH: '2' },
+      onImport: rows => {
+        const sheets = getSeed('timesheets');
+        const bad = [...new Set(rows.map(r => r.sheet))].filter(id => {
+          const x = sheets.find(s => s.id === id);
+          return !x || x.status !== 'draft';
+        });
+        if (bad.length) {
+          showToast(
+            `${L('Unknown or locked sheets', 'كشوف غير معروفة أو مقفلة')}: ${bad.join(', ')}`,
+            {
+              variant: 'warning'
+            }
+          );
+          return false;
+        }
+        for (const r of rows) {
+          const x = getSeed('timesheets').find(s => s.id === r.sheet);
+          const lines = [...(x.lines || [])];
+          const line = {
+            emp: r.emp,
+            days: Number(r.days) || 0,
+            regH: Number(r.regH) || 0,
+            otH: Number(r.otH) || 0
+          };
+          const i = lines.findIndex(l => l.emp === r.emp);
+          if (i >= 0) {
+            lines[i] = line;
+          } else {
+            lines.push(line);
+          }
+          patchSeedRow('timesheets', x, { lines });
+        }
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('ts-export')?.addEventListener('click', () => {
     const rows = [];
     for (const x of getSeed('timesheets')) {

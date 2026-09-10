@@ -6,8 +6,9 @@ import { showModal } from './modal.js';
 import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { fmtDate } from './hr-locale.js';
 import { inRamadan, RAMADAN_DAY_HOURS, NORMAL_DAY_HOURS } from './hr-statutory.js';
-import { getSeed, patchSeedRow } from './hr-api.js';
+import { getSeed, patchSeedRow, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 import { SITES, RAMADAN_PERIODS } from './hr-seed.js';
 
 let booted = false;
@@ -236,6 +237,57 @@ export function initAttendance() {
     renderAll();
   });
   document.getElementById('att-checkin')?.addEventListener('click', () => openCheckinModal());
+  const attSchema = [
+    { key: 'emp', en: 'Employee code', ar: 'رقم الموظف', required: true },
+    { key: 'date', en: 'Date (YYYY-MM-DD)', ar: 'التاريخ', required: true, type: 'date' },
+    { key: 'in', en: 'In (HH:MM, empty = absent)', ar: 'الحضور' },
+    { key: 'out', en: 'Out (HH:MM)', ar: 'الانصراف' },
+    { key: 'site', en: 'Site (fallback)', ar: 'الموقع' }
+  ];
+  document.getElementById('att-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import attendance (Excel / CSV)',
+      titleAr: 'استيراد الحضور (Excel / CSV)',
+      filename: 'attendance',
+      schema: attSchema,
+      example: { emp: 'EMP-0013', date: '2026-09-10', in: '07:55', out: '16:05', site: '' },
+      onImport: rows => {
+        const list = crew();
+        saveImportedRows(
+          'attendance',
+          rows.map(r => {
+            const w = list.find(x => x.emp === r.emp) || { site: r.site || '', client: '' };
+            const base = {
+              id: `ATT-${r.date}-${r.emp}`,
+              emp: r.emp,
+              site: w.site,
+              client: w.client || '',
+              date: r.date
+            };
+            if (!r.in || !r.out) {
+              return { ...base, in: '', out: '', mins: 0, lateMin: 0, otMin: 0, status: 'absent' };
+            }
+            const [ih, im] = r.in.split(':').map(Number);
+            const [oh, om] = r.out.split(':').map(Number);
+            const inMin = ih * 60 + im;
+            const worked = oh * 60 + om - inMin - 60;
+            const late = inMin > 8 * 60 + 5 ? inMin - (8 * 60 + 5) : 0;
+            return {
+              ...base,
+              in: r.in,
+              out: r.out,
+              mins: worked,
+              lateMin: late,
+              otMin: Math.max(0, worked - 480),
+              status: late ? 'late' : 'present'
+            };
+          })
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('att-export')?.addEventListener('click', () => {
     exportData(
       'xlsx',

@@ -7,6 +7,7 @@ import { t, currentLang, LANG_EVENT, applyI18n } from './i18n.js';
 import { fmtSAR } from './hr-locale.js';
 import { getSeed, patchSeedRow, saveImportedRows } from './hr-api.js';
 import { exportData } from './import-export.js';
+import { openImportModal } from './import-modal.js';
 import { AGENTS, PROFESSIONS } from './hr-seed.js';
 
 let booted = false;
@@ -559,6 +560,57 @@ export function initOnboarding() {
     document.getElementById('ob-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
   document.getElementById('ob-new')?.addEventListener('click', openNewCaseModal);
+  const obSchema = [
+    { key: 'nameEn', en: 'Name (EN)', ar: 'الاسم (إنجليزي)', required: true },
+    { key: 'nameAr', en: 'Name (AR)', ar: 'الاسم (عربي)' },
+    { key: 'nat', en: 'Nationality', ar: 'الجنسية', required: true },
+    { key: 'prof', en: 'Profession', ar: 'المهنة' },
+    { key: 'type', en: 'Type (overseas/transfer)', ar: 'النوع' },
+    { key: 'agent', en: 'Agent', ar: 'الوكيل' },
+    { key: 'visa', en: 'Visa no.', ar: 'رقم التأشيرة' }
+  ];
+  document.getElementById('ob-import')?.addEventListener('click', () =>
+    openImportModal({
+      titleEn: 'Import starters (Excel / CSV)',
+      titleAr: 'استيراد ملتحقين جدد (Excel / CSV)',
+      filename: 'onboarding',
+      schema: obSchema,
+      example: {
+        nameEn: 'Imran Khan',
+        nameAr: 'عمران خان',
+        nat: 'Pakistan',
+        prof: 'electrician',
+        type: 'overseas',
+        agent: 'AG-02',
+        visa: ''
+      },
+      onImport: rows => {
+        let n = getSeed('onboarding').length + 19;
+        saveImportedRows(
+          'onboarding',
+          rows.map(r => {
+            n += 1;
+            return {
+              id: `OB-2026-0${n}`,
+              type: r.type === 'transfer' ? 'transfer' : 'overseas',
+              emp: '',
+              nameEn: r.nameEn,
+              nameAr: r.nameAr || '',
+              nat: r.nat || '',
+              prof: r.prof || '',
+              agent: r.agent || '',
+              visa: r.visa || '',
+              stage: 1,
+              stages: {},
+              costs: []
+            };
+          })
+        );
+        renderAll();
+        return rows.length;
+      }
+    })
+  );
   document.getElementById('ob-export')?.addEventListener('click', () => {
     exportData('xlsx', 'onboarding-pipeline', EXPORT_COLS, getSeed('onboarding'), 'Pipeline');
   });
