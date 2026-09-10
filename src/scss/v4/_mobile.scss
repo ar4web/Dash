@@ -81,4 +81,31 @@
   .org-scroll {
     overflow-x: auto;
   }
+
+  .hr-stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .shift-grid,
+  .leave-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lc-day {
+    min-height: 52px;
+    padding: 4px;
+  }
+
+  .lc-num small {
+    display: none;
+  }
+
+  .ap-actions .btn {
+    min-height: 52px;
+  }
+
+  .hr-controls .form-control,
+  .hr-controls .btn {
+    flex: 1 1 100%;
+  }
 }

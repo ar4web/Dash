@@ -1847,3 +1847,284 @@ export const ORG_LINKS = [
   { emp: 'EMP-0022', mgr: 'EMP-0002' },
   { emp: 'EMP-0023', mgr: 'EMP-0002' }
 ];
+
+// ── P2: time & leave ─────────────────────────────────────────────────────
+// Weekend in KSA: Friday + Saturday (JS day numbers).
+export const WEEKEND_DAYS = [5, 6];
+
+export const SHIFTS = [
+  {
+    id: 'SH-DAY',
+    en: 'Day shift (office)',
+    ar: 'صباحية (مكتب)',
+    start: '08:00',
+    end: '17:00',
+    breakMin: 60,
+    days: ['sun', 'mon', 'tue', 'wed', 'thu'],
+    ramadanStart: '09:00',
+    ramadanEnd: '15:00'
+  },
+  {
+    id: 'SH-SITE',
+    en: 'Site shift',
+    ar: 'وردية الموقع',
+    start: '07:00',
+    end: '15:00',
+    breakMin: 30,
+    days: ['sun', 'mon', 'tue', 'wed', 'thu'],
+    ramadanStart: '08:00',
+    ramadanEnd: '14:00'
+  },
+  {
+    id: 'SH-FM',
+    en: 'FM shift (tower)',
+    ar: 'وردية المرافق (برج)',
+    start: '08:00',
+    end: '17:00',
+    breakMin: 60,
+    days: ['sun', 'mon', 'tue', 'wed', 'thu'],
+    ramadanStart: '09:00',
+    ramadanEnd: '15:00'
+  }
+];
+
+export const SITE_SHIFTS = [
+  { site: 'ST-001', shift: 'SH-SITE' },
+  { site: 'ST-002', shift: 'SH-SITE' },
+  { site: 'ST-003', shift: 'SH-FM' }
+];
+
+export const RAMADAN_PERIODS = [
+  { year: 2026, start: '2026-02-18', end: '2026-03-19', hijri: '1447' },
+  { year: 2027, start: '2027-02-08', end: '2027-03-09', hijri: '1448' }
+];
+
+// Deterministic demo attendance: past 14 days for assigned workers.
+function mulberry32(a) {
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildAttendance() {
+  const rnd = mulberry32(42);
+  const rows = [];
+  const seen = new Set();
+  const crew = [];
+  for (const a of ASSIGNMENTS) {
+    if (a.status !== 'active' || seen.has(a.emp)) {
+      continue;
+    }
+    seen.add(a.emp);
+    crew.push({ emp: a.emp, site: a.site, client: a.client });
+  }
+  const pad = n => String(n).padStart(2, '0');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  for (let back = 13; back >= 0; back -= 1) {
+    const d = new Date(today.getTime() - back * 86400000);
+    if (WEEKEND_DAYS.includes(d.getDay())) {
+      continue;
+    }
+    const iso = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    for (const w of crew) {
+      const r = rnd();
+      if (r < 0.02) {
+        rows.push({
+          id: `ATT-${iso}-${w.emp}`,
+          emp: w.emp,
+          site: w.site,
+          client: w.client,
+          date: iso,
+          in: '',
+          out: '',
+          mins: 0,
+          lateMin: 0,
+          otMin: 0,
+          status: 'absent'
+        });
+        continue;
+      }
+      const inMin = 7 * 60 + 52 + Math.floor(rnd() * 16);
+      const late = inMin > 8 * 60 + 5;
+      const outMin = 16 * 60 + 55 + Math.floor(rnd() * 18) + (rnd() < 0.12 ? 60 : 0);
+      const worked = outMin - inMin - 60;
+      rows.push({
+        id: `ATT-${iso}-${w.emp}`,
+        emp: w.emp,
+        site: w.site,
+        client: w.client,
+        date: iso,
+        in: `${pad(Math.floor(inMin / 60))}:${pad(inMin % 60)}`,
+        out: `${pad(Math.floor(outMin / 60))}:${pad(outMin % 60)}`,
+        mins: worked,
+        lateMin: late ? inMin - (8 * 60 + 5) : 0,
+        otMin: Math.max(0, worked - 480),
+        status: late ? 'late' : 'present'
+      });
+    }
+  }
+  return rows;
+}
+
+export const ATTENDANCE = buildAttendance();
+
+// Weekly site timesheets (supervisor view; approved = locked billing feed).
+export const TIMESHEETS = [
+  {
+    id: 'TS-2026-W36-ST1',
+    site: 'ST-001',
+    weekStart: '2026-08-30',
+    ramadan: false,
+    status: 'submitted',
+    step: 0,
+    submittedBy: 'Site supervisor',
+    submittedAt: '2026-09-05',
+    history: [],
+    lines: [
+      { emp: 'EMP-0013', days: 5, regH: 40, otH: 2 },
+      { emp: 'EMP-0014', days: 5, regH: 40, otH: 0 },
+      { emp: 'EMP-0018', days: 5, regH: 40, otH: 3 },
+      { emp: 'EMP-0020', days: 4, regH: 32, otH: 0 },
+      { emp: 'EMP-0023', days: 5, regH: 40, otH: 1 }
+    ]
+  },
+  {
+    id: 'TS-2026-W36-ST2',
+    site: 'ST-002',
+    weekStart: '2026-08-30',
+    ramadan: false,
+    status: 'submitted',
+    step: 0,
+    submittedBy: 'Site supervisor',
+    submittedAt: '2026-09-05',
+    history: [],
+    lines: [
+      { emp: 'EMP-0015', days: 5, regH: 40, otH: 0 },
+      { emp: 'EMP-0016', days: 5, regH: 40, otH: 4 },
+      { emp: 'EMP-0019', days: 5, regH: 40, otH: 2 }
+    ]
+  },
+  {
+    id: 'TS-2026-W36-ST3',
+    site: 'ST-003',
+    weekStart: '2026-08-30',
+    ramadan: false,
+    status: 'approved',
+    step: 2,
+    submittedBy: 'Site supervisor',
+    submittedAt: '2026-09-05',
+    approvedAt: '2026-09-07',
+    history: [
+      { by: 'site-supervisor', at: '2026-09-06', decision: 'approved', note: '' },
+      { by: 'ops', at: '2026-09-07', decision: 'approved', note: '' }
+    ],
+    lines: [
+      { emp: 'EMP-0006', days: 5, regH: 40, otH: 0 },
+      { emp: 'EMP-0007', days: 5, regH: 40, otH: 1 },
+      { emp: 'EMP-0009', days: 5, regH: 40, otH: 0 },
+      { emp: 'EMP-0010', days: 5, regH: 40, otH: 0 },
+      { emp: 'EMP-0011', days: 4, regH: 32, otH: 0 },
+      { emp: 'EMP-0022', days: 5, regH: 40, otH: 2 }
+    ]
+  },
+  {
+    id: 'TS-2026-W37-ST1',
+    site: 'ST-001',
+    weekStart: '2026-09-06',
+    ramadan: false,
+    status: 'draft',
+    step: 0,
+    submittedBy: '',
+    submittedAt: '',
+    history: [],
+    lines: [
+      { emp: 'EMP-0013', days: 4, regH: 32, otH: 1 },
+      { emp: 'EMP-0014', days: 4, regH: 32, otH: 0 },
+      { emp: 'EMP-0018', days: 4, regH: 32, otH: 0 },
+      { emp: 'EMP-0020', days: 4, regH: 32, otH: 0 },
+      { emp: 'EMP-0023', days: 4, regH: 32, otH: 0 }
+    ]
+  }
+];
+
+// Leave requests. status: pending | approved | rejected | cancelled. Historical
+// approved annual requests are already counted in employee.annualUsed.
+export const LEAVE_REQUESTS = [
+  {
+    id: 'LV-2026-031',
+    emp: 'EMP-0009',
+    type: 'annual',
+    from: '2026-09-20',
+    to: '2026-10-04',
+    days: 11,
+    status: 'pending',
+    step: 0,
+    note: 'Family visit',
+    history: []
+  },
+  {
+    id: 'LV-2026-030',
+    emp: 'EMP-0015',
+    type: 'sick',
+    from: '2026-09-06',
+    to: '2026-09-08',
+    days: 3,
+    cert: true,
+    status: 'approved',
+    step: 2,
+    note: 'Flu',
+    history: [
+      { by: 'manager', at: '2026-09-06', decision: 'approved', note: '' },
+      { by: 'hr', at: '2026-09-07', decision: 'approved', note: '' }
+    ]
+  },
+  {
+    id: 'LV-2026-029',
+    emp: 'EMP-0006',
+    type: 'annual',
+    from: '2026-07-05',
+    to: '2026-07-16',
+    days: 10,
+    status: 'approved',
+    step: 2,
+    note: '',
+    history: []
+  },
+  {
+    id: 'LV-2026-028',
+    emp: 'EMP-0022',
+    type: 'paternity',
+    from: '2026-08-10',
+    to: '2026-08-12',
+    days: 3,
+    status: 'approved',
+    step: 2,
+    note: 'Newborn',
+    history: []
+  },
+  {
+    id: 'LV-2026-027',
+    emp: 'EMP-0010',
+    type: 'unpaid',
+    from: '2026-08-20',
+    to: '2026-08-23',
+    days: 2,
+    status: 'rejected',
+    step: 0,
+    note: '',
+    history: [{ by: 'manager', at: '2026-08-21', decision: 'rejected', note: 'Site coverage' }]
+  }
+];
+
+// Approval chains v1 (flows → ordered roles). Admin may act at any step.
+export const APPROVAL_CHAINS = [
+  { flow: 'leave', steps: ['manager', 'hr'] },
+  { flow: 'timesheet', steps: ['site-supervisor', 'ops'] }
+];
+
+export const ACTOR_ROLES = ['manager', 'site-supervisor', 'hr', 'ops', 'admin'];

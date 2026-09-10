@@ -355,3 +355,100 @@ export function renewalChecklist(emp, docs = {}) {
     { key: 'gosi', ok: true, detail: 'expat-2pct' }
   ];
 }
+
+// ── Time & leave engine (P2) ─────────────────────────────────────────────
+// Weekend: Fri(5)+Sat(6). days param: JS getDay() numbers to skip.
+
+export const OT_RATE = 1.5;
+export const MAX_DAY_HOURS = 11;
+export const RAMADAN_DAY_HOURS = 6;
+export const NORMAL_DAY_HOURS = 8;
+
+export function isWeekend(iso, weekend = [5, 6]) {
+  return weekend.includes(new Date(`${iso}T00:00:00`).getDay());
+}
+
+// Working-day count in [from..to], skipping weekend + public-holiday spans.
+// holidays: [{ start, days }]
+export function leaveDays(from, to, holidays = [], weekend = [5, 6]) {
+  if (!from || !to || to < from) {
+    return 0;
+  }
+  const off = new Set();
+  for (const h of holidays || []) {
+    const s = new Date(`${h.start}T00:00:00`);
+    for (let i = 0; i < (h.days || 1); i += 1) {
+      const d = new Date(s.getTime() + i * 86400000);
+      off.add(d.toISOString().slice(0, 10));
+    }
+  }
+  let n = 0;
+  const cur = new Date(`${from}T00:00:00`);
+  const end = new Date(`${to}T00:00:00`);
+  while (cur <= end) {
+    const iso = cur.toISOString().slice(0, 10);
+    if (!weekend.includes(cur.getDay()) && !off.has(iso)) {
+      n += 1;
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return n;
+}
+
+export function annualBalance(joinDate, usedDays = 0, pendingDays = 0) {
+  const ent = annualEntitlement(joinDate);
+  const used = (usedDays || 0) + (pendingDays || 0);
+  return { entitlement: ent, used, left: Math.max(0, ent - used) };
+}
+
+// Sick pay tier by cumulative sick day in the year (Art. 117: 30 full, 60 at
+// 3/4, 30 unpaid). Returns { rate, tier }.
+export function sickTier(cumDay) {
+  if (cumDay <= 30) {
+    return { rate: 1, tier: 1 };
+  }
+  if (cumDay <= 90) {
+    return { rate: 0.75, tier: 2 };
+  }
+  if (cumDay <= 120) {
+    return { rate: 0, tier: 3 };
+  }
+  return { rate: 0, tier: 0 };
+}
+
+// Hajj: once, after 2 years of service.
+export function hajjEligible(joinDate, pastHajjCount = 0) {
+  if ((pastHajjCount || 0) > 0) {
+    return { ok: false, reason: 'already-taken' };
+  }
+  if (yearsBetween(joinDate) < 2) {
+    return { ok: false, reason: 'tenure-under-2y' };
+  }
+  return { ok: true, reason: '' };
+}
+
+// Weekend-shifted observance: Fri/Sat holiday starts move to Sunday.
+export function observedHoliday(iso) {
+  const d = new Date(`${iso}T00:00:00`);
+  const day = d.getDay();
+  if (day === 5) {
+    d.setDate(d.getDate() + 2);
+  } else if (day === 6) {
+    d.setDate(d.getDate() + 1);
+  } else {
+    return { observed: iso, shifted: false };
+  }
+  return { observed: d.toISOString().slice(0, 10), shifted: true };
+}
+
+export function inRamadan(iso, periods = []) {
+  return (periods || []).some(p => iso >= p.start && iso <= p.end);
+}
+
+// Day split for timesheets. Weekend work is all overtime. Flags >11h days.
+export function timesheetDay(totalMin, { ramadan = false, weekendDay = false } = {}) {
+  const cap = (ramadan ? RAMADAN_DAY_HOURS : NORMAL_DAY_HOURS) * 60;
+  const regMin = weekendDay ? 0 : Math.min(totalMin, cap);
+  const otMin = weekendDay ? totalMin : Math.max(0, totalMin - cap);
+  return { regMin, otMin, violation: totalMin > MAX_DAY_HOURS * 60 };
+}

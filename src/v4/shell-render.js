@@ -41,6 +41,19 @@ export const NAV = [
       { key: 'hr-tracker', href: 'hr_tracker.html', text: 'Workforce tracker', icon: 'kanban' },
       { key: 'hr-documents', href: 'hr_documents.html', text: 'Vault', icon: 'files' },
       { key: 'hr-org', href: 'hr_org_chart.html', text: 'Org chart', icon: 'org' },
+      { key: 'hr-attendance', href: 'hr_attendance.html', text: 'Attendance', icon: 'clock' },
+      { key: 'hr-shifts', href: 'hr_shifts.html', text: 'Shifts', icon: 'tables' },
+      { key: 'hr-timesheets', href: 'hr_timesheets.html', text: 'Timesheets', icon: 'clipboard' },
+      { key: 'hr-leave', href: 'hr_leave.html', text: 'Leave', icon: 'palm' },
+      { key: 'hr-holidays', href: 'hr_holidays.html', text: 'Holidays', icon: 'flag' },
+      {
+        key: 'hr-leave-calendar',
+        href: 'hr_leave_calendar.html',
+        text: 'Leave calendar',
+        icon: 'calendar'
+      },
+      { key: 'hr-approvals', href: 'hr_approvals.html', text: 'Approvals', icon: 'shield' },
+      { key: 'hr-my-team', href: 'hr_my_team.html', text: 'My team', icon: 'users' },
       { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings', icon: 'settings' }
     ]
   },
@@ -245,7 +258,12 @@ export const ICONS = {
   doc: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/></svg>',
   flag: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>',
   org: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-2a3 3 0 013-3h8a3 3 0 013 3v2"/></svg>',
-  id: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M5 17c0-1.7 1.3-3 3-3s3 1.3 3 3M14 9h5M14 13h5"/></svg>'
+  id: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M5 17c0-1.7 1.3-3 3-3s3 1.3 3 3M14 9h5M14 13h5"/></svg>',
+  clock:
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  clipboard:
+    '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="4" width="14" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h4"/></svg>',
+  palm: '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21v-9"/><path d="M12 12C8 12 5 10 4 6c4 0 7 2 8 4 1-2 4-4 8-4-1 4-4 6-8 6z"/><path d="M12 12c0-3 1-5 4-6"/></svg>'
 };
 
 const CHEVRON =

@@ -17,7 +17,12 @@ import {
   TRANSFERS,
   RESIDENCY_DOCS,
   DOCUMENTS,
-  ORG_LINKS
+  ORG_LINKS,
+  SHIFTS,
+  SITE_SHIFTS,
+  ATTENDANCE,
+  TIMESHEETS,
+  LEAVE_REQUESTS
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -35,7 +40,12 @@ const SEED_MAP = {
   transfers: TRANSFERS,
   residencyDocs: RESIDENCY_DOCS,
   documents: DOCUMENTS,
-  orgLinks: ORG_LINKS
+  orgLinks: ORG_LINKS,
+  shifts: SHIFTS,
+  siteShifts: SITE_SHIFTS,
+  attendance: ATTENDANCE,
+  timesheets: TIMESHEETS,
+  leaveRequests: LEAVE_REQUESTS
 };
 
 const API_MAP = {
@@ -53,7 +63,12 @@ const API_MAP = {
   transfers: { path: '/api/hr/transfers', listKey: 'transfers' },
   residencyDocs: { path: '/api/hr/residency-docs', listKey: 'docs' },
   documents: { path: '/api/hr/documents', listKey: 'documents' },
-  orgLinks: { path: '/api/hr/org', listKey: 'links' }
+  orgLinks: { path: '/api/hr/org', listKey: 'links' },
+  shifts: { path: '/api/hr/shifts', listKey: 'shifts' },
+  siteShifts: { path: '/api/hr/site-shifts', listKey: 'mappings' },
+  attendance: { path: '/api/hr/attendance', listKey: 'rows' },
+  timesheets: { path: '/api/hr/timesheets', listKey: 'sheets' },
+  leaveRequests: { path: '/api/hr/leave-requests', listKey: 'requests' }
 };
 
 function overlayRows(name) {
@@ -130,14 +145,14 @@ export function hrAdapter(name) {
   if (adapters[name]) {
     return adapters[name];
   }
-  let a;
+  let b;
   if (useApiMode() && API_MAP[name]) {
-    a = httpAdapter(API_MAP[name].path, { listKey: API_MAP[name].listKey });
+    b = httpAdapter(API_MAP[name].path, { listKey: API_MAP[name].listKey });
   } else {
-    a = seedAdapter(getSeed(name));
+    b = seedAdapter(getSeed(name));
   }
-  adapters[name] = a;
-  return a;
+  adapters[name] = b;
+  return b;
 }
 
 export async function hrList(name, query = {}) {
