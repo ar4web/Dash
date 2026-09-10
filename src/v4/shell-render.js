@@ -16,76 +16,127 @@ const VERSION = pkg.version;
 // or a parent with `children: [{ key, href, text, badge? }]` for a submenu.
 // The parent is `key`-less; its children carry their own keys for the
 // `data-page` highlight match. The parent stays expanded if any child matches.
+// HR parents carry `i18n: 'hr.navgroup.x'` so applyShellI18n translates them.
 export const NAV = [
   {
     label: 'HR & Operations',
     items: [
-      { key: 'hr-dashboard', href: 'hr_dashboard.html', text: 'HR Dashboard', icon: 'dashboard' },
-      { key: 'hr-employees', href: 'hr_employees.html', text: 'Employees', icon: 'users' },
       {
-        key: 'hr-sa-compliance',
-        href: 'hr_sa_compliance.html',
-        text: 'SA Compliance',
-        icon: 'shield'
+        text: 'Overview',
+        icon: 'dashboard',
+        i18n: 'hr.navgroup.overview',
+        children: [
+          { key: 'hr-dashboard', href: 'hr_dashboard.html', text: 'HR Dashboard' },
+          { key: 'hr-reports', href: 'hr_reports.html', text: 'Reports' }
+        ]
       },
-      { key: 'hr-my-space', href: 'hr_my_space.html', text: 'My space', icon: 'profile' },
       {
-        key: 'hr-client',
-        href: 'hr_client_dashboard.html',
-        text: 'Client dashboard',
-        icon: 'briefcase'
+        text: 'People',
+        icon: 'users',
+        i18n: 'hr.navgroup.people',
+        children: [
+          { key: 'hr-employees', href: 'hr_employees.html', text: 'Employees' },
+          { key: 'hr-onboarding', href: 'hr_onboarding.html', text: 'Onboarding' },
+          { key: 'hr-org', href: 'hr_org_chart.html', text: 'Org chart' },
+          { key: 'hr-tracker', href: 'hr_tracker.html', text: 'Workforce tracker' },
+          { key: 'hr-documents', href: 'hr_documents.html', text: 'Vault' },
+          { key: 'hr-my-team', href: 'hr_my_team.html', text: 'My team' }
+        ]
       },
-      { key: 'hr-onboarding', href: 'hr_onboarding.html', text: 'Onboarding', icon: 'forms' },
-      { key: 'hr-visas', href: 'hr_visas.html', text: 'Visas', icon: 'id' },
-      { key: 'hr-residency', href: 'hr_residency.html', text: 'Residency & renewals', icon: 'id' },
-      { key: 'hr-tracker', href: 'hr_tracker.html', text: 'Workforce tracker', icon: 'kanban' },
-      { key: 'hr-documents', href: 'hr_documents.html', text: 'Vault', icon: 'files' },
-      { key: 'hr-org', href: 'hr_org_chart.html', text: 'Org chart', icon: 'org' },
-      { key: 'hr-attendance', href: 'hr_attendance.html', text: 'Attendance', icon: 'clock' },
-      { key: 'hr-shifts', href: 'hr_shifts.html', text: 'Shifts', icon: 'tables' },
-      { key: 'hr-timesheets', href: 'hr_timesheets.html', text: 'Timesheets', icon: 'clipboard' },
-      { key: 'hr-leave', href: 'hr_leave.html', text: 'Leave', icon: 'palm' },
-      { key: 'hr-holidays', href: 'hr_holidays.html', text: 'Holidays', icon: 'flag' },
       {
-        key: 'hr-leave-calendar',
-        href: 'hr_leave_calendar.html',
-        text: 'Leave calendar',
-        icon: 'calendar'
+        text: 'Compliance',
+        icon: 'shield',
+        i18n: 'hr.navgroup.compliance',
+        children: [
+          { key: 'hr-sa-compliance', href: 'hr_sa_compliance.html', text: 'SA Compliance' },
+          { key: 'hr-visas', href: 'hr_visas.html', text: 'Visas' },
+          { key: 'hr-residency', href: 'hr_residency.html', text: 'Residency & renewals' },
+          { key: 'hr-contracts', href: 'hr_contracts.html', text: 'Contract maker' },
+          { key: 'hr-eosb', href: 'hr_eosb.html', text: 'EOSB & settlement' }
+        ]
       },
-      { key: 'hr-approvals', href: 'hr_approvals.html', text: 'Approvals', icon: 'shield' },
-      { key: 'hr-my-team', href: 'hr_my_team.html', text: 'My team', icon: 'users' },
-      { key: 'hr-clients', href: 'hr_clients.html', text: 'Clients', icon: 'shop' },
-      { key: 'hr-requests', href: 'hr_requests.html', text: 'Manpower requests', icon: 'mail' },
-      { key: 'hr-assignments', href: 'hr_assignments.html', text: 'Assignments', icon: 'map' },
-      { key: 'hr-ajeer', href: 'hr_ajeer.html', text: 'Ajeer permits', icon: 'doc' },
-      { key: 'hr-invoices', href: 'hr_invoices.html', text: 'Invoices', icon: 'receipt' },
-      { key: 'hr-payroll', href: 'hr_payroll.html', text: 'Pay runs', icon: 'wallet' },
-      { key: 'hr-gosi', href: 'hr_gosi.html', text: 'GOSI', icon: 'percent' },
-      { key: 'hr-wps', href: 'hr_wps.html', text: 'WPS & Mudad', icon: 'bank' },
-      { key: 'hr-eosb', href: 'hr_eosb.html', text: 'EOSB & settlement', icon: 'price' },
-      { key: 'hr-expenses', href: 'hr_expenses.html', text: 'Expenses', icon: 'tag' },
-      { key: 'hr-contracts', href: 'hr_contracts.html', text: 'Contract maker', icon: 'contract' },
-      { key: 'hr-templates', href: 'hr_templates.html', text: 'Templates', icon: 'type' },
-      { key: 'hr-jobs', href: 'hr_jobs.html', text: 'Jobs', icon: 'briefcase' },
-      { key: 'hr-candidates', href: 'hr_candidates.html', text: 'Candidates', icon: 'users' },
-      { key: 'hr-pipeline', href: 'hr_pipeline.html', text: 'Pipeline', icon: 'kanban' },
-      { key: 'hr-interviews', href: 'hr_interviews.html', text: 'Interviews', icon: 'calendar' },
-      { key: 'hr-offers', href: 'hr_offers.html', text: 'Offers', icon: 'mail' },
-      { key: 'hr-goals', href: 'hr_goals.html', text: 'Goals', icon: 'target' },
-      { key: 'hr-reviews', href: 'hr_reviews.html', text: 'Reviews', icon: 'charts' },
-      { key: 'hr-feedback', href: 'hr_feedback.html', text: 'Feedback', icon: 'chat' },
-      { key: 'hr-trainings', href: 'hr_trainings.html', text: 'Trainings', icon: 'media' },
-      { key: 'hr-departments', href: 'hr_departments.html', text: 'Departments', icon: 'projects' },
-      { key: 'hr-roles', href: 'hr_roles.html', text: 'Roles & access', icon: 'settings' },
-      { key: 'hr-audit', href: 'hr_audit.html', text: 'Audit log', icon: 'pages' },
       {
-        key: 'hr-announcements',
-        href: 'hr_announcements.html',
-        text: 'Announcements',
-        icon: 'bell'
+        text: 'Time & Leave',
+        icon: 'clock',
+        i18n: 'hr.navgroup.time',
+        children: [
+          { key: 'hr-attendance', href: 'hr_attendance.html', text: 'Attendance' },
+          { key: 'hr-timesheets', href: 'hr_timesheets.html', text: 'Timesheets' },
+          { key: 'hr-leave', href: 'hr_leave.html', text: 'Leave' },
+          { key: 'hr-leave-calendar', href: 'hr_leave_calendar.html', text: 'Leave calendar' },
+          { key: 'hr-approvals', href: 'hr_approvals.html', text: 'Approvals' }
+        ]
       },
-      { key: 'hr-reports', href: 'hr_reports.html', text: 'Reports', icon: 'charts' },
-      { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings', icon: 'settings' }
+      {
+        text: 'Operations',
+        icon: 'shop',
+        i18n: 'hr.navgroup.operations',
+        children: [
+          { key: 'hr-clients', href: 'hr_clients.html', text: 'Clients' },
+          { key: 'hr-requests', href: 'hr_requests.html', text: 'Manpower requests' },
+          { key: 'hr-assignments', href: 'hr_assignments.html', text: 'Assignments' },
+          { key: 'hr-ajeer', href: 'hr_ajeer.html', text: 'Ajeer permits' },
+          { key: 'hr-expenses', href: 'hr_expenses.html', text: 'Expenses' }
+        ]
+      },
+      {
+        text: 'Money',
+        icon: 'wallet',
+        i18n: 'hr.navgroup.money',
+        children: [
+          { key: 'hr-payroll', href: 'hr_payroll.html', text: 'Pay runs' },
+          { key: 'hr-gosi', href: 'hr_gosi.html', text: 'GOSI' },
+          { key: 'hr-wps', href: 'hr_wps.html', text: 'WPS & Mudad' },
+          { key: 'hr-invoices', href: 'hr_invoices.html', text: 'Invoices' }
+        ]
+      },
+      {
+        text: 'Hiring',
+        icon: 'briefcase',
+        i18n: 'hr.navgroup.hiring',
+        children: [
+          { key: 'hr-jobs', href: 'hr_jobs.html', text: 'Jobs' },
+          { key: 'hr-candidates', href: 'hr_candidates.html', text: 'Candidates' },
+          { key: 'hr-pipeline', href: 'hr_pipeline.html', text: 'Pipeline' },
+          { key: 'hr-interviews', href: 'hr_interviews.html', text: 'Interviews' },
+          { key: 'hr-offers', href: 'hr_offers.html', text: 'Offers' }
+        ]
+      },
+      {
+        text: 'Growth',
+        icon: 'target',
+        i18n: 'hr.navgroup.growth',
+        children: [
+          { key: 'hr-goals', href: 'hr_goals.html', text: 'Goals' },
+          { key: 'hr-reviews', href: 'hr_reviews.html', text: 'Reviews' },
+          { key: 'hr-feedback', href: 'hr_feedback.html', text: 'Feedback' },
+          { key: 'hr-trainings', href: 'hr_trainings.html', text: 'Trainings' },
+          { key: 'hr-announcements', href: 'hr_announcements.html', text: 'Announcements' }
+        ]
+      },
+      {
+        text: 'Portals',
+        icon: 'profile',
+        i18n: 'hr.navgroup.portals',
+        children: [
+          { key: 'hr-my-space', href: 'hr_my_space.html', text: 'My space' },
+          { key: 'hr-client', href: 'hr_client_dashboard.html', text: 'Client dashboard' }
+        ]
+      },
+      {
+        text: 'Settings',
+        icon: 'settings',
+        i18n: 'hr.navgroup.settings',
+        children: [
+          { key: 'hr-settings', href: 'hr_settings.html', text: 'HR Settings' },
+          { key: 'hr-departments', href: 'hr_departments.html', text: 'Departments' },
+          { key: 'hr-roles', href: 'hr_roles.html', text: 'Roles & access' },
+          { key: 'hr-templates', href: 'hr_templates.html', text: 'Templates' },
+          { key: 'hr-holidays', href: 'hr_holidays.html', text: 'Holidays' },
+          { key: 'hr-shifts', href: 'hr_shifts.html', text: 'Shifts' },
+          { key: 'hr-audit', href: 'hr_audit.html', text: 'Audit log' }
+        ]
+      }
     ]
   },
   {
@@ -313,7 +364,7 @@ function renderNavItem(item, activeKey) {
     const sub = item.children
       .map(c => {
         const a = c.key === activeKey;
-        return `<a class="nav-sublink${a ? ' active' : ''}" href="${c.href}"${a ? ' aria-current="page"' : ''}>${c.text}${c.badge ? `<span class="badge ${c.badge.cls}">${c.badge.text}</span>` : ''}</a>`;
+        return `<a class="nav-sublink${a ? ' active' : ''}" href="${c.href}"${a ? ' aria-current="page"' : ''}><span class="nav-text">${c.text}</span>${c.badge ? `<span class="badge ${c.badge.cls}">${c.badge.text}</span>` : ''}</a>`;
       })
       .join('');
     const cls = ['nav-tree'];

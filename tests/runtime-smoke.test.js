@@ -115,6 +115,30 @@ describe('interactions (early: minimal cross-talk)', () => {
   });
 });
 
+describe('sidebar hierarchy', () => {
+  test('HR NAV: 10 icon-bearing parents, 46 keyed leaves, all translated', async () => {
+    const { NAV, ICONS } = await import('../src/v4/shell-render.js');
+    const hr = NAV.find(g => g.label.includes('HR'));
+    expect(hr.items.length).toBe(10);
+    const leaves = hr.items.flatMap(p => p.children || []);
+    expect(leaves.length).toBe(46);
+    expect(new Set(leaves.map(l => l.key)).size).toBe(46);
+    for (const p of hr.items) {
+      expect(p.icon in ICONS).toBe(true);
+    }
+    await mountPage('hr_dashboard');
+    const subs = [...document.querySelectorAll('.sidebar-nav a.nav-sublink')];
+    for (const l of leaves) {
+      expect(subs.some(a => a.getAttribute('href') === l.href)).toBe(true);
+    }
+    expect(subs.every(a => a.querySelector('.nav-text'))).toBe(true);
+    setLang('ar');
+    expect(document.querySelector('.sidebar-nav').textContent).toContain('الإعدادات');
+    expect(document.querySelector('.sidebar-nav').textContent).toContain('الموارد البشرية');
+    setLang('en');
+  });
+});
+
 describe.each(pages)('%s renders', page => {
   test('EN: sidebar + root + content, no errors', async () => {
     await mountPage(page);

@@ -511,6 +511,16 @@ const STR = {
     'hr.p6.apprChains': 'Approval chains',
     'hr.p6.quickLinks': 'Admin shortcuts',
     'hr.ui.pretitle': 'HR & Operations',
+    'hr.navgroup.overview': 'Overview',
+    'hr.navgroup.people': 'People',
+    'hr.navgroup.compliance': 'Compliance',
+    'hr.navgroup.time': 'Time & Leave',
+    'hr.navgroup.operations': 'Operations',
+    'hr.navgroup.money': 'Money',
+    'hr.navgroup.hiring': 'Hiring',
+    'hr.navgroup.growth': 'Growth',
+    'hr.navgroup.portals': 'Portals',
+    'hr.navgroup.settings': 'Settings',
     'hr.stages.new': 'New',
     'hr.stages.screening': 'Screening',
     'hr.stages.interview': 'Interview',
@@ -1070,6 +1080,16 @@ const STR = {
     'hr.p6.apprChains': 'سلاسل الاعتماد',
     'hr.p6.quickLinks': 'اختصارات الإدارة',
     'hr.ui.pretitle': 'الموارد البشرية والعمليات',
+    'hr.navgroup.overview': 'نظرة عامة',
+    'hr.navgroup.people': 'الأفراد',
+    'hr.navgroup.compliance': 'الامتثال',
+    'hr.navgroup.time': 'الوقت والإجازات',
+    'hr.navgroup.operations': 'العمليات',
+    'hr.navgroup.money': 'المالية',
+    'hr.navgroup.hiring': 'التوظيف',
+    'hr.navgroup.growth': 'النمو',
+    'hr.navgroup.portals': 'البوابات',
+    'hr.navgroup.settings': 'الإعدادات',
     'hr.stages.new': 'جديد',
     'hr.stages.screening': 'فرز',
     'hr.stages.interview': 'مقابلة',
@@ -1195,12 +1215,32 @@ export function applyShellI18n() {
       label.textContent = t(`navgroup.${slugifyLabel(def.label)}`);
     }
     def.items.forEach(item => {
-      if (item.children) {
+      if (!item.children) {
+        const a = g.querySelector(`a[href="${item.href}"] .nav-text`);
+        if (a) {
+          a.textContent = t(`nav.${item.key}`);
+        }
         return;
       }
-      const a = g.querySelector(`a[href="${item.href}"] .nav-text`);
-      if (a) {
-        a.textContent = t(`nav.${item.key}`);
+      // Submenu children: HR leaves only (non-HR children keep static text,
+      // since t() falls back to the raw key when no translation exists).
+      for (const c of item.children) {
+        if (!c.key || !c.key.startsWith('hr-')) {
+          continue;
+        }
+        const s = g.querySelector(`a.nav-sublink[href="${c.href}"] .nav-text`);
+        if (s) {
+          s.textContent = t(`nav.${c.key}`);
+        }
+      }
+      if (item.i18n) {
+        const first = item.children[0];
+        const tree =
+          first && g.querySelector(`a.nav-sublink[href="${first.href}"]`)?.closest('.nav-tree');
+        const lbl = tree?.querySelector('.nav-toggle .nav-text');
+        if (lbl) {
+          lbl.textContent = t(item.i18n);
+        }
       }
     });
   });

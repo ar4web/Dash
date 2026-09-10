@@ -573,8 +573,14 @@ function applyRolePreview() {
           a.style.display = 'none';
         }
       });
+    document.querySelectorAll('.sidebar-nav .nav-tree').forEach(tr => {
+      const vis = [...tr.querySelectorAll('a.nav-sublink')].some(a => a.style.display !== 'none');
+      tr.style.display = vis ? '' : 'none';
+    });
     document.querySelectorAll('.sidebar-nav .nav-group').forEach(g => {
-      const vis = [...g.querySelectorAll('a.nav-link, a.nav-sublink')].some(a => a.style.display !== 'none');
+      const vis = [...g.querySelectorAll('a.nav-link, .nav-tree')].some(
+        a => a.style.display !== 'none'
+      );
       if (!vis) {
         g.style.display = 'none';
       }

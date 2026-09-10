@@ -32,7 +32,7 @@ for (const m of nav) {
 }
 const keyList = nav.map(n => n[1]);
 ok('nav-no-dupes', new Set(keyList).size === keyList.length);
-const icons = new Set([...shell.matchAll(/^  ([a-z]+): ?['\n]/gm)].map(m => m[1]));
+const icons = new Set([...shell.matchAll(/^ {2}([a-z]+): ?['\n]/gm)].map(m => m[1]));
 for (const m of shell.matchAll(/icon: '([a-z]+)'/g)) {
   ok(`nav-icon-${m[1]}`, icons.has(m[1]));
 }

@@ -11,26 +11,35 @@ const ok = (name, cond, extra = '') => {
   }
 };
 
-// 1. NAV leaves -> files (multiline-safe); payslip rides the payroll leaf.
-const shell = readFileSync(`${R}/src/v4/shell-render.js`, 'utf8');
-const nav = [
-  ...shell.matchAll(/key: '(hr-[a-z-]+)'[\s\S]{0,120}?href: '(hr_[a-z_]+\.html)'/g)
-];
-const need = ['hr-payroll', 'hr-gosi', 'hr-wps', 'hr-eosb', 'hr-expenses'];
-ok('nav-5-leaves', need.every(k => nav.some(n => n[1] === k)));
-for (const m of nav.filter(n => need.includes(n[1]))) {
-  ok(`nav-file-${m[1]}`, existsSync(`${R}/production/${m[2]}`), m[2]);
+// 1. NAV leaves -> files (HR leaves live in collapsible parents; icons resolve from the parent).
+const { NAV, ICONS } = await import(`${R}/src/v4/shell-render.js`);
+const leaves = [];
+for (const g of NAV) {
+  for (const it of g.items || []) {
+    if (it.children) {
+      for (const c of it.children) {
+        leaves.push({ ...c, parentIcon: it.icon });
+      }
+    } else if (it.key) {
+      leaves.push({ ...it, parentIcon: null });
+    }
+  }
 }
-const icons = new Set([...shell.matchAll(/^  ([a-z]+): ?['\n]/gm)].map(m => m[1]));
-for (const m of nav.filter(n => need.includes(n[1]))) {
-  const im = shell.match(new RegExp(`key: '${m[1]}'[\\s\\S]{0,160}?icon: '([a-z]+)'`));
-  ok(`nav-icon-${m[1]}`, !!im && icons.has(im[1]), im?.[1]);
+const need = ['hr-payroll', 'hr-gosi', 'hr-wps', 'hr-eosb', 'hr-expenses'];
+ok(
+  'nav-5-leaves',
+  need.every(k => leaves.some(l => l.key === k))
+);
+for (const l of leaves.filter(x => need.includes(x.key))) {
+  ok(`nav-file-${l.key}`, existsSync(`${R}/production/${l.href}`), l.href);
+  ok(`nav-icon-${l.key}`, !!l.parentIcon && l.parentIcon in ICONS, l.parentIcon);
 }
 ok('payslip-page-exists', existsSync(`${R}/production/hr_payslip.html`));
-
 // 2. i18n coverage + DOM id xref
 const i18nSrc = readFileSync(`${R}/src/v4/i18n.js`, 'utf8');
-const dictKeys = new Set([...i18nSrc.matchAll(/'((?:nav|common|status|role|hr)\.[^']+)'\s*:/g)].map(m => m[1]));
+const dictKeys = new Set(
+  [...i18nSrc.matchAll(/'((?:nav|common|status|role|hr)\.[^']+)'\s*:/g)].map(m => m[1])
+);
 const pages = ['hr_payroll', 'hr_payslip', 'hr_gosi', 'hr_wps', 'hr_eosb', 'hr_expenses'];
 const mods = ['payroll', 'payslip', 'gosi', 'wps', 'eosb', 'expenses'];
 const roots = {
@@ -68,8 +77,14 @@ const clients = new Set(seed.CLIENTS.map(c => c.id));
 const cats = new Set(seed.EXPENSE_CATEGORIES.map(c => c.code));
 const runIds = new Set(seed.PAY_RUNS.map(r => r.id));
 ok('seed-runs-2', seed.PAY_RUNS.length === 2);
-ok('seed-run-status', seed.PAY_RUNS.every(r => ['draft', 'approved', 'paid'].includes(r.status)));
-ok('seed-run-wps', seed.PAY_RUNS.every(r => ['draft', 'submitted', 'accepted', 'paid'].includes(r.wps)));
+ok(
+  'seed-run-status',
+  seed.PAY_RUNS.every(r => ['draft', 'approved', 'paid'].includes(r.status))
+);
+ok(
+  'seed-run-wps',
+  seed.PAY_RUNS.every(r => ['draft', 'submitted', 'accepted', 'paid'].includes(r.wps))
+);
 ok(
   'seed-adjust-xref',
   seed.PAY_RUNS.every(r => Object.keys(r.adjustments || {}).every(e => emps.has(e)))
@@ -78,8 +93,8 @@ const BLOCKED = ['iqama', 'levy', 'insurance', 'recruitment'];
 ok(
   'seed-no-blocked-deductions',
   seed.PAY_RUNS.every(r =>
-    Object.values(r.adjustments || {}).every(
-      a => (a.deductions || []).every(d => !BLOCKED.includes(d.cat))
+    Object.values(r.adjustments || {}).every(a =>
+      (a.deductions || []).every(d => !BLOCKED.includes(d.cat))
     )
   )
 );
@@ -90,7 +105,11 @@ ok(
     x => emps.has(x.emp) && cats.has(x.cat) && (!x.billable || clients.has(x.client))
   )
 );
-ok('seed-expense-flag-demos', seed.EXPENSES.some(x => x.id === 'EXP-2026-014') && seed.EXPENSES.some(x => x.id === 'EXP-2026-016'));
+ok(
+  'seed-expense-flag-demos',
+  seed.EXPENSES.some(x => x.id === 'EXP-2026-014') &&
+    seed.EXPENSES.some(x => x.id === 'EXP-2026-016')
+);
 ok('seed-advances-2', seed.ADVANCES.length === 2);
 ok(
   'seed-advances-xref',
@@ -100,7 +119,10 @@ ok('seed-eosb-basis', ['basic', 'basic+housing'].includes(seed.SEED_EOSB.basis))
 
 // 4. hr-api collections
 const api = readFileSync(`${R}/src/v4/hr-api.js`, 'utf8');
-ok('api-p4-collections', ['payRuns:', 'expenses:', 'advances:'].every(k => api.includes(k)));
+ok(
+  'api-p4-collections',
+  ['payRuns:', 'expenses:', 'advances:'].every(k => api.includes(k))
+);
 
 console.log(fail.length ? `\nP4 AUDIT: ${fail.length} FAILURES` : '\nALL P4 CHECKS PASSED');
 process.exit(fail.length ? 1 : 0);

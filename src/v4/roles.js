@@ -19,50 +19,52 @@ function L(en, ar) {
 // Sidebar page keys grouped the way the nav renders them.
 export const ROLE_MODULES = [
   {
-    group: 'hr.people',
+    group: 'hr.navgroup.overview',
+    pages: ['hr-dashboard', 'hr-reports']
+  },
+  {
+    group: 'hr.navgroup.people',
+    pages: ['hr-employees', 'hr-onboarding', 'hr-org', 'hr-tracker', 'hr-documents', 'hr-my-team']
+  },
+  {
+    group: 'hr.navgroup.compliance',
+    pages: ['hr-sa-compliance', 'hr-visas', 'hr-residency', 'hr-contracts', 'hr-eosb']
+  },
+  {
+    group: 'hr.navgroup.time',
+    pages: ['hr-attendance', 'hr-timesheets', 'hr-leave', 'hr-leave-calendar', 'hr-approvals']
+  },
+  {
+    group: 'hr.navgroup.operations',
+    pages: ['hr-clients', 'hr-requests', 'hr-assignments', 'hr-ajeer', 'hr-expenses']
+  },
+  {
+    group: 'hr.navgroup.money',
+    pages: ['hr-payroll', 'hr-gosi', 'hr-wps', 'hr-invoices']
+  },
+  {
+    group: 'hr.navgroup.hiring',
+    pages: ['hr-jobs', 'hr-candidates', 'hr-pipeline', 'hr-interviews', 'hr-offers']
+  },
+  {
+    group: 'hr.navgroup.growth',
+    pages: ['hr-goals', 'hr-reviews', 'hr-feedback', 'hr-trainings', 'hr-announcements']
+  },
+  {
+    group: 'hr.navgroup.portals',
+    pages: ['hr-my-space', 'hr-client']
+  },
+  {
+    group: 'hr.navgroup.settings',
     pages: [
-      'hr-employees',
-      'hr-onboarding',
-      'hr-sa-compliance',
-      'hr-visas',
-      'hr-residency',
-      'hr-contracts',
-      'hr-documents',
-      'hr-org',
-      'hr-tracker',
-      'hr-attendance',
-      'hr-shifts',
-      'hr-timesheets',
-      'hr-leave',
-      'hr-leave-calendar',
+      'hr-settings',
+      'hr-departments',
+      'hr-roles',
+      'hr-templates',
       'hr-holidays',
-      'hr-approvals',
-      'hr-my-team',
-      'hr-eosb'
+      'hr-shifts',
+      'hr-audit'
     ]
-  },
-  {
-    group: 'hr.operations',
-    pages: [
-      'hr-dashboard',
-      'hr-clients',
-      'hr-client',
-      'hr-requests',
-      'hr-assignments',
-      'hr-ajeer',
-      'hr-expenses',
-      'hr-my-space'
-    ]
-  },
-  { group: 'hr.money', pages: ['hr-payroll', 'hr-gosi', 'hr-wps', 'hr-invoices', 'hr-reports'] },
-  {
-    group: 'hr.hiring',
-    pages: ['hr-jobs', 'hr-candidates', 'hr-pipeline', 'hr-interviews', 'hr-offers', 'hr-templates']
-  },
-  { group: 'hr.growth', pages: ['hr-goals', 'hr-reviews', 'hr-feedback', 'hr-trainings'] },
-  {
-    group: 'hr.admin',
-    pages: ['hr-departments', 'hr-roles', 'hr-audit', 'hr-announcements', 'hr-settings']
   }
 ];
 

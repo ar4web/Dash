@@ -11,28 +11,63 @@ const ok = (name, cond, extra = '') => {
   }
 };
 
-// 1. NAV leaves -> files (multiline-safe); hr_contract rides hr-contracts.
-const shell = readFileSync(`${R}/src/v4/shell-render.js`, 'utf8');
-const nav = [
-  ...shell.matchAll(/key: '(hr-[a-z-]+)'[\s\S]{0,120}?href: '(hr_[a-z_]+\.html)'/g)
-];
-const need = ['hr-contracts', 'hr-templates', 'hr-jobs', 'hr-candidates', 'hr-pipeline', 'hr-interviews', 'hr-offers'];
-ok('nav-7-leaves', need.every(k => nav.some(n => n[1] === k)));
-for (const m of nav.filter(n => need.includes(n[1]))) {
-  ok(`nav-file-${m[1]}`, existsSync(`${R}/production/${m[2]}`), m[2]);
+// 1. NAV leaves -> files (HR leaves live in collapsible parents; icons resolve from the parent).
+const { NAV, ICONS } = await import(`${R}/src/v4/shell-render.js`);
+const leaves = [];
+for (const g of NAV) {
+  for (const it of g.items || []) {
+    if (it.children) {
+      for (const c of it.children) {
+        leaves.push({ ...c, parentIcon: it.icon });
+      }
+    } else if (it.key) {
+      leaves.push({ ...it, parentIcon: null });
+    }
+  }
 }
-const icons = new Set([...shell.matchAll(/^  ([a-z]+): ?['\n]/gm)].map(m => m[1]));
-for (const m of nav.filter(n => need.includes(n[1]))) {
-  const im = shell.match(new RegExp(`key: '${m[1]}'[\\s\\S]{0,160}?icon: '([a-z]+)'`));
-  ok(`nav-icon-${m[1]}`, !!im && icons.has(im[1]), im?.[1]);
+const need = [
+  'hr-contracts',
+  'hr-templates',
+  'hr-jobs',
+  'hr-candidates',
+  'hr-pipeline',
+  'hr-interviews',
+  'hr-offers'
+];
+ok(
+  'nav-7-leaves',
+  need.every(k => leaves.some(l => l.key === k))
+);
+for (const l of leaves.filter(x => need.includes(x.key))) {
+  ok(`nav-file-${l.key}`, existsSync(`${R}/production/${l.href}`), l.href);
+  ok(`nav-icon-${l.key}`, !!l.parentIcon && l.parentIcon in ICONS, l.parentIcon);
 }
 ok('contract-detail-exists', existsSync(`${R}/production/hr_contract.html`));
-
 // 2. i18n coverage + DOM id xref
 const i18nSrc = readFileSync(`${R}/src/v4/i18n.js`, 'utf8');
-const dictKeys = new Set([...i18nSrc.matchAll(/'((?:nav|common|status|role|hr)\.[^']+)'\s*:/g)].map(m => m[1]));
-const pages = ['hr_contracts', 'hr_contract', 'hr_templates', 'hr_jobs', 'hr_candidates', 'hr_pipeline', 'hr_interviews', 'hr_offers'];
-const mods = ['contracts', 'contract', 'templates', 'jobs', 'candidates', 'pipeline', 'interviews', 'offers'];
+const dictKeys = new Set(
+  [...i18nSrc.matchAll(/'((?:nav|common|status|role|hr)\.[^']+)'\s*:/g)].map(m => m[1])
+);
+const pages = [
+  'hr_contracts',
+  'hr_contract',
+  'hr_templates',
+  'hr_jobs',
+  'hr_candidates',
+  'hr_pipeline',
+  'hr_interviews',
+  'hr_offers'
+];
+const mods = [
+  'contracts',
+  'contract',
+  'templates',
+  'jobs',
+  'candidates',
+  'pipeline',
+  'interviews',
+  'offers'
+];
 const roots = {
   contracts: 'data-hr-contracts',
   contract: 'data-hr-contract',
@@ -101,13 +136,22 @@ ok(
     ['draft', 'review', 'issued', 'signed', 'active', 'renewed', 'closed'].includes(c.status)
   )
 );
-ok('seed-expiring-demo', seed.CONTRACTS.some(c => c.id === 'CT-2026-005' && c.end === '2026-10-15'));
+ok(
+  'seed-expiring-demo',
+  seed.CONTRACTS.some(c => c.id === 'CT-2026-005' && c.end === '2026-10-15')
+);
 ok('seed-jobs-4', seed.JOBS.length === 4);
-ok('seed-jobs-housing-transport', seed.JOBS.every(j => j.housing > 0 && j.transport > 0));
+ok(
+  'seed-jobs-housing-transport',
+  seed.JOBS.every(j => j.housing > 0 && j.transport > 0)
+);
 const jobs = new Set(seed.JOBS.map(j => j.id));
 const cands = new Set(seed.CANDIDATES.map(c => c.id));
 ok('seed-candidates-8', seed.CANDIDATES.length === 8);
-ok('seed-candidates-xref', seed.CANDIDATES.every(c => jobs.has(c.job)));
+ok(
+  'seed-candidates-xref',
+  seed.CANDIDATES.every(c => jobs.has(c.job))
+);
 ok(
   'seed-interviews-xref',
   seed.INTERVIEWS.every(r => cands.has(r.candidate) && emps.has(r.interviewer))
@@ -116,15 +160,23 @@ ok(
   'seed-offers-xref',
   seed.OFFERS.every(o => cands.has(o.candidate) && jobs.has(o.job))
 );
-ok('seed-offer-floor-demo', seed.OFFERS.some(o => o.id === 'OF-2026-002' && o.basic === 3500));
+ok(
+  'seed-offer-floor-demo',
+  seed.OFFERS.some(o => o.id === 'OF-2026-002' && o.basic === 3500)
+);
 const l1 = seed.TEMPLATES.find(t => t.code === 'L1');
-ok('seed-offer-l1-pin', seed.OFFERS.every(o => o.templateVer === l1.version));
+ok(
+  'seed-offer-l1-pin',
+  seed.OFFERS.every(o => o.templateVer === l1.version)
+);
 
 // 4. hr-api collections
 const api = readFileSync(`${R}/src/v4/hr-api.js`, 'utf8');
 ok(
   'api-p5-collections',
-  ['templates:', 'contracts:', 'jobs:', 'candidates:', 'interviews:', 'offers:'].every(k => api.includes(k))
+  ['templates:', 'contracts:', 'jobs:', 'candidates:', 'interviews:', 'offers:'].every(k =>
+    api.includes(k)
+  )
 );
 
 console.log(fail.length ? `\nP5 AUDIT: ${fail.length} FAILURES` : '\nALL P5 CHECKS PASSED');

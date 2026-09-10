@@ -12,9 +12,20 @@ const ok = (name, cond, extra = '') => {
   }
 };
 
-// 1. NAV leaves -> files; hr_review rides hr-reviews (no own leaf).
-const shell = readFileSync(`${R}/src/v4/shell-render.js`, 'utf8');
-const nav = [...shell.matchAll(/key: '(hr-[a-z-]+)'[\s\S]{0,120}?href: '(hr_[a-z_]+\.html)'/g)];
+// 1. NAV leaves -> files (HR leaves live in collapsible parents; icons resolve from the parent).
+const { NAV, ICONS } = await import(`${R}/src/v4/shell-render.js`);
+const leaves = [];
+for (const g of NAV) {
+  for (const it of g.items || []) {
+    if (it.children) {
+      for (const c of it.children) {
+        leaves.push({ ...c, parentIcon: it.icon });
+      }
+    } else if (it.key) {
+      leaves.push({ ...it, parentIcon: null });
+    }
+  }
+}
 const need = [
   'hr-goals',
   'hr-reviews',
@@ -28,21 +39,16 @@ const need = [
 ];
 ok(
   'nav-9-leaves',
-  need.every(k => nav.some(n => n[1] === k))
+  need.every(k => leaves.some(l => l.key === k))
 );
-for (const m of nav.filter(n => need.includes(n[1]))) {
-  ok(`nav-file-${m[1]}`, existsSync(`${R}/production/${m[2]}`), m[2]);
-}
-const icons = new Set([...shell.matchAll(/^  ([a-z]+): ?['\n]/gm)].map(m => m[1]));
-for (const m of nav.filter(n => need.includes(n[1]))) {
-  const im = shell.match(new RegExp(`key: '${m[1]}'[\\s\\S]{0,160}?icon: '([a-z]+)'`));
-  ok(`nav-icon-${m[1]}`, !!im && icons.has(im[1]), im?.[1]);
+for (const l of leaves.filter(x => need.includes(x.key))) {
+  ok(`nav-file-${l.key}`, existsSync(`${R}/production/${l.href}`), l.href);
+  ok(`nav-icon-${l.key}`, !!l.parentIcon && l.parentIcon in ICONS, l.parentIcon);
 }
 ok('review-detail-exists', existsSync(`${R}/production/hr_review.html`));
-ok('review-detail-no-leaf', !nav.some(n => n[1] === 'hr-review'));
+ok('review-detail-no-leaf', !leaves.some(l => l.key === 'hr-review'));
 const detailHtml = readFileSync(`${R}/production/hr_review.html`, 'utf8');
 ok('review-detail-rides-reviews', detailHtml.includes('data-page="hr-reviews"'));
-
 // 2. i18n coverage + DOM id xref
 const i18nSrc = readFileSync(`${R}/src/v4/i18n.js`, 'utf8');
 const dictKeys = new Set(
