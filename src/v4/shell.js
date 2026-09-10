@@ -7,6 +7,8 @@
 
 import { renderShell, NAV } from './shell-render.js';
 import { roleScopes, viewedRole } from './roles.js';
+import { hrAlerts } from './hr-alerts.js';
+import { t } from './i18n.js';
 import { openPanel, openMenu } from './menus.js';
 import { showToast } from './toast.js';
 import { showModal } from './modal.js';
@@ -319,18 +321,21 @@ const USER_MENU = [
   { label: 'Sign out',           action: openSignOutModal }
 ];
 
+let PANEL_ITEMS = [];
+
 function buildNotificationsPanel() {
-  const unreadCount = NOTIFICATIONS.filter((n) => n.unread).length;
+  PANEL_ITEMS = [...hrAlerts(), ...NOTIFICATIONS];
+  const unreadCount = PANEL_ITEMS.filter((n) => n.unread).length;
   const wrap = document.createElement('div');
   wrap.className = 'panel-content';
   wrap.innerHTML = `
     <div class="panel-header">
-      <span class="panel-title">Notifications</span>
+      <span class="panel-title">${t('nav.notifications')}</span>
       ${unreadCount ? `<span class="panel-badge">${unreadCount} new</span>` : ''}
-      <button type="button" class="panel-action" data-action="mark-all">Mark all read</button>
+      <button type="button" class="panel-action" data-action="mark-all">${t('common.markAllRead')}</button>
     </div>
     <div class="panel-list">
-      ${NOTIFICATIONS.map((n, i) => `
+      ${PANEL_ITEMS.map((n, i) => `
         <button type="button" class="panel-row${n.unread ? ' unread' : ''}" data-i="${i}">
           <span class="panel-icon panel-icon-${n.kind}" aria-hidden="true">
             ${n.kind === 'alert' ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l7 13H1L8 1z"/><path d="M8 6v4"/><circle cx="8" cy="12" r="0.5"/></svg>'
@@ -346,7 +351,7 @@ function buildNotificationsPanel() {
       `).join('')}
     </div>
     <div class="panel-footer">
-      <a href="notifications.html" class="panel-link">View all notifications</a>
+      <a href="notifications.html" class="panel-link">${t('common.viewAllNotif')}</a>
     </div>
   `;
   return wrap;
@@ -399,8 +404,8 @@ function openNotificationDetail(n) {
       </div>
     `,
     actions: [
-      { label: 'Dismiss', variant: 'ghost' },
-      { label: 'View all', variant: 'outline', action: () => { window.location.href = 'notifications.html'; } }
+      { label: t('common.close'), variant: 'ghost' },
+      { label: t('common.viewAll'), variant: 'outline', action: () => { window.location.href = 'notifications.html'; } }
     ]
   });
 }
@@ -438,22 +443,35 @@ function bindTopbarPanels() {
         const markAll = ev.target.closest('[data-action="mark-all"]');
         if (markAll) {
           ev.stopPropagation();
-          NOTIFICATIONS.forEach((n) => { n.unread = false; });
-          panel.querySelectorAll('.panel-row.unread').forEach((r) => r.classList.remove('unread'));
-          panel.querySelector('.panel-badge')?.remove();
-          bell.querySelector('.dot')?.style.setProperty('display', 'none');
-          showToast('All notifications marked read', { variant: 'success' });
+          // Sticky HR alerts are live compliance state — they clear when
+          // resolved, not when dismissed.
+          PANEL_ITEMS.forEach((n, i) => {
+            if (!n.sticky) {
+              n.unread = false;
+              panel.querySelector(`.panel-row[data-i="${i}"]`)?.classList.remove('unread');
+            }
+          });
+          if (!PANEL_ITEMS.some(n => n.unread)) {
+            panel.querySelector('.panel-badge')?.remove();
+            bell.querySelector('.dot')?.style.setProperty('display', 'none');
+          }
+          showToast(t('common.allMarkedRead'), { variant: 'success' });
           return;
         }
         const row = ev.target.closest('.panel-row');
         if (row) {
           ev.stopPropagation();
           const i = parseInt(row.dataset.i, 10);
-          NOTIFICATIONS[i].unread = false;
+          const n = PANEL_ITEMS[i];
+          row.closest('.menu-popover')?.remove();
+          if (n.href) {
+            window.location.href = n.href;
+            return;
+          }
+          n.unread = false;
           row.classList.remove('unread');
           // Close the panel before opening the modal so they don't fight.
-          row.closest('.menu-popover')?.remove();
-          openNotificationDetail(NOTIFICATIONS[i]);
+          openNotificationDetail(n);
         }
       });
       openPanel(bell, panel, { className: 'panel-notifications', width: 360 });

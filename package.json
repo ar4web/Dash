@@ -8,6 +8,7 @@
     "build": "NODE_ENV=production vite build",
     "build:dev": "NODE_ENV=development vite build",
     "preview": "vite preview",
+    "test:runtime": "vitest run",
     "test": "node tests/hr-audit-p1.mjs && node tests/hr-logic-p1.mjs && node tests/hr-audit-p2.mjs && node tests/hr-logic-p2.mjs && node tests/hr-import-test.mjs && node tests/hr-audit-p3.mjs && node tests/hr-logic-p3.mjs && node tests/hr-audit-p4.mjs && node tests/hr-logic-p4.mjs && node tests/hr-audit-p5.mjs && node tests/hr-logic-p5.mjs && node tests/hr-audit-p6.mjs && node tests/hr-logic-p6.mjs && node tests/hr-audit-all.mjs",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
@@ -68,12 +69,14 @@
     "@playwright/test": "^1.62.1",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
+    "jsdom": "^30.0.1",
     "playwright": "^1.62.1",
     "prettier": "^3.9.6",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass": "^1.102.0",
     "terser": "^5.49.2",
-    "vite": "^8.2.0"
+    "vite": "^8.2.0",
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "datatables.net": "^3.0.1",
