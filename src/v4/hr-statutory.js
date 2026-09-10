@@ -307,3 +307,51 @@ export function levyFor(bandOk = true) {
   const cfg = getStatutoryConfig();
   return bandOk ? cfg.levy.reduced : cfg.levy.standard;
 }
+
+// ── Expiry bands + pre-renewal checklist (P1) ─────────────────────────────
+// Renewal alert schedule: 90 / 60 / 30 / 7 days before expiry.
+
+export const EXPIRY_ALERTS = [90, 60, 30, 7];
+
+export function expiryBand(days) {
+  if (days === null || days === undefined || Number.isNaN(days)) {
+    return 'missing';
+  }
+  if (days < 0) {
+    return 'expired';
+  }
+  if (days <= 7) {
+    return 'critical';
+  }
+  if (days <= 30) {
+    return 'urgent';
+  }
+  if (days <= 90) {
+    return 'soon';
+  }
+  return 'ok';
+}
+
+// Pre-renewal checklist, auto-evaluated from worker + residency docs.
+// docs: { passportExp, insExp, fines }. Saudis have no Iqama chain.
+export function renewalChecklist(emp, docs = {}) {
+  if (!emp) {
+    return [];
+  }
+  if (emp.saudi) {
+    return [{ key: 'saudi', ok: true, detail: 'no-iqama-chain' }];
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const pp = docs.passportExp ? daysUntil(docs.passportExp, today) : null;
+  const ins = docs.insExp ? daysUntil(docs.insExp, today) : null;
+  return [
+    { key: 'passport', ok: pp !== null && pp >= 180, detail: pp === null ? 'missing' : `${pp}d` },
+    {
+      key: 'insurance',
+      ok: ins !== null && ins >= 0,
+      detail: ins === null ? 'missing' : `${ins}d`
+    },
+    { key: 'fines', ok: (docs.fines || 0) === 0, detail: `${docs.fines || 0}` },
+    { key: 'gosi', ok: true, detail: 'expat-2pct' }
+  ];
+}

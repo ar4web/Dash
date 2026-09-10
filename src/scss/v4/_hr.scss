@@ -251,3 +251,229 @@
   border-radius: 999px;
   transition: width 300ms;
 }
+
+// Selected table row (residency review, onboarding open).
+.row-selected {
+  background: var(--primary-lt);
+}
+
+// Onboarding stage stepper.
+.ob-steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ob-step {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+}
+
+.ob-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin: 0 auto 4px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--body-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.ob-lbl {
+  display: block;
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ob-step.done .ob-dot {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.ob-step.current .ob-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.ob-step.current .ob-lbl {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.ob-step.skipped {
+  opacity: 0.45;
+}
+
+.ob-stage-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  background: var(--body-bg);
+}
+
+.ob-check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  padding: 7px 0;
+  cursor: pointer;
+}
+
+// Tracker board.
+.track-board {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.track-col {
+  flex: 1 1 0;
+  min-width: 200px;
+  background: var(--body-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.track-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 4px 6px 8px;
+}
+
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.track-card {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.track-card:hover {
+  border-color: var(--primary);
+}
+
+// Pre-renewal checklist rows.
+.check-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.check-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.check-row.ok .check-dot {
+  background: var(--green-lt);
+  color: var(--green);
+}
+
+.check-row.fail {
+  border-color: var(--red);
+}
+
+.check-row.fail .check-dot {
+  background: var(--red-lt);
+  color: var(--red);
+}
+
+.check-detail {
+  margin-inline-start: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// Org chart tree.
+.org-root,
+.org-root ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.org-root ul {
+  padding-inline-start: 28px;
+  margin-inline-start: 15px;
+  border-inline-start: 2px solid var(--border);
+}
+
+.org-root li {
+  margin: 8px 0;
+}
+
+.org-node {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 12px 6px 6px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--card-bg);
+  max-width: 100%;
+}
+
+html[dir="rtl"] .org-node {
+  padding: 6px 6px 6px 12px;
+}
+
+.org-node:hover {
+  border-color: var(--primary);
+}
+
+.org-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.org-meta strong {
+  font-size: 13px;
+}
+
+.org-meta span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}

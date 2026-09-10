@@ -10,7 +10,14 @@ import {
   REQUESTS,
   LEAVE_TYPES,
   HOLIDAYS,
-  EXPENSE_CATEGORIES
+  EXPENSE_CATEGORIES,
+  VISA_BLOCKS,
+  VISAS,
+  ONBOARDING,
+  TRANSFERS,
+  RESIDENCY_DOCS,
+  DOCUMENTS,
+  ORG_LINKS
 } from './hr-seed.js';
 
 const SEED_MAP = {
@@ -21,7 +28,14 @@ const SEED_MAP = {
   requests: REQUESTS,
   leaveTypes: LEAVE_TYPES,
   holidays: HOLIDAYS,
-  expenseCategories: EXPENSE_CATEGORIES
+  expenseCategories: EXPENSE_CATEGORIES,
+  visaBlocks: VISA_BLOCKS,
+  visas: VISAS,
+  onboarding: ONBOARDING,
+  transfers: TRANSFERS,
+  residencyDocs: RESIDENCY_DOCS,
+  documents: DOCUMENTS,
+  orgLinks: ORG_LINKS
 };
 
 const API_MAP = {
@@ -32,7 +46,14 @@ const API_MAP = {
   requests: { path: '/api/hr/requests', listKey: 'requests' },
   leaveTypes: { path: '/api/hr/leave-types', listKey: 'types' },
   holidays: { path: '/api/hr/holidays', listKey: 'holidays' },
-  expenseCategories: { path: '/api/hr/expense-categories', listKey: 'categories' }
+  expenseCategories: { path: '/api/hr/expense-categories', listKey: 'categories' },
+  visaBlocks: { path: '/api/hr/visa-blocks', listKey: 'blocks' },
+  visas: { path: '/api/hr/visas', listKey: 'visas' },
+  onboarding: { path: '/api/hr/onboarding', listKey: 'cases' },
+  transfers: { path: '/api/hr/transfers', listKey: 'transfers' },
+  residencyDocs: { path: '/api/hr/residency-docs', listKey: 'docs' },
+  documents: { path: '/api/hr/documents', listKey: 'documents' },
+  orgLinks: { path: '/api/hr/org', listKey: 'links' }
 };
 
 function overlayRows(name) {
@@ -43,13 +64,21 @@ function overlayRows(name) {
   }
 }
 
-export function saveImportedRows(name, rows) {
-  const prev = overlayRows(name);
+function writeOverlay(name, rows) {
   try {
-    localStorage.setItem(`hr:import:${name}`, JSON.stringify(prev.concat(rows)));
+    localStorage.setItem(`hr:import:${name}`, JSON.stringify(rows));
   } catch (_e) {
     /* quota */
   }
+}
+
+function keyOf(r) {
+  return r.code || r.id || r.emp || r.no;
+}
+
+export function saveImportedRows(name, rows) {
+  const prev = overlayRows(name);
+  writeOverlay(name, prev.concat(rows));
 }
 
 export function clearImportedRows(name) {
@@ -60,21 +89,39 @@ export function clearImportedRows(name) {
   }
 }
 
-/** Seeds merged with local overlay (seed mode only). */
+/** Upsert a patch into the overlay. `row` carries the key (code/id/emp/no). */
+export function patchSeedRow(name, row, patch) {
+  const rows = overlayRows(name);
+  const k = keyOf(row);
+  const merged = { ...row, ...patch };
+  const i = rows.findIndex(r => keyOf(r) === k);
+  if (i >= 0) {
+    rows[i] = { ...rows[i], ...merged };
+  } else {
+    rows.push(merged);
+  }
+  writeOverlay(name, rows);
+}
+
+/** Seeds merged with local overlay (seed mode only). Overlay rows whose key
+ *  matches a seed row act as patches; unknown keys append as new rows. */
 export function getSeed(name) {
   const base = (SEED_MAP[name] || []).slice();
   const extra = overlayRows(name);
   if (!extra.length) {
     return base;
   }
-  const keyOf = r => r.code || r.id;
-  const seen = new Set(base.map(keyOf));
+  const out = base.slice();
   for (const r of extra) {
-    if (!seen.has(keyOf(r))) {
-      base.push(r);
+    const k = keyOf(r);
+    const i = out.findIndex(x => keyOf(x) === k);
+    if (i >= 0) {
+      out[i] = { ...out[i], ...r };
+    } else {
+      out.push(r);
     }
   }
-  return base;
+  return out;
 }
 
 const adapters = {};

@@ -55,3 +55,30 @@
     width: 100%;
   }
 }
+
+// P1: tracker board + org tree scroll inside their cards; stepper scrolls.
+@media (max-width: 1100px) {
+  .track-board {
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .track-col {
+    flex: 0 0 240px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ob-steps {
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .ob-step {
+    flex: 0 0 76px;
+  }
+
+  .org-scroll {
+    overflow-x: auto;
+  }
+}

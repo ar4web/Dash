@@ -1101,4 +1101,6 @@ Owner answers to the six P0 questions (§13 D-set), locked for the scaffold:
 3. **Import/export (universal)** — every data list gets importer + exporter: Excel (.xlsx via lazy-loaded SheetJS chunk) + CSV (BOM for Arabic) always; documents print/PDF; settings JSON backup/restore. Reports (P4+) add multi-format bundles.
 4. **Portals** — **both**: employee self-service ("My space") + client portal (roster, billing, requests scoped by client). P0 ships My space v1 + one client dashboard proving the scoped-by-role pattern; RBAC hardening follows in P3/P6.
 
-*End of blueprint (manpower-supply edition). P0 scaffolded on `arena/01a08c48-dash` per the decision log above.*
+**P1 built 2026-09-10** (same branch): onboarding wizard (§4.7, overseas + transfer-in), visa register, residency board + pre-renewal checklist + Qiwa transfers, workforce tracker (100% derived statuses + Staff column), document vault + coverage gaps, org chart. Overlay patches (`patchSeedRow`) added so renewals/advances persist in seed mode. Two pragmatic deviations: tracker renders a custom board (not kanban.js config) since statuses are read-only derived; org chart is a CSS tree (not SVG) for mobile.
+
+*End of blueprint (manpower-supply edition). P0–P1 scaffolded on `arena/01a08c48-dash` per the decision log above.*
