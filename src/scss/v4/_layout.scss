@@ -207,6 +207,73 @@
   background: rgba(255, 255, 255, 0.10);
 }
 
+// ────────────────────────
+// Third level: template groups nested under HR → Settings. Same behavior as
+// the second level (grid-rows expand, guide tick), one step deeper.
+// ────────────────────────
+.nav-subtree {
+  display: flex;
+  flex-direction: column;
+}
+.nav-subtoggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 12px;
+  margin: 1px 0;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--sidebar-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  text-align: start;
+  cursor: pointer;
+  position: relative;
+  transition:
+    background 120ms,
+    color 120ms;
+}
+.nav-subtoggle::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -9px;
+  top: 50%;
+  width: 8px;
+  height: 1px;
+  background: var(--sidebar-border);
+  transform: translateY(-50%);
+}
+.nav-subtoggle:hover {
+  color: var(--sidebar-text-hover);
+  background: var(--sidebar-hover);
+}
+.nav-subtoggle .nav-text {
+  flex: 1;
+}
+.nav-subtree.open > .nav-subtoggle .nav-chev {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+.nav-subtree.has-active > .nav-subtoggle {
+  color: var(--sidebar-text-hover);
+}
+.nav-subtree .nav-subsub {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+.nav-subtree.open .nav-subsub {
+  grid-template-rows: 1fr;
+}
+.nav-subtree .nav-subsub > .nav-sub-inner {
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+  padding: 2px 0 2px 16px;
+}
+
 .nav-sublink {
   display: flex;
   align-items: center;

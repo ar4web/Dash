@@ -99,6 +99,21 @@ function bindNavSubmenus() {
   });
 }
 
+function bindNavSubToggles() {
+  // Third level (template groups under HR → Settings): independent toggles,
+  // no accordion, no persistence — the active page's branch auto-opens.
+  document.querySelectorAll('.sidebar .nav-subtoggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sub = btn.closest('.nav-subtree');
+      if (!sub) {return;}
+      const willOpen = !sub.classList.contains('open');
+      sub.classList.toggle('open', willOpen);
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+  });
+}
+
 // Sidebar toggle — desktop collapses to a 64px rail; mobile opens a drawer.
 // Same button, viewport-aware behavior. Rail state persists in localStorage.
 const RAIL_KEY = 'gentelella:sidebar-rail';
@@ -533,6 +548,7 @@ export function mountShell() {
 
   injectShellIfMissing();
   bindNavSubmenus();
+  bindNavSubToggles();
   bindSidebarToggle();
   bindThemeToggle();
   bindTopbarPanels();
@@ -561,6 +577,11 @@ function applyRolePreview() {
           if (c.key && c.href) {
             byHref[c.href] = c.key;
           }
+          for (const gc of c.children || []) {
+            if (gc.key && gc.href) {
+              byHref[gc.href] = gc.key;
+            }
+          }
         }
       }
     }
@@ -573,6 +594,10 @@ function applyRolePreview() {
           a.style.display = 'none';
         }
       });
+    document.querySelectorAll('.sidebar-nav .nav-subtree').forEach(tr => {
+      const vis = [...tr.querySelectorAll('a.nav-sublink')].some(a => a.style.display !== 'none');
+      tr.style.display = vis ? '' : 'none';
+    });
     document.querySelectorAll('.sidebar-nav .nav-tree').forEach(tr => {
       const vis = [...tr.querySelectorAll('a.nav-sublink')].some(a => a.style.display !== 'none');
       tr.style.display = vis ? '' : 'none';

@@ -4,7 +4,7 @@
 // Run: npm run test:runtime
 import { describe, test, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
-import { initI18n, setLang, currentLang } from '../src/v4/i18n.js';
+import { initI18n, setLang, currentLang, t } from '../src/v4/i18n.js';
 import { mountShell } from '../src/v4/shell.js';
 
 const R = process.cwd();
@@ -120,7 +120,7 @@ describe('sidebar hierarchy', () => {
     const { NAV, ICONS } = await import('../src/v4/shell-render.js');
     const hr = NAV.find(g => g.label.includes('HR'));
     expect(hr.items.length).toBe(10);
-    const leaves = hr.items.flatMap(p => p.children || []);
+    const leaves = hr.items.flatMap(p => (p.children || []).filter(c => c.key));
     expect(leaves.length).toBe(46);
     expect(new Set(leaves.map(l => l.key)).size).toBe(46);
     for (const p of hr.items) {
@@ -136,6 +136,43 @@ describe('sidebar hierarchy', () => {
     expect(document.querySelector('.sidebar-nav').textContent).toContain('الإعدادات');
     expect(document.querySelector('.sidebar-nav').textContent).toContain('الموارد البشرية');
     setLang('en');
+  });
+
+  test('template groups nest under HR Settings, off the top level', async () => {
+    await mountPage('hr_dashboard');
+    const labels = [...document.querySelectorAll('.sidebar-nav .nav-label')].map(e =>
+      e.textContent.trim()
+    );
+    for (const gone of ['E-commerce', 'Projects', 'UI library', 'Admin', 'Layouts']) {
+      expect(labels).not.toContain(gone);
+    }
+    expect(labels).toContain('HR & Operations');
+    expect(document.querySelectorAll('.sidebar-nav .nav-subtree').length).toBe(5);
+    expect(
+      document.querySelector('.sidebar-nav a.nav-sublink[href="orders.html"] .nav-text')
+        ?.textContent
+    ).toBe('All orders');
+    const first = document.querySelector('.sidebar-nav .nav-subtoggle');
+    first.click();
+    expect(first.closest('.nav-subtree').classList.contains('open')).toBe(true);
+    setLang('ar');
+    const subNames = [...document.querySelectorAll('.sidebar-nav .nav-subtoggle .nav-text')].map(
+      e => e.textContent
+    );
+    expect(subNames).toContain('المتجر');
+    expect(
+      document.querySelector('.sidebar-nav a.nav-sublink[href="pricing_tables.html"] .nav-text')
+        ?.textContent
+    ).toBe(t('nav.pricing'));
+    expect(
+      document.querySelector('.sidebar-nav a.nav-sublink[href="orders.html"] .nav-text')
+        ?.textContent
+    ).toBe('All orders');
+    setLang('en');
+    await mountPage('orders');
+    expect(
+      document.querySelector('.sidebar-nav .nav-subtree.open .nav-subtoggle .nav-text')?.textContent
+    ).toBe('E-commerce');
   });
 });
 

@@ -17,6 +17,8 @@ const VERSION = pkg.version;
 // The parent is `key`-less; its children carry their own keys for the
 // `data-page` highlight match. The parent stays expanded if any child matches.
 // HR parents carry `i18n: 'hr.navgroup.x'` so applyShellI18n translates them.
+// One level deeper: a child may itself be a key-less parent with `children`
+// (template groups nested under HR → Settings), rendered as `.nav-subtree`.
 export const NAV = [
   {
     label: 'HR & Operations',
@@ -134,7 +136,76 @@ export const NAV = [
           { key: 'hr-templates', href: 'hr_templates.html', text: 'Templates' },
           { key: 'hr-holidays', href: 'hr_holidays.html', text: 'Holidays' },
           { key: 'hr-shifts', href: 'hr_shifts.html', text: 'Shifts' },
-          { key: 'hr-audit', href: 'hr_audit.html', text: 'Audit log' }
+          { key: 'hr-audit', href: 'hr_audit.html', text: 'Audit log' },
+          {
+            text: 'E-commerce',
+            i18n: 'navgroup.e-commerce',
+            children: [
+              { key: 'storefront', href: 'e_commerce.html', text: 'Storefront' },
+              { key: 'product', href: 'product_detail.html', text: 'Product' },
+              { key: 'orders', href: 'orders.html', text: 'All orders' },
+              { key: 'order-detail', href: 'order_detail.html', text: 'Order detail' },
+              { key: 'invoice', href: 'invoice.html', text: 'Invoice' },
+              { key: 'pricing', href: 'pricing_tables.html', text: 'Pricing' }
+            ]
+          },
+          {
+            text: 'Projects',
+            i18n: 'navgroup.projects',
+            children: [
+              { key: 'projects', href: 'projects.html', text: 'All projects' },
+              { key: 'project-detail', href: 'project_detail.html', text: 'Project detail' }
+            ]
+          },
+          {
+            text: 'UI library',
+            i18n: 'navgroup.ui-library',
+            children: [
+              { key: 'ui', href: 'general_elements.html', text: 'Elements' },
+              {
+                key: 'widgets',
+                href: 'widgets.html',
+                text: 'Widgets',
+                badge: { text: '5', cls: 'badge-blue' }
+              },
+              {
+                key: 'playground',
+                href: 'playground.html',
+                text: 'Playground',
+                badge: { text: 'New', cls: 'badge-teal' }
+              },
+              {
+                key: 'theme',
+                href: 'theme.html',
+                text: 'Theme',
+                badge: { text: 'New', cls: 'badge-teal' }
+              },
+              { key: 'typography', href: 'typography.html', text: 'Typography' },
+              { key: 'icons', href: 'icons.html', text: 'Icons' },
+              { key: 'media', href: 'media_gallery.html', text: 'Media' }
+            ]
+          },
+          {
+            text: 'Admin',
+            i18n: 'navgroup.admin',
+            children: [
+              { key: 'users', href: 'contacts.html', text: 'Contacts' },
+              { key: 'user_management', href: 'user_management.html', text: 'User management' },
+              { key: 'profile', href: 'profile.html', text: 'Your profile' },
+              { key: 'settings', href: 'settings.html', text: 'Settings' },
+              { key: 'faq', href: 'faq.html', text: 'Help center' }
+            ]
+          },
+          {
+            text: 'Layouts',
+            i18n: 'navgroup.layouts',
+            children: [
+              { key: 'fixed-sidebar', href: 'fixed_sidebar.html', text: 'Fixed sidebar' },
+              { key: 'fixed-footer', href: 'fixed_footer.html', text: 'Fixed footer' },
+              { key: 'level2', href: 'level2.html', text: 'Nested page' },
+              { key: 'plain', href: 'plain_page.html', text: 'Blank' }
+            ]
+          }
         ]
       }
     ]
@@ -201,84 +272,6 @@ export const NAV = [
       { key: 'kanban', href: 'kanban.html', text: 'Kanban', icon: 'kanban' },
       { key: 'files', href: 'file_manager.html', text: 'Files', icon: 'files' },
       { key: 'notifications', href: 'notifications.html', text: 'Notifications', icon: 'bell' }
-    ]
-  },
-  {
-    label: 'E-commerce',
-    items: [
-      { key: 'storefront', href: 'e_commerce.html', text: 'Storefront', icon: 'shop' },
-      { key: 'product', href: 'product_detail.html', text: 'Product', icon: 'tag' },
-      {
-        text: 'Orders',
-        icon: 'cart',
-        children: [
-          { key: 'orders', href: 'orders.html', text: 'All orders' },
-          { key: 'order-detail', href: 'order_detail.html', text: 'Order detail' }
-        ]
-      },
-      { key: 'invoice', href: 'invoice.html', text: 'Invoice', icon: 'receipt' },
-      { key: 'pricing', href: 'pricing_tables.html', text: 'Pricing', icon: 'price' }
-    ]
-  },
-  {
-    label: 'Projects',
-    items: [
-      { key: 'projects', href: 'projects.html', text: 'All projects', icon: 'projects' },
-      { key: 'project-detail', href: 'project_detail.html', text: 'Project detail', icon: 'pages' }
-    ]
-  },
-  {
-    label: 'UI library',
-    items: [
-      { key: 'ui', href: 'general_elements.html', text: 'Elements', icon: 'ui' },
-      {
-        key: 'widgets',
-        href: 'widgets.html',
-        text: 'Widgets',
-        icon: 'pages',
-        badge: { text: '5', cls: 'badge-blue' }
-      },
-      {
-        key: 'playground',
-        href: 'playground.html',
-        text: 'Playground',
-        icon: 'code',
-        badge: { text: 'New', cls: 'badge-teal' }
-      },
-      {
-        key: 'theme',
-        href: 'theme.html',
-        text: 'Theme',
-        icon: 'paint',
-        badge: { text: 'New', cls: 'badge-teal' }
-      },
-      { key: 'typography', href: 'typography.html', text: 'Typography', icon: 'type' },
-      { key: 'icons', href: 'icons.html', text: 'Icons', icon: 'icons' },
-      { key: 'media', href: 'media_gallery.html', text: 'Media', icon: 'media' }
-    ]
-  },
-  {
-    label: 'Admin',
-    items: [
-      { key: 'users', href: 'contacts.html', text: 'Contacts', icon: 'users' },
-      {
-        key: 'user_management',
-        href: 'user_management.html',
-        text: 'User management',
-        icon: 'profile'
-      },
-      { key: 'profile', href: 'profile.html', text: 'Your profile', icon: 'profile' },
-      { key: 'settings', href: 'settings.html', text: 'Settings', icon: 'settings' },
-      { key: 'faq', href: 'faq.html', text: 'Help center', icon: 'help' }
-    ]
-  },
-  {
-    label: 'Layouts',
-    items: [
-      { key: 'fixed-sidebar', href: 'fixed_sidebar.html', text: 'Fixed sidebar', icon: 'layout' },
-      { key: 'fixed-footer', href: 'fixed_footer.html', text: 'Fixed footer', icon: 'layout' },
-      { key: 'level2', href: 'level2.html', text: 'Nested page', icon: 'pages' },
-      { key: 'plain', href: 'plain_page.html', text: 'Blank', icon: 'pages' }
     ]
   }
 ];
@@ -360,11 +353,26 @@ const CHEVRON =
 
 function renderNavItem(item, activeKey) {
   if (item.children) {
-    const childActive = item.children.some(c => c.key === activeKey);
+    const renderSublink = c => {
+      const a = c.key === activeKey;
+      return `<a class="nav-sublink${a ? ' active' : ''}" href="${c.href}"${a ? ' aria-current="page"' : ''}><span class="nav-text">${c.text}</span>${c.badge ? `<span class="badge ${c.badge.cls}">${c.badge.text}</span>` : ''}</a>`;
+    };
+    const childActive = item.children.some(
+      c => c.key === activeKey || (c.children || []).some(gc => gc.key === activeKey)
+    );
     const sub = item.children
       .map(c => {
-        const a = c.key === activeKey;
-        return `<a class="nav-sublink${a ? ' active' : ''}" href="${c.href}"${a ? ' aria-current="page"' : ''}><span class="nav-text">${c.text}</span>${c.badge ? `<span class="badge ${c.badge.cls}">${c.badge.text}</span>` : ''}</a>`;
+        if (!c.children) {
+          return renderSublink(c);
+        }
+        // Third level: nested parent (template groups under HR → Settings).
+        const subActive = c.children.some(gc => gc.key === activeKey);
+        const cls = ['nav-subtree'];
+        if (subActive) {
+          cls.push('open', 'has-active');
+        }
+        const guts = c.children.map(renderSublink).join('');
+        return `<div class="${cls.join(' ')}"><button type="button" class="nav-subtoggle" aria-expanded="${subActive ? 'true' : 'false'}"><span class="nav-text">${c.text}</span>${CHEVRON}</button><div class="nav-subsub"><div class="nav-sub-inner">${guts}</div></div></div>`;
       })
       .join('');
     const cls = ['nav-tree'];

@@ -1225,6 +1225,30 @@ export function applyShellI18n() {
       // Submenu children: HR leaves only (non-HR children keep static text,
       // since t() falls back to the raw key when no translation exists).
       for (const c of item.children) {
+        if (c.children) {
+          // Nested parent (template groups under HR → Settings): label via
+          // its i18n key, grandchildren via nav.* only when translated.
+          if (c.i18n && c.children[0]) {
+            const sub = g
+              .querySelector(`a.nav-sublink[href="${c.children[0].href}"]`)
+              ?.closest('.nav-subtree');
+            const lbl = sub?.querySelector('.nav-subtoggle .nav-text');
+            if (lbl) {
+              lbl.textContent = t(c.i18n);
+            }
+          }
+          for (const gc of c.children) {
+            const k = `nav.${gc.key}`;
+            if (t(k) === k) {
+              continue;
+            }
+            const s = g.querySelector(`a.nav-sublink[href="${gc.href}"] .nav-text`);
+            if (s) {
+              s.textContent = t(k);
+            }
+          }
+          continue;
+        }
         if (!c.key || !c.key.startsWith('hr-')) {
           continue;
         }
