@@ -221,6 +221,85 @@
     </div>
   </details>
 
+  <details class="card zone" open data-zone="compliance">
+    <summary class="zone-head">
+      <span class="zone-title" data-i18n="hr.dashboard.zoneCompliance">Compliance shield</span>
+      <span class="zone-meta" id="zone-compliance-meta"></span>
+    </summary>
+    <div class="card-body">
+      <div class="chip-row" id="compliance-chips"></div>
+      <div class="row col-3" style="margin-top:12px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.nitaqatMeter">Saudization vs target</div>
+          </div>
+          <div class="card-body">
+            <div id="nitaqat-meter"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.ajeerTitle">Ajeer validity</div>
+          </div>
+          <div class="card-body">
+            <div id="ajeer-validity"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.levyTitle">Expat levy / mo</div>
+          </div>
+          <div class="card-body">
+            <div id="levy-card"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">
+          <div class="card-title" data-i18n="hr.dashboard.expiryDeck">Expiration alert deck</div>
+        </div>
+        <div class="card-body">
+          <div class="chip-row" id="iqama-buckets"></div>
+          <div class="row col-3" style="margin-top:12px">
+            <div>
+              <div class="vac-group-head"><strong data-i18n="hr.dashboard.iqamaDoc">Iqama</strong></div>
+              <div class="chart-box chart-sm" id="chart-exp-iqama"></div>
+            </div>
+            <div>
+              <div class="vac-group-head"><strong data-i18n="hr.dashboard.passportDoc">Passport</strong></div>
+              <div class="chart-box chart-sm" id="chart-exp-passport"></div>
+            </div>
+            <div>
+              <div class="vac-group-head"><strong data-i18n="hr.dashboard.insDoc">Medical insurance</strong></div>
+              <div class="chart-box chart-sm" id="chart-exp-insurance"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row col-2" style="margin-top:12px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.transfersTitle">Sponsor transfers</div>
+            <div class="card-options">
+              <a class="btn btn-ghost btn-sm" href="hr_residency.html" data-i18n="hr.dashboard.openResidency">Open residency</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="kanban" id="transfer-kanban"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.contractsWatch">Contracts ending ≤ 90 days</div>
+          </div>
+          <div class="card-body">
+            <div id="contracts-watch"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <div class="row col-3" id="hr-kpis" style="margin-bottom:16px"></div>
 
   <div class="row col-2" style="margin-bottom:16px">

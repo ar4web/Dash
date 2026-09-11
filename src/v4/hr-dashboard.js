@@ -16,7 +16,11 @@ import {
   separationSeries,
   leaveWindows,
   returnStats,
-  eligibleForVacation
+  eligibleForVacation,
+  expiryDeck,
+  iqamaBuckets,
+  contractsEnding,
+  permitStatus
 } from './hr-statutory.js';
 import { getSeed } from './hr-api.js';
 import { CLIENTS, LEAVE_DELAY_REASONS, SITES, SKILLS, SPONSORS, PROFESSIONS } from './hr-seed.js';
@@ -983,12 +987,147 @@ function renderS3() {
   }
 }
 
+function renderS4() {
+  if (!document.getElementById('nitaqat-meter')) {
+    return;
+  }
+  const today = todayIso();
+  const s = getSettings();
+  const emps = getSeed('employees');
+  const n = nitaqatEstimate(emps, s.nitaqat.target || 0);
+  const money = execMoney({
+    employees: emps,
+    assignments: getSeed('assignments'),
+    invoices: getSeed('invoices'),
+    targetPct: s.nitaqat.target || 0,
+    todayIso: today
+  });
+
+  const runs = [...getSeed('payRuns')].sort((a, b) => ((a.month || '') < (b.month || '') ? 1 : -1));
+  const last = runs[0];
+  const wpsTone = !last ? 'blue' : { paid: 'green', accepted: 'blue', submitted: 'yellow' }[last.wps] || 'blue';
+  const qiwaTone = n.qiwaPct >= 85 ? 'green' : n.qiwaPct >= 70 ? 'yellow' : 'red';
+  document.getElementById('compliance-chips').innerHTML =
+    `<span class="status status-${qiwaTone}">Qiwa ${n.qiwaPct}%</span>` +
+    (last
+      ? `<span class="status status-${wpsTone}">WPS ${esc(last.month)} · ${esc(t(`status.${last.wps}`))}</span>`
+      : '') +
+    `<span class="status status-blue">GOSI ${esc(fmtSAR(money.gosiEmployer))}/${esc(L('mo', 'شهر'))}</span>`;
+
+  const met = s.nitaqat.target > 0 && n.pct >= s.nitaqat.target;
+  document.getElementById('nitaqat-meter').innerHTML =
+    `<div class="meter-top"><strong>${n.pct}%</strong><span>${esc(t('hr.dashboard.gap'))}: ${n.gap}% · ${esc(L('Target', 'المستهدف'))}: ${s.nitaqat.target > 0 ? `${s.nitaqat.target}%` : '—'}</span></div>` +
+    `<div class="meter"><div class="meter-fill" style="width:${Math.min(100, n.pct)}%;background:var(--${s.nitaqat.target > 0 ? (met ? 'green' : 'yellow') : 'blue'})"></div></div>` +
+    `<div class="stat-subtext">${n.saudiUnits} / ${n.total} ${esc(t('hr.dashboard.heads'))}</div>`;
+
+  const permits = getSeed('ajeerPermits').filter(p => p.status === 'active');
+  const pCount = { active: 0, expiring: 0, expired: 0, missing: 0 };
+  permits.forEach(p => {
+    pCount[permitStatus(p.exp, today)] += 1;
+  });
+  const missingRef = getSeed('assignments').filter(a => a.status === 'active' && !a.ajeer).length;
+  const ajRows = [
+    [t('status.valid'), pCount.active, 'green'],
+    [t('status.expiring'), pCount.expiring, 'yellow'],
+    [t('status.expired'), pCount.expired, 'red'],
+    [t('status.missing'), pCount.missing + missingRef, 'red']
+  ];
+  document.getElementById('ajeer-validity').innerHTML = ajRows
+    .map(
+      ([label, v, tone]) =>
+        `<div class="hr-bar-row"><div class="hr-bar-top"><span><span class="aj-dot" style="background:var(--${tone})"></span>${esc(label)}</span><strong>${v}</strong></div></div>`
+    )
+    .join('');
+
+  document.getElementById('levy-card').innerHTML =
+    `<div class="meter-top"><strong>${esc(fmtSAR(money.levy))}</strong></div>` +
+    `<div class="stat-subtext">${esc(fmtSAR(money.levyHead))} × ${money.expatN} · ${esc(t(money.bandOk ? 'hr.dashboard.redBand' : 'hr.dashboard.stdBand'))}</div>`;
+
+  const bk = iqamaBuckets(emps, today);
+  document.getElementById('iqama-buckets').innerHTML =
+    `<span class="status status-red">≤30: ${bk.le30}</span>` +
+    `<span class="status status-yellow">31–60: ${bk.le60}</span>` +
+    `<span class="status status-blue">61–90: ${bk.le90}</span>`;
+
+  const deck = expiryDeck(emps, getSeed('residencyDocs'), today);
+  const deckDefs = [
+    ['chart-exp-iqama', t('hr.dashboard.iqamaDoc'), deck.iqama],
+    ['chart-exp-passport', t('hr.dashboard.passportDoc'), deck.passport],
+    ['chart-exp-insurance', t('hr.dashboard.insDoc'), deck.insurance]
+  ];
+  deckDefs.forEach(([id, label, bands]) => {
+    renderEchart(
+      document.getElementById(id),
+      tk =>
+        donutOption(tk, [
+          { name: t('status.valid'), v: bands.valid, c: x => x.green },
+          { name: t('status.expiring'), v: bands.expiring, c: x => x.yellow },
+          { name: t('status.expired'), v: bands.expired, c: x => x.red },
+          { name: t('status.missing'), v: bands.missing, c: x => x.purple }
+        ]),
+      `${label}: ${t('status.valid')} ${bands.valid}, ${t('status.expiring')} ${bands.expiring}, ${t('status.expired')} ${bands.expired}, ${t('status.missing')} ${bands.missing}.`
+    );
+  });
+
+  const stages = ['requested', 'in-progress', 'awaiting-release', 'completed'];
+  const transfers = getSeed('transfers');
+  document.getElementById('transfer-kanban').innerHTML = stages
+    .map(st => {
+      const cols = transfers.filter(x => x.status === st);
+      return (
+        `<div class="kanban-col"><div class="kanban-head"><span>${esc(t(`status.${st}`))}</span><strong>${cols.length}</strong></div>` +
+        (cols.length
+          ? cols
+              .map(
+                x =>
+                  `<div class="kanban-card"><strong dir="ltr">${esc(x.id)}</strong>` +
+                  `<span>${esc(currentLang() === 'ar' ? x.nameAr || x.nameEn : x.nameEn)}</span>` +
+                  `<small>${esc(x.from)} · ${esc(fmtSAR(x.fee))}</small>` +
+                  `<small>${esc(fmtDate(x.noticeEnd))} · ${x.released ? '✓' : '…'}</small></div>`
+            )
+            .join('')
+          : '<div class="hr-empty">—</div>') +
+        '</div>'
+      );
+    })
+    .join('');
+
+  const watch = contractsEnding(getSeed('contracts'), 90, today);
+  document.getElementById('contracts-watch').innerHTML = watch.length
+    ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+      watch
+        .map(
+          c => `<tr>
+    <td><a href="hr_contracts.html" dir="ltr">${esc(c.id)}</a><br><small style="color:var(--text-muted)">${esc(c.partyKind === 'employee' ? empName(c.party) : clientName(c.party))}</small></td>
+    <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(fmtDate(c.end))}</td>
+    <td style="text-align:end"><span class="status status-${c.days <= 30 ? 'red' : 'yellow'}">${c.days} ${esc(t('hr.dashboard.daysLeft'))}</span></td>
+  </tr>`
+        )
+        .join('') +
+      '</tbody></table></div>'
+    : `<div class="hr-empty">${esc(t('common.noData'))}</div>`;
+
+  const reds =
+    deck.iqama.expired +
+    deck.passport.expired +
+    deck.insurance.expired +
+    missingRef +
+    watch.filter(c => c.days <= 30).length;
+  const meta = document.getElementById('zone-compliance-meta');
+  if (meta) {
+    meta.innerHTML = reds
+      ? `<span class="status status-red">${reds} ${esc(t('common.urgent'))}</span>`
+      : '<span class="status status-green">✓</span>';
+  }
+}
+
 function renderAll() {
   renderHead();
   renderZoneA();
   renderS1();
   renderS2();
   renderS3();
+  renderS4();
   renderKpis();
   renderAlerts();
   renderExpiries();

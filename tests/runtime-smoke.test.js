@@ -6,7 +6,13 @@ import { describe, test, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { initI18n, setLang, currentLang, t, applyBranding } from '../src/v4/i18n.js';
 import { mountShell } from '../src/v4/shell.js';
-import { leaveWindows, returnStats } from '../src/v4/hr-statutory.js';
+import {
+  leaveWindows,
+  returnStats,
+  expiryDeck,
+  iqamaBuckets,
+  contractsEnding
+} from '../src/v4/hr-statutory.js';
 import { getSeed } from '../src/v4/hr-api.js';
 
 const R = process.cwd();
@@ -369,7 +375,7 @@ describe('command center', () => {
     expect(card.textContent).toMatch(/Huroob|هروب/);
     expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
     const zones = [...document.querySelectorAll('details.zone[data-zone]')];
-    expect(zones.length).toBe(4);
+    expect(zones.length).toBe(5);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
@@ -429,6 +435,43 @@ describe('command center', () => {
     expect(mx[0].textContent).toContain('22');
     expect(mx[1].textContent).toContain('2');
     expect(document.querySelectorAll('#skills-cloud .skill-tag').length).toBeGreaterThan(10);
+  });
+
+  test('§4 compliance shield matches the engine', async () => {
+    await mountPage('hr_dashboard');
+    const chips = document.getElementById('compliance-chips').textContent;
+    expect(chips).toContain('Qiwa');
+    expect(chips).toContain('WPS');
+    expect(chips).toContain('GOSI');
+    expect(document.getElementById('nitaqat-meter').textContent).toContain('18.1%');
+    const ajNums = [...document.querySelectorAll('#ajeer-validity strong')].map(e =>
+      Number(e.textContent)
+    );
+    expect(ajNums.length).toBe(4);
+    expect(ajNums.reduce((x, y) => x + y, 0)).toBe(18);
+    expect(document.getElementById('levy-card').textContent).toContain('15,200');
+    const bk = iqamaBuckets(getSeed('employees'));
+    expect(document.getElementById('iqama-buckets').textContent).toContain(`≤30: ${bk.le30}`);
+    const deck = expiryDeck(getSeed('employees'), getSeed('residencyDocs'));
+    for (const [id, bands] of [
+      ['chart-exp-iqama', deck.iqama],
+      ['chart-exp-passport', deck.passport],
+      ['chart-exp-insurance', deck.insurance]
+    ]) {
+      const label = document.getElementById(id).getAttribute('aria-label');
+      expect(label).toContain(`Valid ${bands.valid}`);
+    }
+    const cols = [...document.querySelectorAll('#transfer-kanban .kanban-col')];
+    expect(cols.length).toBe(4);
+    expect(cols.every(c => c.querySelectorAll('.kanban-card').length === 1)).toBe(true);
+    expect(document.getElementById('transfer-kanban').textContent).toContain('QX-2026-022');
+    const watch = contractsEnding(getSeed('contracts'), 90);
+    const watchRows = document.querySelectorAll('#contracts-watch tbody tr');
+    expect(watchRows.length).toBe(watch.length);
+    if (watch.length) {
+      expect(watchRows[0].textContent).toContain(watch[0].id);
+    }
+    expect(document.getElementById('zone-compliance-meta').textContent.length).toBeGreaterThan(0);
   });
 
   test('Arabic re-render flips chart summaries', async () => {

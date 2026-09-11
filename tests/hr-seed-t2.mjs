@@ -14,7 +14,9 @@ import {
   SPONSORS,
   AJEER_PERMITS,
   INVOICES,
-  ONBOARDING
+  ONBOARDING,
+  RESIDENCY_DOCS,
+  CONTRACTS
 } from '../src/v4/hr-seed.js';
 import {
   nitaqatEstimate,
@@ -24,7 +26,10 @@ import {
   tenureBuckets,
   execMoney,
   separationSeries,
-  eligibleForVacation
+  eligibleForVacation,
+  expiryDeck,
+  iqamaBuckets,
+  contractsEnding
 } from '../src/v4/hr-statutory.js';
 import { applyRtl } from '../src/v4/chart-helper.js';
 
@@ -149,6 +154,15 @@ eq('t2-transfer-stages', TRANSFERS.map(x => x.status).sort(), [
   'completed',
   'in-progress',
   'requested'
+]);
+eq('t2-deck', expiryDeck(EMPLOYEES, RESIDENCY_DOCS, TODAY), {
+  iqama: { valid: 17, expiring: 2, expired: 0, missing: 0 },
+  passport: { valid: 19, expiring: 0, expired: 0, missing: 0 },
+  insurance: { valid: 15, expiring: 2, expired: 1, missing: 1 }
+});
+eq('t2-iqama-buckets', iqamaBuckets(EMPLOYEES, TODAY), { le30: 1, le60: 1, le90: 2 });
+eq('t2-contracts-90', contractsEnding(CONTRACTS, 90, TODAY).map(c => `${c.id}:${c.days}`), [
+  'CT-2026-005:34'
 ]);
 
 // ── §6 tasks ───────────────────────────────────────────────────────────────

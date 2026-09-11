@@ -954,3 +954,69 @@ export function eligibleForVacation(employees, requests, todayIso) {
   }
   return out.sort((a, b) => b.left - a.left || (a.code < b.code ? -1 : 1));
 }
+
+// ── T2 §4 expiry deck (pure) ───────────────────────────────────────────────
+// Per-doc-type bands over payable expats. Missing = no date on file (data
+// gap, shown — never folded into another band).
+export function expiryDeck(employees, docs, todayIso) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const docByEmp = {};
+  (docs || []).forEach(d => {
+    docByEmp[d.emp] = d;
+  });
+  const band = iso => {
+    if (!iso) {
+      return 'missing';
+    }
+    const d = daysUntil(iso, today);
+    if (d < 0) {
+      return 'expired';
+    }
+    if (d <= 60) {
+      return 'expiring';
+    }
+    return 'valid';
+  };
+  const fresh = () => ({ valid: 0, expiring: 0, expired: 0, missing: 0 });
+  const out = { iqama: fresh(), passport: fresh(), insurance: fresh() };
+  for (const e of employees || []) {
+    if (e.saudi || e.st === 'exited' || e.st === 'huroob') {
+      continue;
+    }
+    out.iqama[band(e.iqamaExp)] += 1;
+    const doc = docByEmp[e.code] || {};
+    out.passport[band(doc.passportExp)] += 1;
+    out.insurance[band(doc.insExp)] += 1;
+  }
+  return out;
+}
+
+// Iqama countdown bands (days until expiry): 0–30 / 31–60 / 61–90.
+export function iqamaBuckets(employees, todayIso) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const out = { le30: 0, le60: 0, le90: 0 };
+  for (const e of employees || []) {
+    if (e.saudi || e.st === 'exited' || e.st === 'huroob' || !e.iqamaExp) {
+      continue;
+    }
+    const d = daysUntil(e.iqamaExp, today);
+    if (d >= 0 && d <= 30) {
+      out.le30 += 1;
+    } else if (d > 30 && d <= 60) {
+      out.le60 += 1;
+    } else if (d > 60 && d <= 90) {
+      out.le90 += 1;
+    }
+  }
+  return out;
+}
+
+// Active contracts ending within `withinDays` (open-ended excluded).
+export function contractsEnding(contracts, withinDays, todayIso) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const lim = addDays(today, withinDays);
+  return (contracts || [])
+    .filter(c => c.status === 'active' && c.end && c.end >= today && c.end <= lim)
+    .map(c => ({ id: c.id, party: c.party, partyKind: c.partyKind, end: c.end, days: daysUntil(c.end, today) }))
+    .sort((a, b) => (a.end < b.end ? -1 : 1));
+}
