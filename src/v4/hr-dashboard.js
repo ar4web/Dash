@@ -20,7 +20,10 @@ import {
   expiryDeck,
   iqamaBuckets,
   contractsEnding,
-  permitStatus
+  permitStatus,
+  invoiceTotals,
+  perfRanking,
+  cohortTrend
 } from './hr-statutory.js';
 import { getSeed } from './hr-api.js';
 import { CLIENTS, LEAVE_DELAY_REASONS, SITES, SKILLS, SPONSORS, PROFESSIONS } from './hr-seed.js';
@@ -1128,6 +1131,7 @@ function renderAll() {
   renderS2();
   renderS3();
   renderS4();
+  renderS5();
   renderKpis();
   renderAlerts();
   renderExpiries();
@@ -1171,4 +1175,127 @@ export function initHrDashboard() {
   }
   booted = true;
   window.addEventListener(LANG_EVENT, renderAll);
+}
+
+// ── T2 §5 accounts & performance ───────────────────────────────────────────
+function renderS5() {
+  const ex = getSeed('expenses');
+  const cats = getSeed('expenseCategories');
+  const byCat = {};
+  ex.forEach(r => {
+    byCat[r.cat] = (byCat[r.cat] || 0) + Number(r.amount || 0);
+  });
+  const palette = [
+    tk => tk.primary,
+    tk => tk.blue,
+    tk => tk.purple,
+    tk => tk.yellow,
+    tk => tk.green,
+    tk => tk.red,
+    tk => tk.azure
+  ];
+  const slices = Object.keys(byCat)
+    .sort((a, b) => byCat[b] - byCat[a])
+    .map((code, i) => {
+      const c = cats.find(x => x.code === code) || { en: code, ar: code };
+      return {
+        name: L(c.en, c.ar),
+        v: Math.round(byCat[code] * 100) / 100,
+        c: palette[i % palette.length]
+      };
+    });
+  renderEchart(
+    document.getElementById('chart-expense'),
+    tk => donutOption(tk, slices),
+    slices.map(x => `${x.name} ${fmtSAR(x.v)}`).join(' · ')
+  );
+  const inv = getSeed('invoices');
+  document.querySelector('#billing-history tbody').innerHTML = inv
+    .map(r => {
+      const tot = invoiceTotals(r.lines || []).total;
+      const c = getSeed('clients').find(x => x.code === r.client) || {};
+      return (
+        `<tr><td dir="ltr">${esc(r.month)}</td><td>${esc(L(c.en || r.client, c.ar || r.client))}</td>` +
+        `<td class="num" dir="ltr">${esc(fmtSAR(tot))}</td>` +
+        `<td><span class="status status-${r.status}">${esc(t(`status.${r.status}`))}</span></td></tr>`
+      );
+    })
+    .join('');
+  const d = {
+    attendance: getSeed('attendance'),
+    goals: getSeed('goals'),
+    feedback: getSeed('feedback'),
+    timesheets: getSeed('timesheets')
+  };
+  const rank = perfRanking(d);
+  const top = rank.slice(0, 5);
+  const bottom = rank.slice(-5).reverse();
+  const empName = code => {
+    const e = getSeed('employees').find(x => x.code === code) || {};
+    return L(e.en || code, e.ar || code);
+  };
+  const rows = list =>
+    list
+      .map(
+        (r, i) =>
+          `<tr><td>${i + 1}</td><td>${esc(empName(r.code))}</td>` +
+          `<td class="num">${r.index}</td><td class="num">${r.signals}/4</td></tr>`
+      )
+      .join('');
+  document.querySelector('#perf-top tbody').innerHTML = rows(top);
+  document.querySelector('#perf-bottom tbody').innerHTML = rows(bottom);
+  const tTop = cohortTrend(
+    top.map(r => r.code),
+    d.attendance
+  );
+  const tBot = cohortTrend(
+    bottom.map(r => r.code),
+    d.attendance
+  );
+  const dates = tTop.map(p => p.date.slice(5));
+  const botByDate = Object.fromEntries(tBot.map(p => [p.date, p.score]));
+  renderEchart(
+    document.getElementById('chart-perf-trend'),
+    tk => ({
+      tooltip: { trigger: 'axis' },
+      legend: { bottom: 0, textStyle: { color: tk.textMuted, fontSize: 11 } },
+      grid: { left: 8, right: 8, top: 12, bottom: 52, containLabel: true },
+      xAxis: { type: 'category', data: dates, axisLabel: { color: tk.textMuted, fontSize: 10 } },
+      yAxis: {
+        type: 'value',
+        min: 0,
+        max: 100,
+        splitLine: { lineStyle: { color: tk.borderLight, type: [4, 3] } }
+      },
+      series: [
+        {
+          name: t('hr.dashboard.top5'),
+          type: 'line',
+          data: tTop.map(p => p.score),
+          lineStyle: { color: tk.green, width: 2 },
+          itemStyle: { color: tk.green },
+          symbol: 'circle',
+          symbolSize: 5
+        },
+        {
+          name: t('hr.dashboard.bottom5'),
+          type: 'line',
+          data: tTop.map(p => (botByDate[p.date] === undefined ? null : botByDate[p.date])),
+          lineStyle: { color: tk.red, width: 2 },
+          itemStyle: { color: tk.red },
+          symbol: 'circle',
+          symbolSize: 5
+        }
+      ]
+    }),
+    `${t('hr.dashboard.top5')}: ${top.map(r => r.index).join(', ')} · ${t('hr.dashboard.bottom5')}: ${bottom
+      .map(r => r.index)
+      .join(', ')}`
+  );
+  const meta = document.getElementById('zone-accounts-meta');
+  if (meta) {
+    meta.innerHTML = `<span class="status status-green">${rank.length} · ${esc(t('hr.dashboard.top5'))} ${
+      top.length ? top[0].index : '—'
+    }</span>`;
+  }
 }

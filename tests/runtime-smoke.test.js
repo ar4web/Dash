@@ -11,7 +11,9 @@ import {
   returnStats,
   expiryDeck,
   iqamaBuckets,
-  contractsEnding
+  contractsEnding,
+  perfRanking,
+  invoiceTotals
 } from '../src/v4/hr-statutory.js';
 import { getSeed } from '../src/v4/hr-api.js';
 
@@ -375,7 +377,7 @@ describe('command center', () => {
     expect(card.textContent).toMatch(/Huroob|هروب/);
     expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
     const zones = [...document.querySelectorAll('details.zone[data-zone]')];
-    expect(zones.length).toBe(5);
+    expect(zones.length).toBe(6);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
@@ -472,6 +474,37 @@ describe('command center', () => {
       expect(watchRows[0].textContent).toContain(watch[0].id);
     }
     expect(document.getElementById('zone-compliance-meta').textContent.length).toBeGreaterThan(0);
+  });
+
+  test('§5 money + performance matrix match the engine', async () => {
+    await mountPage('hr_dashboard');
+    const cats = getSeed('expenseCategories');
+    const exLabel = document.getElementById('chart-expense').getAttribute('aria-label');
+    expect(exLabel).toContain(cats[0].en);
+    const inv = getSeed('invoices');
+    const billRows = document.querySelectorAll('#billing-history tbody tr');
+    expect(billRows.length).toBe(inv.length);
+    expect(billRows[0].textContent).toContain(inv[0].month);
+    expect(billRows[0].textContent).toContain(
+      Math.round(invoiceTotals(inv[0].lines).total).toLocaleString('en-US')
+    );
+    const rank = perfRanking({
+      attendance: getSeed('attendance'),
+      goals: getSeed('goals'),
+      feedback: getSeed('feedback'),
+      timesheets: getSeed('timesheets')
+    });
+    const topRows = document.querySelectorAll('#perf-top tbody tr');
+    const botRows = document.querySelectorAll('#perf-bottom tbody tr');
+    expect(topRows.length).toBe(5);
+    expect(botRows.length).toBe(5);
+    expect(topRows[0].textContent).toContain(String(rank[0].index));
+    const trendLabel = document.getElementById('chart-perf-trend').getAttribute('aria-label');
+    expect(trendLabel).toContain('Top 5');
+    expect(trendLabel).toContain(String(rank[rank.length - 1].index));
+    expect(document.querySelector('[data-i18n="hr.dashboard.perfFormula"]').textContent).toContain(
+      '40%'
+    );
   });
 
   test('Arabic re-render flips chart summaries', async () => {

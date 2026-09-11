@@ -16,7 +16,13 @@ import {
   INVOICES,
   ONBOARDING,
   RESIDENCY_DOCS,
-  CONTRACTS
+  CONTRACTS,
+  ATTENDANCE,
+  GOALS,
+  FEEDBACK,
+  TIMESHEETS,
+  EXPENSES,
+  EXPENSE_CATEGORIES
 } from '../src/v4/hr-seed.js';
 import {
   nitaqatEstimate,
@@ -29,7 +35,10 @@ import {
   eligibleForVacation,
   expiryDeck,
   iqamaBuckets,
-  contractsEnding
+  contractsEnding,
+  perfIndex,
+  perfRanking,
+  cohortTrend
 } from '../src/v4/hr-statutory.js';
 import { applyRtl } from '../src/v4/chart-helper.js';
 
@@ -164,6 +173,52 @@ eq('t2-iqama-buckets', iqamaBuckets(EMPLOYEES, TODAY), { le30: 1, le60: 1, le90:
 eq('t2-contracts-90', contractsEnding(CONTRACTS, 90, TODAY).map(c => `${c.id}:${c.days}`), [
   'CT-2026-005:34'
 ]);
+
+// ── §5 accounts & performance ─────────────────────────────────────────────
+eq(
+  't2-perf-synth',
+  perfIndex('X', {
+    attendance: Array.from({ length: 10 }, (_, i) => ({
+      emp: 'X',
+      status: i < 8 ? 'present' : 'late'
+    })),
+    goals: [{ owner: 'X', status: 'active', target: 98, current: 96.5 }],
+    feedback: [{ to: 'X', kind: 'praise' }],
+    timesheets: [{ status: 'approved', lines: [{ emp: 'X', otH: 2 }] }]
+  }),
+  { index: 95.5, signals: 4, att: 90, goals: 98.5, feedback: 100, ot: 100 }
+);
+eq(
+  't2-perf-att-only',
+  perfIndex('Y', { attendance: [{ emp: 'Y', status: 'present' }] }).index,
+  100
+);
+eq('t2-perf-none', perfIndex('Z', {}), null);
+{
+  const d = { attendance: ATTENDANCE, goals: GOALS, feedback: FEEDBACK, timesheets: TIMESHEETS };
+  const r = perfRanking(d);
+  eq('t2-perf-crew-18', r.length, 18);
+  ok(
+    't2-perf-range',
+    r.every(x => x.index >= 0 && x.index <= 100 && x.signals >= 1)
+  );
+  ok(
+    't2-perf-sorted',
+    r.every((x, i) => i === 0 || r[i - 1].index >= x.index)
+  );
+  const trend = cohortTrend(
+    r.slice(0, 5).map(x => x.code),
+    ATTENDANCE
+  );
+  ok(
+    't2-perf-trend',
+    trend.length >= 5 && trend.every((t, i) => i === 0 || trend[i - 1].date <= t.date)
+  );
+}
+ok(
+  't2-expense-cats',
+  EXPENSES.every(x => EXPENSE_CATEGORIES.some(c => c.code === x.cat)) && EXPENSE_CATEGORIES.every(c => c.en && c.ar)
+);
 
 // ── §6 tasks ───────────────────────────────────────────────────────────────
 ok('t2-tasks-8', TASKS.length === 8);

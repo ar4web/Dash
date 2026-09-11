@@ -300,6 +300,63 @@
     </div>
   </details>
 
+  <details class="card zone" open data-zone="accounts">
+    <summary class="zone-head">
+      <span class="zone-title" data-i18n="hr.dashboard.zoneAccounts">Accounts & performance</span>
+      <span class="zone-meta" id="zone-accounts-meta"></span>
+    </summary>
+    <div class="card-body">
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.expenseTitle">Expense distribution</div>
+          </div>
+          <div class="card-body">
+            <div class="chart" id="chart-expense" role="img"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" data-i18n="hr.dashboard.billingTitle">Billing history</div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+            <table class="table" id="billing-history">
+              <thead><tr><th data-i18n="hr.dashboard.billMonth">Month</th><th data-i18n="hr.dashboard.billClient">Client</th><th class="num" data-i18n="common.total">Total</th><th data-i18n="common.status">Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="hr_invoices.html" data-i18n="common.viewAll">View all</a>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">
+          <div class="card-title" data-i18n="hr.dashboard.perfTitle">Performance matrix</div>
+        </div>
+        <div class="card-body">
+          <h4 class="sub" data-i18n="hr.dashboard.trendTitle">Trailing 14-day attendance trend</h4>
+          <div class="chart" id="chart-perf-trend" role="img"></div>
+          <div class="row col-2">
+            <div>
+              <h4 class="sub" data-i18n="hr.dashboard.top5">Top 5</h4>
+              <div class="table-responsive">
+            <table class="table" id="perf-top"><thead><tr><th>#</th><th data-i18n="common.name">Name</th><th class="num" data-i18n="hr.dashboard.score">Score</th><th class="num" data-i18n="hr.dashboard.signals">signals</th></tr></thead><tbody></tbody></table>
+            </div>
+            </div>
+            <div>
+              <h4 class="sub" data-i18n="hr.dashboard.bottom5">Bottom 5</h4>
+              <div class="table-responsive">
+            <table class="table" id="perf-bottom"><thead><tr><th>#</th><th data-i18n="common.name">Name</th><th class="num" data-i18n="hr.dashboard.score">Score</th><th class="num" data-i18n="hr.dashboard.signals">signals</th></tr></thead><tbody></tbody></table>
+            </div>
+            </div>
+          </div>
+          <p class="muted" data-i18n="hr.dashboard.perfFormula"></p>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <div class="row col-3" id="hr-kpis" style="margin-bottom:16px"></div>
 
   <div class="row col-2" style="margin-bottom:16px">

@@ -1020,3 +1020,84 @@ export function contractsEnding(contracts, withinDays, todayIso) {
     .map(c => ({ id: c.id, party: c.party, partyKind: c.partyKind, end: c.end, days: daysUntil(c.end, today) }))
     .sort((a, b) => (a.end < b.end ? -1 : 1));
 }
+
+// ── T2 §5 performance index (pure) ─────────────────────────────────────────
+// index = attendance 40% + goal progress 30% + praise share 20% + OT
+// discipline 10%. Signals missing for an employee are EXCLUDED and the
+// weights renormalized (documented in the UI footnote); coverage = how many
+// of the 4 signals fired. Ranked cohort = deployed crew (attendance-tracked).
+export function perfIndex(code, data = {}) {
+  const { attendance = [], goals = [], feedback = [], timesheets = [] } = data;
+  const rows = attendance.filter(r => r.emp === code);
+  let att = null;
+  if (rows.length) {
+    const pts = rows.reduce(
+      (s, r) => s + (r.status === 'present' ? 1 : r.status === 'late' ? 0.5 : 0),
+      0
+    );
+    att = (pts / rows.length) * 100;
+  }
+  const mine = goals.filter(g => g.owner === code && g.status !== 'draft' && g.target > 0);
+  let gl = null;
+  if (mine.length) {
+    gl = mine.reduce((s, g) => s + Math.min(100, (g.current / g.target) * 100), 0) / mine.length;
+  }
+  const fb = feedback.filter(f => f.to === code);
+  let fbs = null;
+  if (fb.length) {
+    fbs = (fb.filter(f => f.kind === 'praise').length / fb.length) * 100;
+  }
+  const lines = timesheets
+    .filter(t => t.status !== 'draft')
+    .flatMap(t => (t.lines || []).filter(l => l.emp === code));
+  let ot = null;
+  if (lines.length) {
+    const avg = lines.reduce((s, l) => s + (l.otH || 0), 0) / lines.length;
+    ot = Math.max(0, 100 - Math.max(0, avg - 4) * 8.33);
+  }
+  const parts = [
+    [att, 0.4],
+    [gl, 0.3],
+    [fbs, 0.2],
+    [ot, 0.1]
+  ].filter(([v]) => v !== null);
+  if (!parts.length) {
+    return null;
+  }
+  const wsum = parts.reduce((s, [, w]) => s + w, 0);
+  const index = parts.reduce((s, [v, w]) => s + v * w, 0) / wsum;
+  return {
+    index: Math.round(index * 10) / 10,
+    signals: parts.length,
+    att: att === null ? null : Math.round(att * 10) / 10,
+    goals: gl === null ? null : Math.round(gl * 10) / 10,
+    feedback: fbs === null ? null : Math.round(fbs * 10) / 10,
+    ot: ot === null ? null : Math.round(ot * 10) / 10
+  };
+}
+
+// Ranked crew: employees with attendance rows, scored + sorted desc.
+export function perfRanking(data = {}) {
+  const crew = [...new Set((data.attendance || []).map(r => r.emp))];
+  return crew
+    .map(code => ({ code, ...(perfIndex(code, data) || { index: 0, signals: 0 }) }))
+    .filter(r => r.signals > 0)
+    .sort((a, b) => b.index - a.index || (a.code < b.code ? -1 : 1));
+}
+
+// Daily attendance score per cohort (dates present in the data, ascending).
+export function cohortTrend(codes, attendance = []) {
+  const set = new Set(codes);
+  const byDate = {};
+  attendance
+    .filter(r => set.has(r.emp))
+    .forEach(r => {
+      (byDate[r.date] = byDate[r.date] || []).push(r.status === 'present' ? 100 : r.status === 'late' ? 50 : 0);
+    });
+  return Object.keys(byDate)
+    .sort()
+    .map(d => ({
+      date: d,
+      score: Math.round((byDate[d].reduce((s, v) => s + v, 0) / byDate[d].length) * 10) / 10
+    }));
+}
