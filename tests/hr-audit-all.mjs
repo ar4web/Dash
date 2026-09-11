@@ -139,23 +139,40 @@ for (const m of mods) {
   physicalRe.lastIndex = 0;
 }
 // ── white-label: no template brand in user-visible copy ──
-// Titles self-heal via applyBranding; landing keeps historical phrasing;
-// JS keeps header comments + storage-compat shims + the public API hook.
+// Only storage-compat shims + the legacy API-hook alias keep the old
+// tokens (exempted below); dated records (changelog, hr-blueprint,
+// improvement-plan, LICENSE provenance) are outside this scan.
 const brandRe = /gentelella|colorlib|aigars|silkalns/gi;
 const compatRe =
   /__GENTELELLA_API__|LEGACY_|gentelella:(nav-open|sidebar-rail|settings|theme-overrides)/;
 for (const p of pages) {
-  if (p === 'landing.html') {
-    continue;
-  }
   const html = read(`production/${p}`);
   for (const m of html.matchAll(brandRe)) {
     const lineStart = html.lastIndexOf('\n', m.index) + 1;
     const lineEnd = html.indexOf('\n', m.index);
     const line = html.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
-    if (!line.includes('<title') && !compatRe.test(line)) {
+    if (!compatRe.test(line)) {
       ok(`brand-leak-${p}`, false, line.trim().slice(0, 70));
     }
+  }
+  brandRe.lastIndex = 0;
+}
+const docFiles = [
+  ...readdirSync(`${R}`).filter(f => f.endsWith('.md')),
+  ...readdirSync(`${R}/docs`).filter(f => f.endsWith('.md')).map(f => `docs/${f}`),
+  ...readdirSync(`${R}/examples`).filter(f => f.endsWith('.md')).map(f => `examples/${f}`),
+  'examples/express-sqlite/README.md',
+  'package.json',
+  'public/llms.txt',
+  'public/site.webmanifest'
+].filter(f => !['changelog.md', 'docs/hr-blueprint.md', 'docs/improvement-plan.md'].includes(f));
+for (const d of docFiles) {
+  const text = read(d);
+  for (const m of text.matchAll(brandRe)) {
+    const lineStart = text.lastIndexOf('\n', m.index) + 1;
+    const lineEnd = text.indexOf('\n', m.index);
+    const line = text.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
+    ok(`brand-leak-doc-${d.replaceAll('/', '-')}`, false, line.trim().slice(0, 70));
   }
   brandRe.lastIndex = 0;
 }
