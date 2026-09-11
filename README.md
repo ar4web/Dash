@@ -139,7 +139,8 @@ Light + dark mode with `prefers-color-scheme` detection and a pre-paint script
 | -------------------------------------------------------- | --------------------------------------------------- |
 | [Getting started](docs/getting-started.md)               | Install, dev server, first build                    |
 | [Workflow](docs/workflow.md)                             | Chunk loop, gates, releases                         |
-| [Architecture](docs/architecture.md)                     | Bundle, shell injection, lazy imports               |
+| [Architecture](docs/architecture.md)                       | Bundle, shell injection, lazy imports               |
+| [Blueprint](docs/architecture-blueprint.md)                | Every page, control, wiring, workflow (diagrams)    |
 | [Project structure](docs/project-structure.md)           | What lives in each directory                        |
 | [Pages](docs/pages.md)                                   | The bundled pages, adding another                   |
 | [HR blueprint](docs/hr-blueprint.md)                     | KSA compliance design record                        |

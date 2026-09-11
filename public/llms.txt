@@ -19,6 +19,7 @@ Clone with `git clone https://github.com/ar4web/Dash.git`, then `npm install`. R
 
 - [Getting started](https://raw.githubusercontent.com/ar4web/Dash/master/docs/getting-started.md): Install, run the dev server, and produce a first build.
 - [Architecture](https://raw.githubusercontent.com/ar4web/Dash/master/docs/architecture.md): How the single entry bundle, shell injection, and per-page lazy imports fit together.
+- [Blueprint](https://raw.githubusercontent.com/ar4web/Dash/master/docs/architecture-blueprint.md): Every page, shell control, data wiring, and workflow, diagrammed.
 - [Project structure](https://raw.githubusercontent.com/ar4web/Dash/master/docs/project-structure.md): What lives in each directory.
 - [Pages](https://raw.githubusercontent.com/ar4web/Dash/master/docs/pages.md): The bundled pages and how to add another.
 - [Theming](https://raw.githubusercontent.com/ar4web/Dash/master/docs/theming.md): Design tokens, light/dark themes, and generating custom SCSS.

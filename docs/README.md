@@ -8,6 +8,7 @@ Start here: [Getting started](getting-started.md), then
 - [Getting started](getting-started.md) — install, dev server, first build.
 - [Workflow](workflow.md) — chunk loop, gates, releases.
 - [Architecture](architecture.md) — bundle, shell injection, lazy imports.
+- [Blueprint](architecture-blueprint.md) — every page, control, wiring, workflow.
 - [Project structure](project-structure.md) — what lives in each directory.
 - [Pages](pages.md) — the bundled pages, adding another.
 - [HR blueprint](hr-blueprint.md) — KSA compliance design record.
