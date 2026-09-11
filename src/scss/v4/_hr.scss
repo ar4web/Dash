@@ -1126,6 +1126,7 @@ details.zone:not([open]) .zone-head::before {
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 999px;
+  border: 1px solid var(--border-color-light);
 }
 .ticker-band.red {
   background: #fde8ea;
@@ -1190,4 +1191,9 @@ h4.sub {
 }
 h4.sub:first-child {
   margin-top: 0;
+}
+#tasks-formula {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
 }

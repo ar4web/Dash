@@ -134,6 +134,10 @@ table.table td {
 table.table tr:last-child td { border-bottom: none; }
 table.table tbody tr { transition: background 80ms; }
 table.table tbody tr:hover { background: var(--bg-surface-secondary); }
+table.table .num {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
 
 .cell-strong { color: var(--text); font-weight: var(--font-weight-medium); }
 .cell-mono {
