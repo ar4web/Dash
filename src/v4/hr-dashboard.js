@@ -1085,6 +1085,9 @@ export function initHrDashboard() {
 
 // ── T2 §5 accounts & performance ───────────────────────────────────────────
 function renderS5() {
+  if (!document.getElementById('chart-expense')) {
+    return;
+  }
   const ex = getSeed('expenses');
   const cats = getSeed('expenseCategories');
   const byCat = {};
@@ -1203,6 +1206,9 @@ function renderS5() {
 
 // ── T2 §6 action center ────────────────────────────────────────────────────
 function renderS6() {
+  if (!document.getElementById('ticker-track')) {
+    return;
+  }
   const today = todayIso();
   const s = getSettings();
   const a = tickerAlerts(
