@@ -35,7 +35,7 @@ const SEED = {
   '2026-04-22': [{ title: 'Quarterly review', color: 'purple' }],
   '2026-04-24': [{ title: 'Code freeze', color: 'red' }],
   '2026-04-27': [{ title: 'Standup 9am' }, { title: 'Sprint planning', color: 'blue' }],
-  '2026-04-29': [{ title: '1:1 with Aigars' }],
+  '2026-04-29': [{ title: '1:1 with Adam' }],
   '2026-04-30': [{ title: 'Release v4.0', color: 'yellow' }]
 };
 

@@ -138,6 +138,38 @@ for (const m of mods) {
   }
   physicalRe.lastIndex = 0;
 }
+// ── white-label: no template brand in user-visible copy ──
+// Titles self-heal via applyBranding; landing keeps historical phrasing;
+// JS keeps header comments + storage-compat shims + the public API hook.
+const brandRe = /gentelella|colorlib|aigars|silkalns/gi;
+const compatRe =
+  /__GENTELELLA_API__|LEGACY_|gentelella:(nav-open|sidebar-rail|settings|theme-overrides)/;
+for (const p of pages) {
+  if (p === 'landing.html') {
+    continue;
+  }
+  const html = read(`production/${p}`);
+  for (const m of html.matchAll(brandRe)) {
+    const lineStart = html.lastIndexOf('\n', m.index) + 1;
+    const lineEnd = html.indexOf('\n', m.index);
+    const line = html.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
+    if (!line.includes('<title') && !compatRe.test(line)) {
+      ok(`brand-leak-${p}`, false, line.trim().slice(0, 70));
+    }
+  }
+  brandRe.lastIndex = 0;
+}
+for (const m of mods) {
+  const src = read(`src/v4/${m}`);
+  for (const x of src.matchAll(brandRe)) {
+    const lineStart = src.lastIndexOf('\n', x.index) + 1;
+    const line = src.slice(lineStart, src.indexOf('\n', x.index));
+    if (!/^\s*(\/\/|\*|\/\*)/.test(line) && !compatRe.test(line)) {
+      ok(`brand-leak-js-${m}`, false, line.trim().slice(0, 70));
+    }
+  }
+  brandRe.lastIndex = 0;
+}
 console.log(`  (pages=${pages.length} mods=${mods.length} keys-used=${used.size})`);
 
 console.log(fail.length ? `\nSYSTEM AUDIT: ${fail.length} FAILURES` : '\nALL SYSTEM CHECKS PASSED');

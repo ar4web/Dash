@@ -14,7 +14,7 @@ const MEMBER_NAMES = {
   DR: { name: 'Diego Reyes',    role: 'Sales',     color: 'blue' },
   YT: { name: 'Yuki Tanaka',    role: 'Support',   color: 'primary' },
   TH: { name: 'Tom Hardy',      role: 'Engineer',  color: 'purple' },
-  A:  { name: 'Aigars Silkalns', role: 'Admin',    color: 'primary' }
+  A:  { name: 'Adam Saleh', role: 'Admin',    color: 'primary' }
 };
 
 const COLOR_VAR = {

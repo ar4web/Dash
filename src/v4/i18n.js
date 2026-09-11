@@ -1601,17 +1601,11 @@ export function initI18n() {
   const lang = currentLang();
   document.documentElement.setAttribute('lang', lang);
   document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-  // Inject language toggle into topbar (replaces external docs link for internal tool).
-  const docs = document.querySelector('.topbar .tb-docs');
-  if (docs && !document.getElementById('lang-toggle')) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.id = 'lang-toggle';
-    btn.className = 'tb-btn tb-lang';
-    btn.title = 'Language / اللغة';
-    btn.setAttribute('aria-label', 'Switch language');
-    docs.replaceWith(btn);
-    btn.addEventListener('click', () => setLang(currentLang() === 'ar' ? 'en' : 'ar'));
+  // Bind the topbar language toggle (rendered by the shell).
+  const toggle = document.getElementById('lang-toggle');
+  if (toggle && !toggle.dataset.bound) {
+    toggle.dataset.bound = '1';
+    toggle.addEventListener('click', () => setLang(currentLang() === 'ar' ? 'en' : 'ar'));
   }
   applyI18n(document);
   applyShellI18n();

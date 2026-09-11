@@ -213,7 +213,7 @@ const tables = `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" pr
     <!-- Rows -->
     ${[
     { id: '#7841', c: 'JD', cb: COLORS.primary, p: 'AdminLTE Pro',     s: 'Paid',       sb: COLORS.green,  d: 'Apr 28' },
-    { id: '#7840', c: 'AS', cb: COLORS.azure,   p: 'Gentelella Theme', s: 'Processing', sb: COLORS.blue,   d: 'Apr 27' },
+    { id: '#7840', c: 'AS', cb: COLORS.azure,   p: 'Dashboard Theme', s: 'Processing', sb: COLORS.blue,   d: 'Apr 27' },
     { id: '#7839', c: 'RJ', cb: COLORS.purple,  p: 'Dashboard Pack',   s: 'Paid',       sb: COLORS.green,  d: 'Apr 27' },
     { id: '#7838', c: 'EW', cb: COLORS.yellow,  p: 'ArchitectUI',      s: 'Pending',    sb: COLORS.yellow, d: 'Apr 26' },
     { id: '#7837', c: 'MK', cb: COLORS.red,     p: 'Bootstrap Bundle', s: 'Cancelled',  sb: COLORS.red,    d: 'Apr 25' },

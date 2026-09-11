@@ -292,6 +292,17 @@ describe('headers + buttons', () => {
   });
 });
 
+describe('white-label', () => {
+  test('no template brand leaks into shell chrome or auth pages', async () => {
+    await mountPage('hr_dashboard');
+    expect(document.querySelector('.sidebar-user .name')?.textContent).toBe('Admin');
+    expect(document.querySelector('.tb-docs')).toBe(null);
+    expect(document.getElementById('lang-toggle')).not.toBe(null);
+    await mountPage('login');
+    expect(document.querySelector('.brand-name')?.textContent).toContain('Dash');
+  });
+});
+
 describe('security', () => {
   test('imported row values render inert (stored-XSS overlay)', async () => {
     await mountPage('hr_employees');
