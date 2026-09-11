@@ -101,6 +101,10 @@ function renderAlerts() {
     : `<div class="hr-empty">${t('common.noData')}</div>`;
 }
 
+function tableOpen(label) {
+  return `<div class="table-responsive"><table class="table hr-table" aria-label="${esc(label)}"><tbody>`;
+}
+
 function renderExpiries() {
   const el = document.getElementById('hr-expiries');
   if (!el) {
@@ -113,7 +117,7 @@ function renderExpiries() {
     .sort((a, b) => a.d - b.d)
     .slice(0, 6);
   el.innerHTML = rows.length
-    ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+    ? tableOpen(t('hr.dashboard.expiries')) +
       rows
         .map(
           ({ e, d }) => `<tr>
@@ -316,7 +320,7 @@ function renderZoneA() {
   const tc = document.getElementById('top-clients');
   if (tc) {
     tc.innerHTML =
-      '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+      tableOpen(t('hr.dashboard.topClients')) +
       money.perClient
         .map(
           c => `<tr>
@@ -556,7 +560,7 @@ function renderS2() {
       g =>
         `<div class="vac-group"><div class="vac-group-head"><strong>${esc(g.label)}</strong><span class="status status-blue">${g.ids.length}</span></div>` +
         (g.ids.length
-          ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+          ? tableOpen(g.label) +
             g.ids
               .map(id => byId(id))
               .filter(Boolean)
@@ -604,7 +608,7 @@ function renderS2() {
   const ot = document.getElementById('overdue-table');
   if (ot) {
     ot.innerHTML = overdue.length
-      ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+      ? tableOpen(t('hr.dashboard.overdueTitle')) +
         overdue
           .map(r => {
             const late = Math.max(
@@ -656,7 +660,7 @@ function renderS2() {
   const et = document.getElementById('eligible-table');
   if (et) {
     et.innerHTML =
-      '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+      tableOpen(t('hr.dashboard.eligibleTitle')) +
       elig
         .map(
           x => `<tr>
@@ -716,7 +720,7 @@ function renderRoster(siteId) {
     '</div>' +
     (siteId
       ? rows.length
-        ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+        ? tableOpen(t('hr.dashboard.rosterTitle')) +
           rows
             .map(
               a => `<tr>
@@ -865,7 +869,7 @@ function renderS3() {
   const mx = document.getElementById('sponsor-matrix');
   if (mx) {
     mx.innerHTML =
-      '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+      tableOpen(t('hr.dashboard.sponsorMatrix')) +
       SPONSORS.map(p => {
         const n = emps.filter(e => e.sponsor === p.id).length;
         const nm = currentLang() === 'ar' ? p.nameAr : p.nameEn;
@@ -998,7 +1002,7 @@ function renderS4() {
 
   const watch = contractsEnding(getSeed('contracts'), 90, today);
   document.getElementById('contracts-watch').innerHTML = watch.length
-    ? '<div class="table-responsive"><table class="table hr-table"><tbody>' +
+    ? tableOpen(t('hr.dashboard.contractsWatch')) +
       watch
         .map(
           c => `<tr>

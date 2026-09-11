@@ -391,6 +391,20 @@ describe('command center', () => {
     expect(document.querySelectorAll('h1').length).toBe(1);
     expect(document.querySelectorAll('h2.zone-title').length).toBe(7);
     expect(document.querySelectorAll('h3.sub').length).toBe(3);
+    expect(
+      [...document.querySelectorAll('th')].every(th => th.getAttribute('scope') === 'col')
+    ).toBe(true);
+    expect(document.querySelector('#perf-top th .sr-only').textContent).toBe('Rank');
+    for (const sel of [
+      '#vac-list table',
+      '#overdue-table table',
+      '#eligible-table table',
+      '#site-roster table',
+      '#sponsor-matrix table',
+      '#contracts-watch table'
+    ]) {
+      expect(document.querySelector(sel).getAttribute('aria-label').length).toBeGreaterThan(0);
+    }
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
