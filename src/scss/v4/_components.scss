@@ -171,14 +171,29 @@ table.table .num {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.status-green { color: var(--green); }
-.status-green::before { background: var(--green); }
+.status-green {
+  color: #1e7e34;
+}
+.status-green::before {
+  background: var(--green);
+}
 .status-yellow { color: #b45309; }
 .status-yellow::before { background: var(--yellow); }
 .status-blue { color: var(--blue); }
 .status-blue::before { background: var(--blue); }
 .status-red { color: var(--red); }
 .status-red::before { background: var(--red); }
+// Dark theme: status text tones lightened to hold AA on dark surfaces
+// (dots keep the vivid base tones).
+[data-theme="dark"] .status-yellow {
+  color: #fbbf24;
+}
+[data-theme="dark"] .status-red {
+  color: #f87171;
+}
+[data-theme="dark"] .status-blue {
+  color: #60a5fa;
+}
 
 // Progress bar (inline) — used in stat tiles, plan/quota progress, KPI rows.
 .progress-thin {

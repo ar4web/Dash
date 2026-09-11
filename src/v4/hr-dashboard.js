@@ -1117,10 +1117,11 @@ function renderS5() {
   document.querySelector('#billing-history tbody').innerHTML = inv
     .map(r => {
       const tot = invoiceTotals(r.lines || []).total;
+      const tone = { paid: 'green', issued: 'yellow' }[r.status] || 'blue';
       return (
         `<tr><td dir="ltr">${esc(r.month)}</td><td>${esc(clientName(r.client))}</td>` +
         `<td class="num" dir="ltr">${esc(fmtSAR(tot))}</td>` +
-        `<td><span class="status status-${r.status}">${esc(t(`status.${r.status}`))}</span></td></tr>`
+        `<td><span class="status status-${tone}">${esc(t(`status.${r.status}`))}</span></td></tr>`
       );
     })
     .join('');

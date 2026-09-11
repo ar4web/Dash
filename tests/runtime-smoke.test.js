@@ -499,6 +499,8 @@ describe('command center', () => {
     expect(billRows[0].textContent).toContain(inv[0].month);
     expect(billRows[0].textContent).toContain('Al-Bina');
     expect(billRows[0].textContent).not.toContain('CL-001');
+    expect(billRows[0].querySelector('.status').className).toContain('status-yellow');
+    expect(billRows[1].querySelector('.status').className).toContain('status-green');
     expect(billRows[0].textContent).toContain(
       Math.round(invoiceTotals(inv[0].lines).total).toLocaleString('en-US')
     );

@@ -63,6 +63,8 @@ jsdom structural checks (no browser binary available in sandbox; no screenshots)
 - C6 Buttons 32/28px pass WCAG 2.2 (≥24px) but trail iOS 44px HIG — accepted
   and documented; no change.
 - D1 `.meter-fill` fills left-to-right physically → mirror under `[dir=rtl]`.
+- D2 Billing chips used `status-issued`/`status-paid` classes that don't exist
+  (unstyled) → explicit paid→green / issued→yellow tone map.
 
 ## Test plan per chunk
 
