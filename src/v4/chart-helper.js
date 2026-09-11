@@ -25,7 +25,8 @@ function tokens() {
     red: g('--red'),
     purple: g('--purple'),
     text: g('--text'),
-    textMuted: g('--text-muted'),
+    // Small chart text (10-12px legends/axes) needs secondary to hold AA.
+    textMuted: g('--text-secondary'),
     borderLight: g('--border-color-light'),
     bgSurface: g('--bg-surface')
   };

@@ -320,7 +320,7 @@ function renderZoneA() {
       money.perClient
         .map(
           c => `<tr>
-      <td><strong>${esc(clientName(c.id))}</strong><br><small style="color:var(--text-muted)">${c.heads} ${esc(t('hr.dashboard.heads'))}</small></td>
+      <td><strong>${esc(clientName(c.id))}</strong><br><small style="color:var(--text-secondary)">${c.heads} ${esc(t('hr.dashboard.heads'))}</small></td>
       <td dir="ltr" style="text-align:end">${esc(fmtSAR(c.revenue))}</td>
       <td dir="ltr" style="text-align:end"><span class="status status-${c.margin >= 0 ? 'green' : 'red'}">${esc(fmtSAR(c.margin))}</span></td>
     </tr>`
@@ -562,7 +562,7 @@ function renderS2() {
               .filter(Boolean)
               .map(
                 r => `<tr>
-        <td><a href="hr_employee.html?code=${encodeURIComponent(r.emp)}">${esc(empName(r.emp))}</a><br><small style="color:var(--text-muted)" dir="ltr">${esc(r.id)}</small></td>
+        <td><a href="hr_employee.html?code=${encodeURIComponent(r.emp)}">${esc(empName(r.emp))}</a><br><small style="color:var(--text-secondary)" dir="ltr">${esc(r.id)}</small></td>
         <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(fmtDate(r.from))} → ${esc(fmtDate(r.to))}</td>
         <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(String(r.days))} ${esc(t('common.days'))}</td>
       </tr>`
@@ -612,8 +612,8 @@ function renderS2() {
               Math.round((new Date(r.returnedAt) - new Date(r.to)) / 86400000)
             );
             return `<tr>
-      <td><a href="hr_employee.html?code=${encodeURIComponent(r.emp)}">${esc(empName(r.emp))}</a><br><small style="color:var(--text-muted)" dir="ltr">${esc(r.id)}</small></td>
-      <td><span class="status status-red">${late} ${esc(t('hr.dashboard.daysLate'))}</span><br><small style="color:var(--text-muted)">${esc(t('hr.dashboard.reason'))}: ${esc(delayReasonName(r.delayReason))}</small></td>
+      <td><a href="hr_employee.html?code=${encodeURIComponent(r.emp)}">${esc(empName(r.emp))}</a><br><small style="color:var(--text-secondary)" dir="ltr">${esc(r.id)}</small></td>
+      <td><span class="status status-red">${late} ${esc(t('hr.dashboard.daysLate'))}</span><br><small style="color:var(--text-secondary)">${esc(t('hr.dashboard.reason'))}: ${esc(delayReasonName(r.delayReason))}</small></td>
     </tr>`;
           })
           .join('') +
@@ -720,7 +720,7 @@ function renderRoster(siteId) {
           rows
             .map(
               a => `<tr>
-      <td><a href="hr_employee.html?code=${encodeURIComponent(a.emp)}">${esc(empName(a.emp))}</a><br><small style="color:var(--text-muted)">${esc(profName((getSeed('employees').find(e => e.code === a.emp) || {}).prof))}</small></td>
+      <td><a href="hr_employee.html?code=${encodeURIComponent(a.emp)}">${esc(empName(a.emp))}</a><br><small style="color:var(--text-secondary)">${esc(profName((getSeed('employees').find(e => e.code === a.emp) || {}).prof))}</small></td>
       <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(fmtSAR(a.rate))}</td>
     </tr>`
             )
@@ -870,7 +870,7 @@ function renderS3() {
         const n = emps.filter(e => e.sponsor === p.id).length;
         const nm = currentLang() === 'ar' ? p.nameAr : p.nameEn;
         return `<tr>
-    <td><strong>${esc(nm)}</strong><br><small style="color:var(--text-muted)" dir="ltr">CR ${esc(p.cr)} · ${esc(p.city)}</small></td>
+    <td><strong>${esc(nm)}</strong><br><small style="color:var(--text-secondary)" dir="ltr">CR ${esc(p.cr)} · ${esc(p.city)}</small></td>
     <td dir="ltr" style="text-align:end"><span class="status status-blue">${n} ${esc(t('hr.dashboard.heads'))}</span></td>
   </tr>`;
       }).join('') +
@@ -1002,7 +1002,7 @@ function renderS4() {
       watch
         .map(
           c => `<tr>
-    <td><a href="hr_contracts.html" dir="ltr">${esc(c.id)}</a><br><small style="color:var(--text-muted)">${esc(c.partyKind === 'employee' ? empName(c.party) : clientName(c.party))}</small></td>
+    <td><a href="hr_contracts.html" dir="ltr">${esc(c.id)}</a><br><small style="color:var(--text-secondary)">${esc(c.partyKind === 'employee' ? empName(c.party) : clientName(c.party))}</small></td>
     <td dir="ltr" style="text-align:end;white-space:nowrap">${esc(fmtDate(c.end))}</td>
     <td style="text-align:end"><span class="status status-${c.days <= 30 ? 'red' : 'yellow'}">${c.days} ${esc(t('hr.dashboard.daysLeft'))}</span></td>
   </tr>`
