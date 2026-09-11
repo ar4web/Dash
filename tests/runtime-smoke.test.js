@@ -278,6 +278,20 @@ describe('lists', () => {
   });
 });
 
+describe('headers + buttons', () => {
+  test('employee file uses the system page header', async () => {
+    await mountPage('hr_employee');
+    expect(document.querySelector('.page-header .page-title')?.textContent).toBe('Employee file');
+    expect(document.querySelector('.crumbs')).toBe(null);
+  });
+
+  test('theme picker renders ringed swatch buttons', async () => {
+    await mountPage('theme');
+    expect(document.querySelectorAll('.theme-swatch').length).toBeGreaterThan(5);
+    expect(document.querySelector('.theme-swatch.active')).not.toBe(null);
+  });
+});
+
 describe('security', () => {
   test('imported row values render inert (stored-XSS overlay)', async () => {
     await mountPage('hr_employees');
