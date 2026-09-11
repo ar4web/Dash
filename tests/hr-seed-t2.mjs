@@ -301,6 +301,11 @@ ok(
 
 // ── chart RTL policy ──────────────────────────────────────────────────────
 eq('t2-rtl-hbar', applyRtl({ xAxis: {} }, 'ar', 'hbar'), { xAxis: { inverse: true } });
+eq(
+  't2-rtl-hbar-radius',
+  applyRtl({ xAxis: {}, series: [{ itemStyle: { borderRadius: [0, 4, 4, 0] } }] }, 'ar', 'hbar'),
+  { xAxis: { inverse: true }, series: [{ itemStyle: { borderRadius: [4, 0, 0, 4] } }] }
+);
 eq('t2-rtl-time-kept', applyRtl({ xAxis: {} }, 'ar', 'time'), { xAxis: {} });
 eq('t2-rtl-en-kept', applyRtl({ xAxis: {} }, 'en', 'hbar'), { xAxis: {} });
 

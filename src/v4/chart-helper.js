@@ -53,6 +53,13 @@ export function applyRtl(option, dir, mode) {
   } else if (x && typeof x === 'object') {
     x.inverse = true;
   }
+  // Rounded value-ends point at the axis after inversion — mirror them back.
+  for (const s of Array.isArray(option.series) ? option.series : []) {
+    const r = s && s.itemStyle && s.itemStyle.borderRadius;
+    if (Array.isArray(r) && r.length === 4) {
+      s.itemStyle.borderRadius = [r[1], r[0], r[3], r[2]];
+    }
+  }
   return option;
 }
 

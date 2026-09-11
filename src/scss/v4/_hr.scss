@@ -1063,6 +1063,8 @@ details.zone:not([open]) .zone-head::before {
   height: 100%;
   border-radius: 999px;
   transition: width 300ms;
+  // Hug the inline-start edge in both directions (explicit RTL mirror).
+  margin-inline-end: auto;
 }
 .meter-top {
   display: flex;
