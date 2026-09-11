@@ -1183,13 +1183,13 @@ details.zone:not([open]) .zone-head::before {
   border: 2px solid var(--border-color);
   color: transparent;
 }
-h4.sub {
+h3.sub {
   font-size: 13px;
   font-weight: 700;
   color: var(--text-secondary);
   margin: 12px 0 8px;
 }
-h4.sub:first-child {
+h3.sub:first-child {
   margin-top: 0;
 }
 #tasks-formula {

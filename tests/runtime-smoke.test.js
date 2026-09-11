@@ -388,6 +388,9 @@ describe('command center', () => {
       'accounts',
       'actions'
     ]);
+    expect(document.querySelectorAll('h1').length).toBe(1);
+    expect(document.querySelectorAll('h2.zone-title').length).toBe(7);
+    expect(document.querySelectorAll('h3.sub').length).toBe(3);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
