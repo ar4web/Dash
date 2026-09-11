@@ -1231,15 +1231,6 @@
 .fm-storage-meta { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 
 .fm-main { display: flex; flex-direction: column; min-height: 0; }
-.fm-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color-light);
-  flex-shrink: 0;
-}
 .fm-breadcrumb { display: flex; align-items: center; gap: var(--space-1); flex-wrap: wrap; }
 .bc-link {
   background: transparent;
@@ -1255,7 +1246,6 @@
 .bc-link:hover { background: var(--bg-surface-secondary); color: var(--text); }
 .bc-link.current { color: var(--text); font-weight: var(--font-weight-medium); cursor: default; }
 .bc-link.current:hover { background: transparent; }
-.fm-toolbar-actions { display: flex; align-items: center; gap: var(--space-2); }
 .fm-view-toggle {
   display: inline-flex;
   border: 1px solid var(--border-color);

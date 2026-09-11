@@ -290,6 +290,15 @@ describe('headers + buttons', () => {
     expect(document.querySelectorAll('.theme-swatch').length).toBeGreaterThan(5);
     expect(document.querySelector('.theme-swatch.active')).not.toBe(null);
   });
+
+  test('in-card toolbars share one style', async () => {
+    await mountPage('calendar');
+    expect(document.querySelector('.toolbar .toolbar-spacer')).not.toBe(null);
+    expect(document.querySelector('.calendar-toolbar')).toBe(null);
+    await mountPage('file_manager');
+    expect(document.querySelector('.toolbar.toolbar-spread .toolbar-group')).not.toBe(null);
+    expect(document.querySelector('.fm-toolbar')).toBe(null);
+  });
 });
 
 describe('white-label', () => {

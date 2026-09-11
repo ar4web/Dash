@@ -370,8 +370,8 @@ export function initCalendar() {
 
   render(state);
 
-  // Prev / next month — calendar-toolbar nav buttons
-  const navBtns = document.querySelectorAll('.calendar-toolbar .nav-btns .card-opt-btn');
+  // Prev / next month — toolbar nav buttons
+  const navBtns = document.querySelectorAll('.toolbar .nav-btns .card-opt-btn');
   if (navBtns[0]) {navBtns[0].addEventListener('click', (e) => {
     e.stopPropagation();
     e.preventDefault();
