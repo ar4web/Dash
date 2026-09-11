@@ -221,6 +221,37 @@ describe('sidebar hierarchy', () => {
     expect(document.title).toContain('شركة توريد العمالة');
     setLang('en');
   });
+
+  test('groups render collapsed with the active group marked', async () => {
+    const { renderSidebar } = await import('../src/v4/shell-render.js');
+    const html = renderSidebar('hr-dashboard');
+    expect(html).not.toContain('nav-tree open');
+    expect(html).not.toContain('nav-subtree open');
+    expect(html).toContain('has-active');
+    expect(html).toContain('data-auto-open');
+  });
+
+  test('desktop starts collapsed, mobile opens the active group', async () => {
+    const real = window.matchMedia;
+    sessionStorage.clear();
+    window.matchMedia = q => ({
+      matches: String(q).includes('min-width'),
+      media: q,
+      addEventListener() {},
+      removeEventListener() {}
+    });
+    await mountPage('hr_dashboard');
+    expect(document.querySelectorAll('.sidebar .nav-tree.open').length).toBe(0);
+    expect(
+      document
+        .querySelector('.sidebar .nav-tree.has-active .nav-toggle')
+        .getAttribute('aria-expanded')
+    ).toBe('false');
+    window.matchMedia = real;
+    sessionStorage.clear();
+    await mountPage('hr_dashboard');
+    expect(document.querySelectorAll('.sidebar .nav-tree.open').length).toBe(1);
+  });
 });
 
 describe('security', () => {

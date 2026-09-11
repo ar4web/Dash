@@ -99,7 +99,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(123,143,163,0.5);
+  color: #98a5b8;
 }
 
 .nav-link {
@@ -129,7 +129,7 @@
 }
 .nav-link .icon {
   width: 18px; height: 18px;
-  opacity: 0.5;
+  opacity: 0.75;
   flex-shrink: 0;
 }
 .nav-link:hover .icon, .nav-link.active .icon { opacity: 0.85; }
@@ -148,7 +148,7 @@
 // ────────────────────────
 //  SIDEBAR SUBMENU
 // ────────────────────────
-// Collapsed by default; only the group containing the active page auto-opens.
+// Collapsed by default (desktop); the active group auto-opens on mobile only.
 // Click a parent to expand/collapse — accordion behavior: opening one closes
 // other open groups in the sidebar (one open at a time).
 .nav-tree { display: flex; flex-direction: column; }
@@ -165,7 +165,7 @@
 .nav-toggle .nav-text { flex: 1; }
 .nav-chev {
   margin-inline-start: auto;
-  opacity: 0.55;
+  opacity: 0.75;
   transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 120ms;
   flex-shrink: 0;
 }

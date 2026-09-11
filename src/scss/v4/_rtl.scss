@@ -105,3 +105,8 @@
 [dir="rtl"] table.table th {
   letter-spacing: 0;
 }
+
+// 6. Sidebar group labels — tracking would disconnect Arabic joining.
+[dir="rtl"] .nav-label {
+  letter-spacing: 0;
+}

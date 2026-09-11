@@ -39,11 +39,11 @@ function injectShellIfMissing() {
 
 // Sidebar submenus — accordion behavior + sessionStorage memory.
 //
-// On page load, the group containing the active page auto-opens (server-rendered
-// markup). User can manually expand/collapse any group; opening one closes all
-// others. The chosen state persists across navigation via sessionStorage so
-// the sidebar doesn't snap back to "auto-open" when the user moves to a child
-// page that's not in their preferred group.
+// Groups render collapsed; on mobile the active page's group auto-opens for
+// orientation. User can manually expand/collapse any group; opening one closes
+// all others. The chosen state persists across navigation via sessionStorage so
+// the sidebar doesn't snap back when the user moves to a child page that's not
+// in their preferred group.
 const SUBMENU_STATE_KEY = 'dash:nav-open';
 
 // One-time migration of pre-rebrand storage keys (gentelella:* -> dash:*).
@@ -96,14 +96,23 @@ function bindNavSubmenus() {
     });
   };
 
-  // Restore the user's last manually-toggled group, if any. Otherwise the
-  // server-rendered .open (auto-applied to the active page's group) wins.
+  // Restore the user's last manually-toggled group, if any. Otherwise groups
+  // stay collapsed on desktop; on mobile the active group opens instead.
   const stored = getStoredOpenIndex();
   if (stored !== null && trees[stored]) {
     closeAll(trees[stored]);
     trees[stored].classList.add('open');
     const btn = trees[stored].querySelector('.nav-toggle');
     if (btn) {btn.setAttribute('aria-expanded', 'true');}
+  } else if (!isDesktop()) {
+    trees.forEach(t => {
+      if (!t.hasAttribute('data-auto-open')) {
+        return;
+      }
+      t.classList.add('open');
+      const btn = t.querySelector('.nav-toggle');
+      if (btn) {btn.setAttribute('aria-expanded', 'true');}
+    });
   }
 
   trees.forEach((tree, i) => {
@@ -122,7 +131,15 @@ function bindNavSubmenus() {
 
 function bindNavSubToggles() {
   // Third level (template groups under HR → Settings): independent toggles,
-  // no accordion, no persistence — the active page's branch auto-opens.
+  // no accordion, no persistence — collapsed on desktop, the active page's
+  // branch auto-opens on mobile.
+  if (!isDesktop()) {
+    document.querySelectorAll('.sidebar .nav-subtree[data-auto-open]').forEach(sub => {
+      sub.classList.add('open');
+      const btn = sub.querySelector('.nav-subtoggle');
+      if (btn) {btn.setAttribute('aria-expanded', 'true');}
+    });
+  }
   document.querySelectorAll('.sidebar .nav-subtoggle').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();

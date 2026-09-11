@@ -351,19 +351,19 @@ function renderNavItem(item, activeKey) {
         const subActive = c.children.some(gc => gc.key === activeKey);
         const cls = ['nav-subtree'];
         if (subActive) {
-          cls.push('open', 'has-active');
+          cls.push('has-active');
         }
         const guts = c.children.map(renderSublink).join('');
-        return `<div class="${cls.join(' ')}"><button type="button" class="nav-subtoggle" aria-expanded="${subActive ? 'true' : 'false'}"><span class="nav-text">${c.text}</span>${CHEVRON}</button><div class="nav-subsub"><div class="nav-sub-inner">${guts}</div></div></div>`;
+        return `<div class="${cls.join(' ')}"${subActive ? ' data-auto-open="1"' : ''}><button type="button" class="nav-subtoggle" aria-expanded="false"><span class="nav-text">${c.text}</span>${CHEVRON}</button><div class="nav-subsub"><div class="nav-sub-inner">${guts}</div></div></div>`;
       })
       .join('');
     const cls = ['nav-tree'];
     if (childActive) {
-      cls.push('open', 'has-active');
+      cls.push('has-active');
     }
     return `
-      <div class="${cls.join(' ')}">
-        <button type="button" class="nav-link nav-toggle" aria-expanded="${childActive ? 'true' : 'false'}">
+      <div class="${cls.join(' ')}"${childActive ? ' data-auto-open="1"' : ''}>
+        <button type="button" class="nav-link nav-toggle" aria-expanded="false">
           ${ICONS[item.icon] || ''}
           <span class="nav-text">${item.text}</span>
           ${item.badge ? `<span class="badge ${item.badge.cls}">${item.badge.text}</span>` : ''}
