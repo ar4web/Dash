@@ -1,4 +1,4 @@
-// Gentelella v4 — advanced form controls (date-range, rich-text, multi-select).
+// Dash — advanced form controls (date-range, rich-text, multi-select).
 // Auto-init on DOM ready: any element with the relevant data attribute gets
 // upgraded. No external dependencies.
 

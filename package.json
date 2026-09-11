@@ -1,8 +1,8 @@
 {
-  "name": "gentelella",
-  "version": "4.1.1",
+  "name": "dash",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Gentelella v4 — free admin template. 58 pages, 20 chart variants, fully interactive inbox & kanban, live theme generator, component playground, PWA-ready. Vite 8, vanilla JS, no Bootstrap, no jQuery.",
+  "description": "Dash — bilingual (EN/AR) HR command center for KSA workforce-supply operations: employees, contracts, payroll, compliance, visas, Ajeer. 108 pages, vanilla JS + SCSS + Vite 8, no Bootstrap, no jQuery.",
   "scripts": {
     "dev": "vite --clearScreen false",
     "build": "NODE_ENV=production vite build",
@@ -23,12 +23,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ColorlibHQ/gentelella.git"
+    "url": "git+https://github.com/ar4web/Dash.git"
   },
   "keywords": [
     "admin",
     "dashboard",
-    "template",
+    "hr",
+    "hris",
+    "payroll",
+    "compliance",
+    "bilingual",
+    "arabic",
+    "rtl",
     "html",
     "css",
     "scss",
@@ -36,21 +42,20 @@
     "echarts",
     "datatables",
     "vite",
-    "modern",
     "pwa",
     "dark-mode",
     "command-palette",
     "theme-generator"
   ],
-  "author": "Aigars Silkalns",
+  "author": "Dash contributors",
   "license": "MIT",
   "main": "src/main-v4.js",
-  "types": "types/gentelella.d.ts",
+  "types": "types/dash.d.ts",
   "exports": {
     ".": "./src/main-v4.js",
     "./v4/*": "./src/v4/*.js",
     "./scss/*": "./src/scss/*",
-    "./types": "./types/gentelella.d.ts",
+    "./types": "./types/dash.d.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -61,9 +66,9 @@
     "vite.config.js"
   ],
   "bugs": {
-    "url": "https://github.com/ColorlibHQ/gentelella/issues"
+    "url": "https://github.com/ar4web/Dash/issues"
   },
-  "homepage": "https://github.com/ColorlibHQ/gentelella#readme",
+  "homepage": "https://github.com/ar4web/Dash#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.62.1",

@@ -1,4 +1,4 @@
-// Gentelella v4 — markup helpers.
+// Dash — markup helpers.
 //
 // Pure functions that return HTML strings. Use them when building content
 // dynamically (rows from a fetched list, cards from an array, etc.) so you

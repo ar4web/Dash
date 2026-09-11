@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Scaffold a new Gentelella page.
+// Scaffold a new Dash page.
 //
 // Usage:
 //   node scripts/new-page.mjs <slug> [options]
@@ -97,7 +97,7 @@ function pageHtml({ slug, title, pretitle, breadcrumb }) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${t} | Gentelella 2026 v4</title>
+<title>${t} | Dash</title>
 <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

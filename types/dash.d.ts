@@ -1,19 +1,19 @@
-// Gentelella v4 — TypeScript declarations for the public JS surface.
+// Dash — TypeScript declarations for the public JS surface.
 //
-// Drop this file at `types/gentelella.d.ts` and add `"types": "types/gentelella.d.ts"`
+// Drop this file at `types/dash.d.ts` and add `"types": "types/dash.d.ts"`
 // to `package.json` (already done). VS Code then resolves type info for every
 // `import { ... } from 'src/v4/...'` automatically — no tsconfig needed,
 // no .ts files required, IntelliSense + parameter hints just work.
 //
 // If you DO use TypeScript, you can also `import type { ModalAction } from
-// 'gentelella'` etc. — the named exports below are reachable via the
+// 'dash'` etc. — the named exports below are reachable via the
 // per-module declarations.
 
 // ────────────────────────────────────────────────────────────────────────
 //  shell.js — admin shell mount + sidebar/topbar/footer render
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/shell' {
+declare module 'dash/v4/shell' {
   /**
    * Mount the admin shell (sidebar + topbar + footer + interactivity).
    * Reads body data attributes:
@@ -25,7 +25,7 @@ declare module 'gentelella/v4/shell' {
   export function mountShell(): void;
 }
 
-declare module 'gentelella/v4/shell-render' {
+declare module 'dash/v4/shell-render' {
   export interface NavBadge { text: string; cls: 'badge-red' | 'badge-teal' | 'badge-blue' }
 
   export interface NavLeaf {
@@ -90,7 +90,7 @@ declare module 'gentelella/v4/shell-render' {
 //  toast.js — transient notifications
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/toast' {
+declare module 'dash/v4/toast' {
   export interface ToastOptions {
     /** Visual style. Defaults to `'default'`. */
     variant?: 'default' | 'success' | 'error' | 'info' | 'warning';
@@ -109,7 +109,7 @@ declare module 'gentelella/v4/toast' {
 //  modal.js — focus-trapped dialog
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/modal' {
+declare module 'dash/v4/modal' {
   export interface ModalActionContext {
     dialog: HTMLElement;
     body: HTMLElement;
@@ -153,7 +153,7 @@ declare module 'gentelella/v4/modal' {
 //  menus.js — popover menu + side panel
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/menus' {
+declare module 'dash/v4/menus' {
   /** A clickable menu entry; `action` defaults to a no-op when omitted. */
   export interface MenuItem {
     label: string;
@@ -191,7 +191,7 @@ declare module 'gentelella/v4/menus' {
 //  charts.js — ECharts factories + auto-init
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/charts' {
+declare module 'dash/v4/charts' {
   /**
    * Mount ECharts on every `<div data-chart="…">` on the page. Lazy-imports
    * `echarts/core` plus the chart types and components actually needed.
@@ -204,7 +204,7 @@ declare module 'gentelella/v4/charts' {
 //  tables.js — DataTables auto-init
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/tables' {
+declare module 'dash/v4/tables' {
   /**
    * Wire DataTables on every `<table data-datatable>`.
    * Opt-in extras via attribute on the `<table>`:
@@ -220,7 +220,7 @@ declare module 'gentelella/v4/tables' {
 //  command-palette.js — ⌘K / Ctrl+K
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/command-palette' {
+declare module 'dash/v4/command-palette' {
   /** Wire the global ⌘K shortcut + topbar search-input opener. Idempotent. */
   export function initCommandPalette(): void;
   /** Open programmatically. */
@@ -233,7 +233,7 @@ declare module 'gentelella/v4/command-palette' {
 //  page-actions.js — global Print / Export / Compose / etc. dispatcher
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/page-actions' {
+declare module 'dash/v4/page-actions' {
   /**
    * Wire shared button-intent handlers (Print / Export / Refresh / Share /
    * Compose / `New <thing>` / Invite). Buttons that don't match an intent
@@ -246,8 +246,8 @@ declare module 'gentelella/v4/page-actions' {
 //  data-adapter.js — seed ↔ http data source pattern
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/data-adapter' {
-  /** True when `?api=1` in URL or `window.__GENTELELLA_API__ = true`. */
+declare module 'dash/v4/data-adapter' {
+  /** True when `?api=1` in URL or `window.__DASH_API__ = true`. */
   export function useApiMode(): boolean;
 
   /** Unified surface every adapter implements — keeps render code the same. */
@@ -295,7 +295,7 @@ declare module 'gentelella/v4/data-adapter' {
 //  Lazy-loaded page modules (init functions)
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/inbox' {
+declare module 'dash/v4/inbox' {
   /**
    * Mount the interactive inbox into `#inbox-root`. With `?api=1`, hydrates
    * initial messages from `/api/messages`; otherwise uses the seed array.
@@ -303,24 +303,24 @@ declare module 'gentelella/v4/inbox' {
   export function initInbox(): Promise<void>;
 }
 
-declare module 'gentelella/v4/kanban' {
+declare module 'dash/v4/kanban' {
   export function initKanban(): void;
 }
 
-declare module 'gentelella/v4/calendar' {
+declare module 'dash/v4/calendar' {
   export function initCalendar(): void;
 }
 
-declare module 'gentelella/v4/file-manager' {
+declare module 'dash/v4/file-manager' {
   export function initFileManager(): void;
 }
 
-declare module 'gentelella/v4/settings' {
+declare module 'dash/v4/settings' {
   /** Wire all settings interactions: persistence, save/cancel, integrations, etc. Idempotent. */
   export function initSettings(): void;
 }
 
-declare module 'gentelella/v4/form-controls' {
+declare module 'dash/v4/form-controls' {
   /**
    * Auto-init advanced form controls:
    *   `[data-date-range]`    — two-month range picker with presets
@@ -331,7 +331,7 @@ declare module 'gentelella/v4/form-controls' {
   export function initFormControls(): void;
 }
 
-declare module 'gentelella/v4/details' {
+declare module 'dash/v4/details' {
   export interface ProjectDetail {
     title: string; client: string; status: string; sCls: string;
     desc: string; pct: number; due: string;
@@ -356,7 +356,7 @@ declare module 'gentelella/v4/details' {
  * @example
  * document.documentElement.style.setProperty('--primary', '#ff0066');
  */
-type GentelellaToken =
+type DashToken =
   // Colors
   | '--primary' | '--primary-lt' | '--primary-dk'
   | '--blue' | '--azure' | '--green' | '--lime' | '--yellow'
@@ -381,14 +381,14 @@ type GentelellaToken =
   | '--shadow' | '--shadow-card';
 
 interface CSSStyleDeclaration {
-  setProperty(property: GentelellaToken, value: string | null, priority?: string): void;
+  setProperty(property: DashToken, value: string | null, priority?: string): void;
 }
 
 // ────────────────────────────────────────────────────────────────────────
 //  markup.js — string-returning helpers for repeated markup patterns
 // ────────────────────────────────────────────────────────────────────────
 
-declare module 'gentelella/v4/markup' {
+declare module 'dash/v4/markup' {
   export function escapeHtml(value: unknown): string;
 
   export type StatColor = 'teal' | 'green' | 'blue' | 'yellow' | 'red' | 'purple' | 'pink' | 'azure';
@@ -466,6 +466,8 @@ declare global {
      * Set to `true` before the page loads to force API mode without needing
      * `?api=1` in the URL. Honored by `useApiMode()` from data-adapter.
      */
+    __DASH_API__?: boolean;
+    /** @deprecated Pre-rebrand alias of `__DASH_API__`. */
     __GENTELELLA_API__?: boolean;
   }
 }

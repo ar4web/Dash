@@ -1,4 +1,4 @@
-// Gentelella 2026 v4 — DataTables integration
+// Dash — DataTables integration
 // Dynamic-imports DataTables only when a [data-datatable] table is present.
 
 import { showToast } from './toast.js';

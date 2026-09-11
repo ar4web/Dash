@@ -263,7 +263,8 @@ describe('sidebar hierarchy', () => {
     expect(document.querySelector('.footer .footer-brand')?.textContent).toBe(
       'Manpower Supply Co.'
     );
-    expect(document.querySelector('.footer')?.textContent).toContain('v4.1.1');
+    const { version } = JSON.parse(readFileSync(`${R}/package.json`, 'utf8'));
+    expect(document.querySelector('.footer')?.textContent).toContain(`v${version}`);
   });
 });
 

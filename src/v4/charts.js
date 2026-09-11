@@ -1,4 +1,4 @@
-// Gentelella 2026 v4 — ECharts integration
+// Dash — ECharts integration
 // Dynamic-imports ECharts only when a [data-chart] element is present on the
 // page, keeping pages without charts free of the ~400kB cost.
 

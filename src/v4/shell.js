@@ -1,4 +1,4 @@
-// Gentelella 2026 v4 — runtime shell mount
+// Dash — runtime shell mount
 // At build/dev time the Vite plugin (vite.config.js) injects sidebar/topbar/
 // footer directly into each production/*.html. mountShell() is the runtime
 // fallback: if the shell isn't already in the DOM (e.g. opening a raw HTML

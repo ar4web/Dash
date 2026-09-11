@@ -33,7 +33,7 @@ function discoverEntries() {
 // is both dishonest and a structured-data violation.
 function structuredDataPlugin() {
   const pkg = JSON.parse(readFileSync(resolve(import.meta.dirname, 'package.json'), 'utf8'));
-  const SITE = 'https://gentelella.colorlib.com/';
+  const SITE = 'https://github.com/ar4web/Dash';
   const ENTITIES = {
     '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'",
     '&mdash;': '\u2014', '&ndash;': '\u2013', '&nbsp;': ' ', '&hellip;': '\u2026'
@@ -46,7 +46,7 @@ function structuredDataPlugin() {
       .trim();
 
   return {
-    name: 'gentelella-structured-data',
+    name: 'dash-structured-data',
     transformIndexHtml: {
       order: 'post',
       handler(html, ctx) {
@@ -73,7 +73,7 @@ function structuredDataPlugin() {
         const graph = [
           {
             '@type': 'SoftwareApplication',
-            name: 'Gentelella',
+            name: 'Dash',
             applicationCategory: 'DeveloperApplication',
             operatingSystem: 'Any',
             softwareVersion: pkg.version,
@@ -81,7 +81,7 @@ function structuredDataPlugin() {
             description: pkg.description,
             license: 'https://opensource.org/licenses/MIT',
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-            author: { '@type': 'Organization', name: 'Colorlib', url: 'https://colorlib.com' }
+            author: { '@type': 'Organization', name: 'Dash' }
           }
         ];
         if (faq.length) graph.push({ '@type': 'FAQPage', mainEntity: faq });
@@ -114,7 +114,7 @@ const SITEMAP_EXCLUDE = new Set([
 
 function sitemapPlugin() {
   return {
-    name: 'gentelella-sitemap',
+    name: 'dash-sitemap',
     apply: 'build',
     generateBundle() {
       const site = process.env.SITE_URL;
@@ -143,10 +143,10 @@ function sitemapPlugin() {
 // under production/, so without this the bare deploy root (GitHub Pages, R2,
 // `npm run preview`) has no front door and 404s. The redirect target is
 // relative, so it resolves the same whether the site is served from / or from
-// a subpath like /gentelella/ or /theme/gentelella/.
+// a subpath like /Dash/.
 function rootRedirectPlugin() {
   return {
-    name: 'gentelella-root-redirect',
+    name: 'dash-root-redirect',
     // Dev: preview root opens the HR dashboard instead of a blank 404.
     // (configureServer never runs during build; generateBundle never runs in serve.)
     configureServer(server) {
@@ -167,7 +167,7 @@ function rootRedirectPlugin() {
           '<!DOCTYPE html>',
           '<meta http-equiv="refresh" content="0;url=production/index.html">',
           '<link rel="canonical" href="production/index.html">',
-          '<title>Gentelella v4</title>',
+          '<title>Dash</title>',
           ''
         ].join('\n')
       });
@@ -182,7 +182,7 @@ function rootRedirectPlugin() {
 function shellInjectionPlugin() {
   let base = '/'; // Resolved from Vite config — used for subpath-safe URLs.
   return {
-    name: 'gentelella-shell-injection',
+    name: 'dash-shell-injection',
     configResolved(config) { base = config.base || '/'; },
     transformIndexHtml: {
       order: 'pre',
@@ -191,7 +191,7 @@ function shellInjectionPlugin() {
 
         // PWA + meta tags for every page (admin-shell or not).
         // Asset URLs are prefixed with the resolved base so deploys under a
-        // subpath (e.g. /theme/gentelella-v4-rc1/) resolve correctly.
+        // subpath (e.g. /Dash/) resolve correctly.
         // Both the modern `mobile-web-app-capable` and the older
         // `apple-mobile-web-app-capable` are emitted for max compatibility —
         // newer Chrome/Edge prefer the unprefixed name.
@@ -205,7 +205,7 @@ function shellInjectionPlugin() {
         out = out.replace(/<\/head>/i, `${metaPwa}\n</head>`);
 
         // SEO + Open Graph meta. Skip if the page already declares a
-        // description (page-specific copy wins). Title falls back to "Gentelella v4"
+        // description (page-specific copy wins). Title falls back to "Dash"
         // if the page has none. The description is derived from the breadcrumb
         // when present so each page gets distinct copy without per-page edits.
         if (!/name=["']description["']/i.test(out)) {
@@ -222,7 +222,7 @@ function shellInjectionPlugin() {
 <meta property="og:title" content="${title.replace(/"/g, '&quot;')}">
 <meta property="og:description" content="${desc.replace(/"/g, '&quot;')}">
 <meta property="og:image" content="${base}images/android-chrome-512x512.svg">
-<meta property="og:site_name" content="Gentelella v4">
+<meta property="og:site_name" content="Dash">
 <meta name="twitter:card" content="summary_large_image">`;
           out = out.replace(/<\/head>/i, `${seo}\n</head>`);
         }

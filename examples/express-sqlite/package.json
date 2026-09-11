@@ -1,7 +1,7 @@
 {
-  "name": "gentelella-example-express-sqlite",
+  "name": "dash-example-express-sqlite",
   "version": "0.1.0",
-  "description": "Tiny Express + SQLite backend for the Gentelella v4 admin template. Demonstrates the data-adapter pattern by serving real /api/orders and /api/messages endpoints that the inbox and orders pages can be repointed at.",
+  "description": "Tiny Express + SQLite backend for the Dash HR command center. Demonstrates the data-adapter pattern by serving real /api/orders and /api/messages endpoints that the inbox and orders pages can be repointed at.",
   "type": "module",
   "private": true,
   "main": "server.js",

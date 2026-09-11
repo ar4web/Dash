@@ -38,7 +38,7 @@ const MESSAGES = [
   ['inbox',  0, 'personal', 'Michael R.', 'mike@somewhere.io',  'Lunch tomorrow?',          'Hey, are you free for lunch?',         'Hey,\n\nAre you free for lunch tomorrow at the new place on 4th?\n\n— Mike'],
   ['inbox',  0, 'work',     'Emily W.',  'emily@design.co',     'Sprint retro notes',       "Posted the action items.",             "Posted retro notes — three action items."],
   ['inbox',  0, 'work',     'Linear',    'notifications@linear.app', 'You were assigned 3 issues', 'GEN-128, GEN-129, GEN-131',     'Three issues assigned to you.'],
-  ['inbox',  0, null,       'Vercel',    'updates@vercel.com',  'Deployment succeeded',     'gentelella-v4.vercel.app · 28s',       'Production deployment succeeded.'],
+  ['inbox',  0, null,       'Vercel',    'updates@vercel.com',  'Deployment succeeded',     'dash.vercel.app · 28s',       'Production deployment succeeded.'],
   ['sent',   0, 'work',     'Me',        null,                  'Q1 design review',         'Sharing the figma link.',              "Hey Sarah,\n\nSharing the figma link.\n\n— A."],
   ['drafts', 0, null,       'Me',        null,                  'Re: landing copy',         'Two suggestions on the subhead…',      'Two suggestions on the subhead.'],
   ['trash',  0, 'promotions', 'AppSumo', 'deals@appsumo.com',   '90% off — today only',     'Today only — 90% off.',                'Today only — 90% off our top admin templates.']

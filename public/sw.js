@@ -1,14 +1,14 @@
-// Gentelella v4 — service worker
+// Dash — service worker
 // Strategy: cache-first for hashed assets (Vite emits content-hashed URLs),
 // network-first for HTML so navigations always pull the freshest shell, with
 // a fallback to the offline page when the network is unavailable.
 
 // Bump the suffix on every release to bust users' caches when CSS/JS hashes
 // change but the same URL is requested. Activate handler clears old caches.
-const CACHE = 'gentelella-v4-r2';
+const CACHE = 'dash-v1-r1';
 
 // Subpath-aware: scope is the directory the SW is registered against. Under
-// `/` it's `https://example.com/`; under `/theme/gentelella-v4-rc1/` it's that
+// `/` it's `https://example.com/`; under `/Dash/` it's that
 // path. Resolving relative URLs against the scope makes the SW work in both.
 const SCOPE = self.registration?.scope || self.location.origin + '/';
 const OFFLINE_URL = new URL('production/offline.html', SCOPE).href;

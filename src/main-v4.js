@@ -1,4 +1,4 @@
-// Gentelella 2026 v4 — entry
+// Dash — entry
 // Self-contained dashboard skin. Loads only the v4 design system.
 
 import './scss/v4/main.scss';
@@ -19,7 +19,7 @@ initPageActions();
 
 // Service worker — only in production builds (skip on dev so HMR isn't fought
 // by the cache). Path uses Vite's BASE_URL so subpath deploys (e.g.
-// preview.colorlib.com/theme/foo/) register the SW at the right scope.
+// example.com/dash/) register the SW at the right scope.
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     const swPath = `${import.meta.env.BASE_URL}sw.js`;

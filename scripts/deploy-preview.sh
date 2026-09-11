@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 # scripts/deploy-preview.sh
 #
-# Build + deploy the rc.1 preview to R2 with proper per-file cache headers.
+# Build + deploy a preview to R2 (or any rclone remote) with proper
+# per-file cache headers. Configure via environment (no defaults —
+# the script refuses to guess where your preview lives):
+#
+#   PREVIEW_BUCKET   rclone destination, e.g. "myremote:previews/dash"
+#   PREVIEW_SLUG     subpath slug, e.g. "dash"            (default: dash)
+#   PREVIEW_HOST     public host, e.g. "preview.example.com" (enables sitemap
+#                    absolute URLs; omit to skip sitemap emission)
+#   CF_API_TOKEN / CF_ZONE_ID + PREVIEW_ZONE_NAME
+#                    optional Cloudflare edge-cache purge for PREVIEW_HOST
+#
 #
 # Why this is more than `rclone sync`: Cloudflare edge cache + R2's defaults
 # aggressively cache HTML at the edge for 30 days. Our HTML references
@@ -24,12 +34,21 @@
 
 set -euo pipefail
 
-SLUG="${PREVIEW_SLUG:-gentelella}"
-BUCKET="r2pro:colorlib-preview/theme/$SLUG"
+SLUG="${PREVIEW_SLUG:-dash}"
+if [ -z "${PREVIEW_BUCKET:-}" ]; then
+  echo "✖ Set PREVIEW_BUCKET first, e.g. export PREVIEW_BUCKET=myremote:previews/dash" >&2
+  exit 1
+fi
+BUCKET="$PREVIEW_BUCKET"
+BASE="/${SLUG}/"
 
-echo "→ Building with BASE_PATH=/theme/$SLUG/"
+echo "→ Building with BASE_PATH=$BASE"
 # SITE_URL makes the build emit sitemap.xml with absolute URLs for this host.
-BASE_PATH="/theme/$SLUG/" SITE_URL="https://preview.colorlib.com/theme/$SLUG/" npm run build
+if [ -n "${PREVIEW_HOST:-}" ]; then
+  BASE_PATH="$BASE" SITE_URL="https://${PREVIEW_HOST}${BASE}" npm run build
+else
+  BASE_PATH="$BASE" npm run build
+fi
 
 # Strip dev artifacts.
 rm -f dist/stats.html
@@ -74,26 +93,31 @@ rclone copyto dist/site.webmanifest "$BUCKET/site.webmanifest" \
   --ignore-times
 
 # Optional: purge Cloudflare cache for this path. Token needs
-# Zone:Cache Purge permission on the colorlib.com zone.
-if [ -n "${CF_API_TOKEN:-}" ] && [ -n "${CF_ZONE_ID:-}" ]; then
+# Zone:Cache Purge permission on the preview zone.
+if [ -n "${CF_API_TOKEN:-}" ] && [ -n "${CF_ZONE_ID:-}" ] && [ -n "${PREVIEW_HOST:-}" ]; then
   echo ""
-  echo "→ Purging Cloudflare cache for preview.colorlib.com/theme/$SLUG/*"
+  echo "→ Purging Cloudflare cache for ${PREVIEW_HOST}${BASE}*"
   curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
     -H "Authorization: Bearer $CF_API_TOKEN" \
     -H "Content-Type: application/json" \
-    --data "{\"prefixes\":[\"preview.colorlib.com/theme/$SLUG/\"]}" \
+    --data "{\"prefixes\":[\"${PREVIEW_HOST}${BASE}\"]}" \
     | grep -oE '"success":[a-z]+' || true
 else
   echo ""
-  echo "ℹ  Skipped Cloudflare cache purge (CF_API_TOKEN / CF_ZONE_ID not set)."
+  echo "ℹ  Skipped Cloudflare cache purge (CF_API_TOKEN / CF_ZONE_ID / PREVIEW_HOST not set)."
   echo "   To purge manually now:"
-  echo "     dash.cloudflare.com → colorlib.com → Caching → Configuration"
-  echo "     → Custom Purge → URL → paste 'preview.colorlib.com/theme/$SLUG/*'"
+  echo "     dash.cloudflare.com → your zone → Caching → Configuration"
+  echo "     → Custom Purge → URL → paste '${PREVIEW_HOST:-<host>}${BASE}*'"
   echo ""
   echo "   To automate, add to your shell:"
   echo "     export CF_API_TOKEN=…    # zone:cache-purge permission"
-  echo "     export CF_ZONE_ID=…      # the colorlib.com zone ID"
+  echo "     export CF_ZONE_ID=…      # the preview zone ID"
+  echo "     export PREVIEW_HOST=…    # the public preview host"
 fi
 
 echo ""
-echo "✓ https://preview.colorlib.com/theme/$SLUG/"
+if [ -n "${PREVIEW_HOST:-}" ]; then
+  echo "✓ https://${PREVIEW_HOST}${BASE}"
+else
+  echo "✓ Deployed to $BUCKET (set PREVIEW_HOST to print the public URL)"
+fi

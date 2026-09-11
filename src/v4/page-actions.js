@@ -1,4 +1,4 @@
-// Gentelella v4 — global page action handlers.
+// Dash — global page action handlers.
 //
 // Wires up common button intents that show up across pages so the template
 // has real interactivity instead of generic toast feedback. All handlers

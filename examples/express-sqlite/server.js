@@ -1,6 +1,6 @@
 // examples/express-sqlite/server.js
 //
-// Tiny Express app demonstrating how the Gentelella v4 frontend pages can
+// Tiny Express app demonstrating how the Dash frontend pages can
 // fetch real data instead of hardcoded seed arrays. Endpoints intentionally
 // match what `src/v4/inbox.js` and `production/orders.html` would expect if
 // you flipped them from seed mode to API mode.
@@ -165,7 +165,7 @@ app.get('/api/health', (_req, res) => {
 app.use((req, res) => res.status(404).json({ error: 'not found', path: req.path }));
 
 app.listen(PORT, () => {
-  console.log(`\n→ Gentelella example API running on http://localhost:${PORT}`);
+  console.log(`\n→ Dash example API running on http://localhost:${PORT}`);
   console.log(`  endpoints: GET /api/orders   POST /api/messages   GET /api/health\n`);
   console.log(`  point your frontend at it:`);
   console.log(`    http://localhost:9173/production/orders.html?api=1`);

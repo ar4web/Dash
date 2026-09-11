@@ -1,4 +1,4 @@
-// Gentelella 2026 v4 — shell render (pure)
+// Dash — shell render (pure)
 // String-only renderers. No DOM, no window/document access.
 // Imported by:
 //   1. The Vite plugin (vite.config.js) to inject shell HTML at build/dev time.
