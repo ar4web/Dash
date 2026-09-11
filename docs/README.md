@@ -1,19 +1,33 @@
-# Gentelella v4 documentation
+# Dash documentation
 
-**The docs have moved.** This directory is retained only for stable redirects from old links.
+Start here: [Getting started](getting-started.md), then
+[Workflow](workflow.md).
 
-👉 **<https://gentelella.colorlib.com/docs/>** is the single source of truth.
+## System
 
-Find the topic you were looking for:
+- [Getting started](getting-started.md) — install, dev server, first build.
+- [Workflow](workflow.md) — chunk loop, gates, releases.
+- [Architecture](architecture.md) — bundle, shell injection, lazy imports.
+- [Project structure](project-structure.md) — what lives in each directory.
+- [Pages](pages.md) — the bundled pages, adding another.
+- [HR blueprint](hr-blueprint.md) — KSA compliance design record.
+- [Deployment](deployment.md) — static hosting, subpath deploys, cache headers.
+- [Data adapter](data-adapter.md) — swapping seed data for a real API.
+- [FAQ](faq.md) — common questions.
 
-- [Getting started](https://gentelella.colorlib.com/docs/getting-started/)
-- [Project structure](https://gentelella.colorlib.com/docs/project-structure/)
-- [Architecture](https://gentelella.colorlib.com/docs/architecture/)
-- [Theming](https://gentelella.colorlib.com/docs/theming/)
-- [Adding a page](https://gentelella.colorlib.com/docs/adding-pages/)
-- [Forms](https://gentelella.colorlib.com/docs/forms/) · [Tables](https://gentelella.colorlib.com/docs/tables/) · [Overlays](https://gentelella.colorlib.com/docs/overlays/) · [ECharts](https://gentelella.colorlib.com/docs/echarts/)
-- [Inbox](https://gentelella.colorlib.com/docs/inbox/) · [Kanban](https://gentelella.colorlib.com/docs/kanban/) · [Command palette](https://gentelella.colorlib.com/docs/palette/)
-- [Theme generator](https://gentelella.colorlib.com/docs/theme-generator/) · [Component playground](https://gentelella.colorlib.com/docs/playground/)
-- [Vite build](https://gentelella.colorlib.com/docs/vite-build/) · [PWA setup](https://gentelella.colorlib.com/docs/pwa/) · [Deployment](https://gentelella.colorlib.com/docs/deployment/)
-- [TypeScript](https://gentelella.colorlib.com/docs/typescript/) · [Data adapter](https://gentelella.colorlib.com/docs/data-adapter/)
-- [Migration from v2](https://gentelella.colorlib.com/docs/migration-v2/) · [FAQ](https://gentelella.colorlib.com/docs/faq/)
+## Interface
+
+- [Theming](theming.md) — tokens, light/dark, custom SCSS.
+- [Components](components.md) — buttons, cards, badges, reusable markup.
+- [Tables](tables.md) — one table style, DataTables integration.
+- [Charts](charts.md) — ECharts wrapper, adding a chart card.
+- [Forms](forms.md) — inputs, switches, pickers, validation.
+- [Overlays](overlays.md) — modals, toasts, dropdowns, panels.
+- [RTL](rtl.md) — Arabic layouts via logical properties.
+- [PWA](pwa.md) — service worker and manifest.
+
+## Apps
+
+- [App modules](app-modules.md) — inbox, kanban, calendar, chat, file manager.
+- [Command palette](command-palette.md) — ⌘K palette, registering commands.
+- [TypeScript](typescript.md) — declarations for the public JS surface.
