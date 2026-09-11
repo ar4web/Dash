@@ -480,12 +480,16 @@ describe('command center', () => {
   test('§5 money + performance matrix match the engine', async () => {
     await mountPage('hr_dashboard');
     const cats = getSeed('expenseCategories');
+    expect(document.getElementById('chart-expense').className).toContain('chart-box');
+    expect(document.getElementById('chart-perf-trend').className).toContain('chart-box');
     const exLabel = document.getElementById('chart-expense').getAttribute('aria-label');
     expect(exLabel).toContain(cats[0].en);
     const inv = getSeed('invoices');
     const billRows = document.querySelectorAll('#billing-history tbody tr');
     expect(billRows.length).toBe(inv.length);
     expect(billRows[0].textContent).toContain(inv[0].month);
+    expect(billRows[0].textContent).toContain('Al-Bina');
+    expect(billRows[0].textContent).not.toContain('CL-001');
     expect(billRows[0].textContent).toContain(
       Math.round(invoiceTotals(inv[0].lines).total).toLocaleString('en-US')
     );
@@ -500,6 +504,7 @@ describe('command center', () => {
     expect(topRows.length).toBe(5);
     expect(botRows.length).toBe(5);
     expect(topRows[0].textContent).toContain(String(rank[0].index));
+    expect(topRows[0].querySelectorAll('td')[1].textContent).not.toMatch(/^EMP-/);
     const trendLabel = document.getElementById('chart-perf-trend').getAttribute('aria-label');
     expect(trendLabel).toContain('Top 5');
     expect(trendLabel).toContain(String(rank[rank.length - 1].index));

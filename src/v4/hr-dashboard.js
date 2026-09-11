@@ -1119,9 +1119,8 @@ function renderS5() {
   document.querySelector('#billing-history tbody').innerHTML = inv
     .map(r => {
       const tot = invoiceTotals(r.lines || []).total;
-      const c = getSeed('clients').find(x => x.code === r.client) || {};
       return (
-        `<tr><td dir="ltr">${esc(r.month)}</td><td>${esc(L(c.en || r.client, c.ar || r.client))}</td>` +
+        `<tr><td dir="ltr">${esc(r.month)}</td><td>${esc(clientName(r.client))}</td>` +
         `<td class="num" dir="ltr">${esc(fmtSAR(tot))}</td>` +
         `<td><span class="status status-${r.status}">${esc(t(`status.${r.status}`))}</span></td></tr>`
       );
@@ -1136,10 +1135,6 @@ function renderS5() {
   const rank = perfRanking(d);
   const top = rank.slice(0, 5);
   const bottom = rank.slice(-5).reverse();
-  const empName = code => {
-    const e = getSeed('employees').find(x => x.code === code) || {};
-    return L(e.en || code, e.ar || code);
-  };
   const rows = list =>
     list
       .map(
