@@ -1100,3 +1100,85 @@ details.zone:not([open]) .zone-head::before {
     scroll-snap-align: start;
   }
 }
+.ticker {
+  overflow: hidden;
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius);
+  padding: 8px 0;
+}
+.ticker-track {
+  display: inline-flex;
+  gap: 8px;
+  padding-inline: 8px;
+  width: max-content;
+  animation: tick-scroll 28s linear infinite;
+}
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+.ticker-band {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.ticker-band.red {
+  background: #fde8ea;
+  color: #a31228;
+}
+.ticker-band.dark {
+  background: #16181d;
+  color: #fff;
+}
+.ticker-band.green {
+  background: #e6f6ec;
+  color: #14703c;
+}
+@keyframes tick-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+[dir='rtl'] .ticker-track {
+  animation-name: tick-scroll-rtl;
+}
+@keyframes tick-scroll-rtl {
+  to {
+    transform: translateX(50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.check-item .tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+  flex: none;
+}
+.check-item.done .tick {
+  background: var(--green);
+  color: #fff;
+}
+.check-item.todo .tick {
+  border: 2px solid var(--border-color);
+  color: transparent;
+}

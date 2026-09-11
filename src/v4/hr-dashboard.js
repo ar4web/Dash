@@ -23,7 +23,8 @@ import {
   permitStatus,
   invoiceTotals,
   perfRanking,
-  cohortTrend
+  cohortTrend,
+  tickerAlerts
 } from './hr-statutory.js';
 import { getSeed } from './hr-api.js';
 import { CLIENTS, LEAVE_DELAY_REASONS, SITES, SKILLS, SPONSORS, PROFESSIONS } from './hr-seed.js';
@@ -1132,6 +1133,7 @@ function renderAll() {
   renderS3();
   renderS4();
   renderS5();
+  renderS6();
   renderKpis();
   renderAlerts();
   renderExpiries();
@@ -1297,5 +1299,103 @@ function renderS5() {
     meta.innerHTML = `<span class="status status-green">${rank.length} · ${esc(t('hr.dashboard.top5'))} ${
       top.length ? top[0].index : '—'
     }</span>`;
+  }
+}
+
+// ── T2 §6 action center ────────────────────────────────────────────────────
+function renderS6() {
+  const today = todayIso();
+  const s = getSettings();
+  const a = tickerAlerts(
+    {
+      ajeerPermits: getSeed('ajeerPermits'),
+      assignments: getSeed('assignments'),
+      employees: getSeed('employees'),
+      tasks: getSeed('tasks')
+    },
+    s,
+    today
+  );
+  const bands = [];
+  a.staleReturns.forEach(r => {
+    bands.push(['red', `${t('hr.dashboard.staleReturn')} ${r.no} · ${r.emp} · ${r.at}`]);
+  });
+  if (a.expiringPermits) {
+    bands.push(['red', `${a.expiringPermits} ${t('hr.dashboard.permitsExpiring')} ≤30d`]);
+  }
+  if (a.expiringIqamas) {
+    bands.push(['dark', `${a.expiringIqamas} ${t('hr.dashboard.iqamasExpiring')}`]);
+  }
+  if (a.overdue) {
+    bands.push([
+      'red',
+      `${a.overdue} ${t('hr.dashboard.tasksTitle')} ${t('hr.dashboard.overdue')}`
+    ]);
+  }
+  if (a.followups) {
+    bands.push(['dark', `${a.followups} ${t('hr.dashboard.tasksDue')}`]);
+  }
+  if (a.nitaqatBelow) {
+    bands.push(['red', t('hr.dashboard.nitaqatBelow')]);
+  }
+  if (!bands.length) {
+    bands.push(['green', t('hr.dashboard.noAlerts')]);
+  }
+  const half = bands
+    .map(([tone, text]) => `<span class="ticker-band ${tone}">${esc(text)}</span>`)
+    .join('');
+  document.getElementById('ticker-track').innerHTML = half + half;
+
+  const tasks = getSeed('tasks') || [];
+  const prio = { high: 0, medium: 1, low: 2 };
+  const open = tasks
+    .filter(x => !x.done)
+    .sort(
+      (x, y) =>
+        (x.due < today ? 0 : 1) - (y.due < today ? 0 : 1) ||
+        (x.due < y.due ? -1 : 1) ||
+        (prio[x.priority] ?? 1) - (prio[y.priority] ?? 1)
+    )
+    .slice(0, 5);
+  document.getElementById('tasks-formula').textContent =
+    `${tasks.filter(x => x.done).length} / ${tasks.length} ${t('hr.dashboard.doneOf')}`;
+  document.querySelector('#tasks-table tbody').innerHTML = open
+    .map(x => {
+      const d = daysUntil(x.due, today);
+      const chip =
+        d < 0
+          ? `<span class="status status-red">${-d}d ${esc(t('hr.dashboard.overdue'))}</span>`
+          : `<span class="status status-blue">${d}d ${esc(t('hr.dashboard.leftD'))}</span>`;
+      return (
+        `<tr><td><a href="${esc(x.link || '#')}">${esc(L(x.titleEn, x.titleAr))}</a></td>` +
+        `<td>${esc(x.owner)}</td><td dir="ltr">${esc(x.due)} ${chip}</td></tr>`
+      );
+    })
+    .join('');
+
+  const steps = setupSteps();
+  const labels = [
+    t('hr.dashboard.setupCompany'),
+    t('hr.dashboard.setupNitaqat'),
+    t('hr.dashboard.setupLicence')
+  ];
+  const doneCount = steps.filter(x => x.done).length;
+  const pct = Math.round((doneCount / steps.length) * 100);
+  const bar = document.getElementById('setup-progress');
+  bar.setAttribute('aria-valuenow', String(pct));
+  document.getElementById('setup-progress-fill').style.width = `${pct}%`;
+  document.getElementById('setup-checklist').innerHTML = steps
+    .map(
+      (x, i) =>
+        `<div class="check-item ${x.done ? 'done' : 'todo'}"><span class="tick">✓</span><span>${esc(labels[i])}</span></div>`
+    )
+    .join('');
+
+  const reds = a.staleReturns.length + a.overdue + (a.nitaqatBelow ? 1 : 0);
+  const meta = document.getElementById('zone-actions-meta');
+  if (meta) {
+    meta.innerHTML = reds
+      ? `<span class="status status-red">${reds} ${esc(t('common.urgent'))}</span>`
+      : '<span class="status status-green">✓</span>';
   }
 }

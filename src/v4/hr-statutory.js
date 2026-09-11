@@ -1101,3 +1101,32 @@ export function cohortTrend(codes, attendance = []) {
       score: Math.round((byDate[d].reduce((s, v) => s + v, 0) / byDate[d].length) * 10) / 10
     }));
 }
+
+// ── T2 §6 action-center ticker (pure) ──────────────────────────────────────
+// Stale return = beneficiary returned the worker, 1 working day passed, and
+// the employee still sits on an active assignment (needs PRO follow-up).
+export function tickerAlerts(data = {}, settings = {}, todayIso) {
+  const today = todayIso || new Date().toISOString().slice(0, 10);
+  const p7 = addDays(today, 7);
+  const staleReturns = (data.ajeerPermits || [])
+    .filter(p => p.status === 'returned')
+    .map(p => {
+      const ev = (p.history || []).filter(h => h.event === 'returned').pop();
+      return { no: p.no, emp: p.emp, at: ev ? ev.at : '' };
+    })
+    .filter(
+      r =>
+        r.at &&
+        returnDeadline(r.at) < today &&
+        (data.assignments || []).some(a => a.status === 'active' && a.emp === r.emp)
+    );
+  const expiringPermits = (data.ajeerPermits || []).filter(
+    p => p.status === 'active' && permitStatus(p.exp, today) !== 'active'
+  ).length;
+  const expiringIqamas = iqamaBuckets(data.employees || [], today).le30;
+  const followups = (data.tasks || []).filter(x => !x.done && x.due && x.due <= p7).length;
+  const overdue = (data.tasks || []).filter(x => !x.done && x.due && x.due < today).length;
+  const n = nitaqatEstimate(data.employees || [], (settings.nitaqat || {}).target || 0);
+  const nitaqatBelow = n.targetPct > 0 && n.pct < n.targetPct;
+  return { staleReturns, expiringPermits, expiringIqamas, followups, overdue, nitaqatBelow, today };
+}

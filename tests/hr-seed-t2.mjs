@@ -38,7 +38,8 @@ import {
   contractsEnding,
   perfIndex,
   perfRanking,
-  cohortTrend
+  cohortTrend,
+  tickerAlerts
 } from '../src/v4/hr-statutory.js';
 import { applyRtl } from '../src/v4/chart-helper.js';
 
@@ -305,6 +306,57 @@ eq('t2-rtl-en-kept', applyRtl({ xAxis: {} }, 'en', 'hbar'), { xAxis: {} });
 
 // ── files referenced exist (helpers land with the dashboard build) ─────────
 ok('t2-seed-file-present', readdirSync(`${R}/src/v4`).includes('hr-seed.js'));
+
+// ── §6 ticker alerts ────────────────────────────────────────────────────────
+{
+  const a = tickerAlerts(
+    { ajeerPermits: AJEER_PERMITS, assignments: ASSIGNMENTS, employees: EMPLOYEES, tasks: TASKS },
+    { nitaqat: {} },
+    TODAY
+  );
+  eq(
+    't2-ticker-seed',
+    [
+      a.staleReturns.length,
+      a.expiringPermits,
+      a.expiringIqamas,
+      a.followups,
+      a.overdue,
+      a.nitaqatBelow
+    ],
+    [1, 1, 1, 6, 1, false]
+  );
+  eq('t2-ticker-stale', a.staleReturns[0].no, 'AJ-2025-318');
+}
+eq(
+  't2-ticker-synth',
+  tickerAlerts(
+    {
+      ajeerPermits: [
+        { no: 'AJ-1', emp: 'E1', status: 'returned', history: [{ event: 'returned', at: '2026-09-01' }] },
+        { no: 'AJ-2', emp: 'E9', status: 'returned', history: [{ event: 'returned', at: '2026-09-01' }] }
+      ],
+      assignments: [{ emp: 'E1', status: 'active' }],
+      employees: [],
+      tasks: [
+        { due: '2026-09-12', done: false },
+        { due: '2026-10-01', done: false },
+        { due: '2026-09-10', done: true }
+      ]
+    },
+    { nitaqat: { target: 30 } },
+    TODAY
+  ),
+  {
+    staleReturns: [{ no: 'AJ-1', emp: 'E1', at: '2026-09-01' }],
+    expiringPermits: 0,
+    expiringIqamas: 0,
+    followups: 1,
+    overdue: 0,
+    nitaqatBelow: true,
+    today: TODAY
+  }
+);
 
 console.log(
   fail.length ? `\nT2 SEED AUDIT: ${fail.length} FAILURES` : '\nALL T2 SEED CHECKS PASSED'

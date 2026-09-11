@@ -13,7 +13,8 @@ import {
   iqamaBuckets,
   contractsEnding,
   perfRanking,
-  invoiceTotals
+  invoiceTotals,
+  tickerAlerts
 } from '../src/v4/hr-statutory.js';
 import { getSeed } from '../src/v4/hr-api.js';
 
@@ -377,7 +378,7 @@ describe('command center', () => {
     expect(card.textContent).toMatch(/Huroob|هروب/);
     expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
     const zones = [...document.querySelectorAll('details.zone[data-zone]')];
-    expect(zones.length).toBe(6);
+    expect(zones.length).toBe(7);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
@@ -505,6 +506,27 @@ describe('command center', () => {
     expect(document.querySelector('[data-i18n="hr.dashboard.perfFormula"]').textContent).toContain(
       '40%'
     );
+  });
+
+  test('§6 action center ticker, TASKS and checklist', async () => {
+    await mountPage('hr_dashboard');
+    const al = tickerAlerts({
+      ajeerPermits: getSeed('ajeerPermits'),
+      assignments: getSeed('assignments'),
+      employees: getSeed('employees'),
+      tasks: getSeed('tasks')
+    });
+    const track = document.getElementById('ticker-track').textContent;
+    if (al.staleReturns.length) {
+      expect(track).toContain(al.staleReturns[0].no);
+    }
+    expect(document.querySelectorAll('#ticker-track .ticker-band').length).toBeGreaterThan(1);
+    const tasks = getSeed('tasks');
+    expect(document.querySelectorAll('#tasks-table tbody tr').length).toBe(5);
+    expect(document.getElementById('tasks-formula').textContent).toContain(`/ ${tasks.length}`);
+    expect(document.querySelectorAll('#setup-checklist .check-item').length).toBe(3);
+    expect(document.getElementById('setup-progress').getAttribute('aria-valuenow')).toBe('0');
+    expect(document.getElementById('zone-actions-meta').textContent.length).toBeGreaterThan(0);
   });
 
   test('Arabic re-render flips chart summaries', async () => {
