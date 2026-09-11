@@ -978,6 +978,11 @@ function renderS4() {
     );
   });
 
+  const kanbanCard = x =>
+    `<div class="kanban-card"><strong dir="ltr">${esc(x.id)}</strong>` +
+    `<span>${esc(currentLang() === 'ar' ? x.nameAr || x.nameEn : x.nameEn)}</span>` +
+    `<small>${esc(x.from)} · ${esc(fmtSAR(x.fee))}</small>` +
+    `<small>${esc(fmtDate(x.noticeEnd))} · ${x.released ? '✓' : '…'}</small></div>`;
   const stages = ['requested', 'in-progress', 'awaiting-release', 'completed'];
   const transfers = getSeed('transfers');
   document.getElementById('transfer-kanban').innerHTML = stages
@@ -985,17 +990,7 @@ function renderS4() {
       const cols = transfers.filter(x => x.status === st);
       return (
         `<div class="kanban-col"><div class="kanban-head"><span>${esc(t(`status.${st}`))}</span><strong>${cols.length}</strong></div>` +
-        (cols.length
-          ? cols
-              .map(
-                x =>
-                  `<div class="kanban-card"><strong dir="ltr">${esc(x.id)}</strong>` +
-                  `<span>${esc(currentLang() === 'ar' ? x.nameAr || x.nameEn : x.nameEn)}</span>` +
-                  `<small>${esc(x.from)} · ${esc(fmtSAR(x.fee))}</small>` +
-                  `<small>${esc(fmtDate(x.noticeEnd))} · ${x.released ? '✓' : '…'}</small></div>`
-            )
-            .join('')
-          : '<div class="hr-empty">—</div>') +
+        (cols.length ? cols.map(kanbanCard).join('') : '<div class="hr-empty">—</div>') +
         '</div>'
       );
     })
@@ -1205,6 +1200,23 @@ function renderS5() {
 }
 
 // ── T2 §6 action center ────────────────────────────────────────────────────
+function taskOwnerName(owner) {
+  const roles = {
+    pro: t('role.pro'),
+    hr: t('role.hr'),
+    manager: t('role.manager'),
+    payroll: t('role.payroll'),
+    finance: t('role.finance')
+  };
+  if (roles[owner]) {
+    return roles[owner];
+  }
+  if (String(owner).startsWith('EMP-')) {
+    return empName(owner);
+  }
+  return owner;
+}
+
 function renderS6() {
   if (!document.getElementById('ticker-track')) {
     return;
@@ -1226,7 +1238,10 @@ function renderS6() {
     bands.push(['red', `${t('hr.dashboard.staleReturn')} ${r.no} · ${r.emp} · ${r.at}`]);
   });
   if (a.expiringPermits) {
-    bands.push(['red', `${a.expiringPermits} ${t('hr.dashboard.permitsExpiring')} ≤30d`]);
+    bands.push([
+      'red',
+      `${a.expiringPermits} ${t('hr.dashboard.permitsExpiring')} ≤30${L('d', 'ي')}`
+    ]);
   }
   if (a.expiringIqamas) {
     bands.push(['dark', `${a.expiringIqamas} ${t('hr.dashboard.iqamasExpiring')}`]);
@@ -1251,6 +1266,7 @@ function renderS6() {
     .join('');
   document.getElementById('ticker-track').innerHTML =
     half + `<span aria-hidden="true" style="display:contents">${half}</span>`;
+  document.getElementById('ticker').setAttribute('aria-label', t('hr.dashboard.tickerTitle'));
 
   const tasks = getSeed('tasks') || [];
   const prio = { high: 0, medium: 1, low: 2 };
@@ -1259,7 +1275,7 @@ function renderS6() {
     .sort(
       (x, y) =>
         (x.due < today ? 0 : 1) - (y.due < today ? 0 : 1) ||
-        (x.due < y.due ? -1 : 1) ||
+        (x.due < y.due ? -1 : x.due > y.due ? 1 : 0) ||
         (prio[x.priority] ?? 1) - (prio[y.priority] ?? 1)
     )
     .slice(0, 5);
@@ -1272,9 +1288,10 @@ function renderS6() {
         d < 0
           ? `<span class="status status-red">${-d}d ${esc(t('hr.dashboard.overdue'))}</span>`
           : `<span class="status status-blue">${d}d ${esc(t('hr.dashboard.leftD'))}</span>`;
+      const href = /^hr_[a-z0-9_]+\.html(\?[^"]*)?$/.test(x.link || '') ? x.link : '#';
       return (
-        `<tr><td><a href="${esc(x.link || '#')}">${esc(L(x.titleEn, x.titleAr))}</a></td>` +
-        `<td>${esc(x.owner)}</td><td dir="ltr">${esc(x.due)} ${chip}</td></tr>`
+        `<tr><td><a href="${esc(href)}">${esc(L(x.titleEn, x.titleAr))}</a></td>` +
+        `<td>${esc(taskOwnerName(x.owner))}</td><td dir="ltr">${esc(x.due)} ${chip}</td></tr>`
       );
     })
     .join('');

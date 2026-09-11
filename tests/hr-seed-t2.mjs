@@ -327,6 +327,15 @@ ok('t2-seed-file-present', readdirSync(`${R}/src/v4`).includes('hr-seed.js'));
     [1, 1, 1, 6, 1, false]
   );
   eq('t2-ticker-stale', a.staleReturns[0].no, 'AJ-2025-318');
+  eq(
+    't2-ticker-missing-exp',
+    tickerAlerts(
+      { ajeerPermits: [{ no: 'AJ-X', status: 'active', exp: '' }] },
+      {},
+      TODAY
+    ).expiringPermits,
+    0
+  );
 }
 eq(
   't2-ticker-synth',

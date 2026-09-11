@@ -1121,7 +1121,7 @@ export function tickerAlerts(data = {}, settings = {}, todayIso) {
         (data.assignments || []).some(a => a.status === 'active' && a.emp === r.emp)
     );
   const expiringPermits = (data.ajeerPermits || []).filter(
-    p => p.status === 'active' && permitStatus(p.exp, today) !== 'active'
+    p => p.status === 'active' && ['expiring', 'expired'].includes(permitStatus(p.exp, today))
   ).length;
   const expiringIqamas = iqamaBuckets(data.employees || [], today).le30;
   const followups = (data.tasks || []).filter(x => !x.done && x.due && x.due <= p7).length;
