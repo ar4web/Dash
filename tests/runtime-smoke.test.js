@@ -88,7 +88,7 @@ describe('interactions (early: minimal cross-talk)', () => {
     expect(btn).toBeTruthy();
     btn.click();
     expect(document.documentElement.getAttribute('dir')).toBe('rtl');
-    expect(document.title).not.toBe('Goals | Gentelella 2026 v4');
+    expect(document.title).not.toBe('Goals | Dash');
     expect(currentLang()).toBe('ar');
     btn.click();
     expect(document.documentElement.getAttribute('dir')).toBe('ltr');
