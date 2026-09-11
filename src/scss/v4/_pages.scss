@@ -1069,23 +1069,6 @@ button.project-card:hover { border-color: var(--primary); }
 .contact-card { cursor: pointer; }
 
 // ────────────────────────
-//  FIXED FOOTER (page-scoped)
-// ────────────────────────
-.page-fixed-footer .footer {
-  position: fixed;
-  inset-inline-start: var(--sidebar-w);
-  inset-inline-end: 0;
-  bottom: 0;
-  background: var(--bg-surface);
-  border-top: 1px solid var(--border-color);
-  z-index: 80;
-}
-.page-fixed-footer .page-wrapper { padding-bottom: 80px; }
-@media (max-width: 768px) {
-  .page-fixed-footer .footer { inset-inline-start: 0; }
-}
-
-// ────────────────────────
 //  FILE UPLOAD (form_upload.html)
 // ────────────────────────
 .dropzone {
@@ -1470,7 +1453,6 @@ button.project-card:hover { border-color: var(--primary); }
   body { background: white; color: #000; }
   .sidebar,
   .topbar,
-  .footer,
   .skip-link,
   .sidebar-backdrop,
   .toast-host,

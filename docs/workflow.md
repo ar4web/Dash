@@ -38,14 +38,14 @@ one page, one rule) that goes from code to pushed commit in a single pass.
   parity, wiring, links, IDs, table/list/header style pins) and HR rule
   engines (payroll, EOSB, leave, compliance).
 - `tests/runtime-smoke.test.js` — vitest + jsdom: every page mounts, key
-  interactions behave, shell/header/footer/sidebar contracts hold.
+  interactions behave, shell/header/sidebar contracts hold.
 
 ## Branches and releases
 
 - Feature work happens on `arena/*` working branches, pushed after every
   chunk; `master` receives reviewed merges.
-- The footer version comes from `package.json`, so a release is a version
-  bump + changelog entry — no code edits.
+- The version lives only in `package.json` (nothing renders it into the UI),
+  so a release is a version bump + changelog entry — no code edits.
 - GitHub Pages deploys from `master` via `.github/workflows/deploy-pages.yml`
   (serves under `/Dash/`); ad-hoc previews via `npm run deploy:preview`
   (see [deployment](deployment.md)).

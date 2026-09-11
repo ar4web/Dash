@@ -1557,10 +1557,6 @@ export function applyBranding() {
   if (brandName) {
     brandName.textContent = name;
   }
-  const footerBrand = document.querySelector('.footer .footer-brand');
-  if (footerBrand) {
-    footerBrand.textContent = name;
-  }
   const icon = document.querySelector('.sidebar-brand .brand-icon');
   if (icon) {
     if (raw.company.logo && isSafeMediaUrl(raw.company.logo)) {

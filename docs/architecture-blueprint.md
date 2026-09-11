@@ -12,7 +12,7 @@ delivery workflow. Diagrams are Mermaid — they render natively on GitHub.
 ```mermaid
 flowchart LR
     U[User browser] --> P[108 static pages in production]
-    P --> SH[Shell - sidebar topbar footer]
+    P --> SH[Shell - sidebar topbar]
     SH --> M[main-v4 boot]
     M --> FEAT[Feature modules in src v4]
     FEAT --> SEED[Built in seed data]
@@ -79,12 +79,7 @@ flowchart TB
         MB[.tb-messages] --> MP[Messages panel]
         AV[.tb-avatar] --> ME2[Account menu]
     end
-    subgraph FT[Footer]
-        FB[.footer-brand] --> BN[Company name from settings]
-        FV[.footer-meta] --> VS[Version from package json]
-    end
     SB --> TP
-    TP --> FT
 ```
 
 | Control | Selector | Action |
@@ -288,8 +283,8 @@ flowchart TB
 
 App modules mirror their pages (`inbox.js`, `kanban.js`, `calendar.js`,
 `file-manager.js`, `settings.js`, …); chat runs an inline page module.
-Standalone pages omit `data-shell="admin"` and render without sidebar,
-topbar, or footer.
+Standalone pages omit `data-shell="admin"` and render without sidebar or
+topbar.
 
 ## 6. Data wiring
 
@@ -302,7 +297,6 @@ flowchart LR
     ST --> BR[applyBranding]
     BR --> TI[document title]
     BR --> SB[Sidebar brand]
-    BR --> FT[Footer brand]
     BR --> PC[Primary color tokens]
     D18N[en plus ar dicts] --> DA[data-i18n attributes]
     D18N --> TF[t function]
@@ -375,6 +369,6 @@ flowchart LR
 | `hr-audit-*` | node | NAV, i18n parity, wiring, links, IDs, style systems, brand leaks, RTL props |
 | `hr-logic-*` | node | Payroll, EOSB, leave, compliance rule engines |
 | `hr-seed-t2`, `hr-import-test`, `hr-audit-security` | node | Seed integrity, imports, security rules |
-| `runtime-smoke.test.js` (127) | vitest | Every page mounts, interactions, shell/header/footer/sidebar contracts |
+| `runtime-smoke.test.js` (127) | vitest | Every page mounts, interactions, shell/header/sidebar contracts |
 
 Full loop, rules, and release process: [workflow](workflow.md).

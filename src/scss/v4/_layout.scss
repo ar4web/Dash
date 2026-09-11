@@ -578,19 +578,6 @@
 .col-1   { grid-template-columns: minmax(0, 1fr); }
 
 // ────────────────────────
-//  FOOTER
-// ────────────────────────
-.footer {
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border-color-light);
-}
-.footer a { color: var(--primary); }
-
-// ────────────────────────
 //  RESPONSIVE
 // ────────────────────────
 // Asymmetric 8-4 / 4-8 splits stack first — the narrow column gets cramped

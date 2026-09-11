@@ -6,7 +6,7 @@ they all load one shared bundle: `/src/main-v4.js`.
 ## Request path (dev and build)
 
 1. **Shell injection.** `vite.config.js` (`dash-shell-injection`) inlines the
-   sidebar/topbar/footer into every `body[data-shell="admin"]` page at
+   sidebar/topbar into every `body[data-shell="admin"]` page at
    dev/build time, so the shell paints on the first frame. At runtime
    `mountShell()` (`src/v4/shell.js`) detects the injected shell and only
    wires event handlers.

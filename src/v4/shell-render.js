@@ -4,13 +4,7 @@
 //   1. The Vite plugin (vite.config.js) to inject shell HTML at build/dev time.
 //   2. src/v4/shell.js as a runtime fallback for pages that bypass the plugin.
 
-// The footer version comes straight from package.json so it can't drift from
-// the released version. Default import (Node's JSON modules expose no named
-// exports) — Rolldown narrows it to the one string it sees used, so the rest
-// of package.json never reaches the bundle.
-import pkg from '../../package.json' with { type: 'json' };
-
-const VERSION = pkg.version;
+// Shell chrome is sidebar + topbar only — no footer element is rendered.
 
 // NAV items are either flat — { key, href, text, icon, badge? } —
 // or a parent with `children: [{ key, href, text, badge? }]` for a submenu.
@@ -498,20 +492,10 @@ export function renderTopbar(breadcrumb) {
   `;
 }
 
-export function renderFooter() {
-  return `
-    <footer class="footer">
-      <span class="footer-brand">Dash</span>
-      <span class="footer-meta">v${VERSION}</span>
-    </footer>
-  `;
-}
-
 export function renderShell({ activeKey = '', breadcrumb = ['Home'] } = {}) {
   return {
     sidebar: renderSidebar(activeKey),
-    topbar: renderTopbar(breadcrumb),
-    footer: renderFooter()
+    topbar: renderTopbar(breadcrumb)
   };
 }
 

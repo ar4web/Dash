@@ -22,7 +22,7 @@ function injectShellIfMissing() {
     ? body.dataset.breadcrumb.split('>').map((s) => s.trim()).filter(Boolean)
     : ['Home'];
 
-  const { sidebar, topbar, footer } = renderShell({ activeKey, breadcrumb });
+  const { sidebar, topbar } = renderShell({ activeKey, breadcrumb });
 
   const tpl = document.createElement('template');
   tpl.innerHTML = sidebar.trim();
@@ -32,8 +32,6 @@ function injectShellIfMissing() {
   tpl.innerHTML = topbar.trim();
   if (mainEl) {
     body.insertBefore(tpl.content.firstElementChild, mainEl);
-    tpl.innerHTML = footer.trim();
-    mainEl.appendChild(tpl.content.firstElementChild);
   }
 }
 

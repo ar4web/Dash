@@ -17,7 +17,7 @@ a backend via the [data adapter](data-adapter.md). Nothing phones home.
 
 ## How do I change the company name, logo, or colors?
 
-HR → Settings → company profile. The sidebar, footer, titles, and brand
+HR → Settings → company profile. The sidebar, titles, and brand
 color update at runtime; no rebuild, no code changes.
 
 ## How do I add a page?

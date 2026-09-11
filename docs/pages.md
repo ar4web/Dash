@@ -18,8 +18,8 @@
 <body data-shell="admin" data-page="hr-payroll" data-breadcrumb="Home > Payroll">
 ```
 
-- `data-shell="admin"` — the Vite plugin + `mountShell()` inject the sidebar,
-  topbar, and footer. Standalone pages omit it.
+- `data-shell="admin"` — the Vite plugin + `mountShell()` inject the sidebar and
+  topbar. Standalone pages omit them.
 - `data-page` — must match a `NAV` key in `src/v4/shell-render.js` so the
   sidebar highlights correctly (audit-enforced).
 - `data-breadcrumb` — drives the topbar trail and the SEO description fallback.

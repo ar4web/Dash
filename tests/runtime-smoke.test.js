@@ -253,18 +253,12 @@ describe('sidebar hierarchy', () => {
     expect(document.querySelectorAll('.sidebar .nav-tree.open').length).toBe(1);
   });
 
-  test('footer carries brand + version, no template attribution', async () => {
-    const { renderFooter } = await import('../src/v4/shell-render.js');
-    const html = renderFooter();
-    expect(html).not.toMatch(/gentelella|colorlib/i);
-    expect(html).toContain('footer-brand');
+  test('shell renders no footer chrome', async () => {
+    const { renderShell } = await import('../src/v4/shell-render.js');
+    expect(renderShell({})).not.toHaveProperty('footer');
     await mountPage('hr_dashboard');
     applyBranding();
-    expect(document.querySelector('.footer .footer-brand')?.textContent).toBe(
-      'Manpower Supply Co.'
-    );
-    const { version } = JSON.parse(readFileSync(`${R}/package.json`, 'utf8'));
-    expect(document.querySelector('.footer')?.textContent).toContain(`v${version}`);
+    expect(document.querySelector('.footer')).toBe(null);
   });
 });
 
