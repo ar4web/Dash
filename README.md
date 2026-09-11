@@ -131,7 +131,7 @@ per page so pages that don't use them never load them:
   **Leaflet 1.9** — maps · **xlsx** — Excel import/export.
 
 Light + dark mode with `prefers-color-scheme` detection and a pre-paint script
-(no flash of the wrong theme). Installable PWA with offline shell.
+(applied at startup). Installable PWA with offline shell.
 
 ## Docs
 

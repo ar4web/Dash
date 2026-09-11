@@ -1,6 +1,6 @@
 # RTL (right-to-left)
 
-Gentelella v4 supports right-to-left layouts for Arabic, Hebrew, Persian, and Urdu.
+Das supports right-to-left layouts for Arabic, Hebrew, Persian, and Urdu.
 
 ## Turning it on
 
