@@ -1197,3 +1197,7 @@ h4.sub:first-child {
   color: var(--text-secondary);
   white-space: nowrap;
 }
+// Vertical rhythm between stacked cards/rows (space token, not raw px).
+.stack-gap {
+  margin-top: var(--space-3);
+}

@@ -98,3 +98,10 @@
 [dir='rtl'] .nav-chev {
   transform: scaleX(-1);
 }
+
+// ---------------------------------------------------------------------------
+// 5. Table headers — any letter-spacing disconnects Arabic letter joining
+// ---------------------------------------------------------------------------
+[dir="rtl"] table.table th {
+  letter-spacing: 0;
+}
