@@ -379,6 +379,15 @@ describe('command center', () => {
     expect(card.querySelector('a[href*="EMP-0027"]')).toBeTruthy();
     const zones = [...document.querySelectorAll('details.zone[data-zone]')];
     expect(zones.length).toBe(7);
+    expect(zones.map(z => z.dataset.zone)).toEqual([
+      'money',
+      'workforce',
+      'leave',
+      'geo',
+      'compliance',
+      'accounts',
+      'actions'
+    ]);
     const money = document.querySelector('details.zone[data-zone="money"]');
     money.open = false;
     money.dispatchEvent(new Event('toggle'));
