@@ -94,6 +94,10 @@ function paint(entry) {
   const { el, build, mode } = entry;
   const t = tokens();
   const option = applyRtl(build(t) || {}, currentLang() === 'ar' ? 'ar' : 'en', mode);
+  const mq = typeof globalThis !== 'undefined' && globalThis.matchMedia;
+  if (mq && mq('(prefers-reduced-motion: reduce)').matches) {
+    option.animation = false;
+  }
   entry.option = option;
   if (typeof document === 'undefined' || !canvas2d()) {
     el.setAttribute('data-chart-fallback', '1');

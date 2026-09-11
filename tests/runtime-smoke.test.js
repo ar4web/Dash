@@ -17,6 +17,7 @@ import {
   tickerAlerts
 } from '../src/v4/hr-statutory.js';
 import { getSeed } from '../src/v4/hr-api.js';
+import { renderEchart } from '../src/v4/chart-helper.js';
 
 const R = process.cwd();
 const loaders = import.meta.glob('../src/v4/*.js');
@@ -571,5 +572,23 @@ describe('command center', () => {
     );
     expect(document.getElementById('dash-head').textContent).toContain('نطاقات');
     setLang('en');
+  });
+
+  test('a11y primitives: reduced-motion charts, visible focus ring', async () => {
+    await mountPage('hr_dashboard');
+    const real = window.matchMedia;
+    window.matchMedia = q => ({
+      matches: String(q).includes('reduce'),
+      media: q,
+      addEventListener() {},
+      removeEventListener() {}
+    });
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    const entry = renderEchart(el, () => ({}), 'probe');
+    expect(entry.option.animation).toBe(false);
+    window.matchMedia = real;
+    const css = readFileSync(`${R}/src/scss/v4/_components.scss`, 'utf8');
+    expect(css).toContain(':focus-visible {');
   });
 });

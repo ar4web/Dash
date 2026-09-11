@@ -33,6 +33,13 @@
 .btn-outline:hover { background: var(--bg-surface-secondary); color: var(--text); }
 .btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
 
+// Visible keyboard focus everywhere. Component-level :focus rules (higher
+// specificity) keep their custom treatments; this is the fallback ring.
+:focus-visible {
+  outline: 2px solid var(--primary-dk);
+  outline-offset: 2px;
+}
+
 // Card
 .card {
   background: var(--bg-surface);
