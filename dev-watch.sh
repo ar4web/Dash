@@ -6,7 +6,7 @@
 echo "🚀 Starting Dash dev server with auto-restart..."
 
 while true; do
-    echo "📡 Starting dev server on http://localhost:5173"
+    echo "📡 Starting dev server on http://localhost:9173"
     npm run dev
     
     exit_code=$?

@@ -1,4 +1,4 @@
-# Express + SQLite — Gentelella v4 example backend
+# Express + SQLite — Dash example backend
 
 Tiny REST API serving the inbox and orders pages. ~150 lines of code, three deps (`express`, `cors`, `better-sqlite3`).
 

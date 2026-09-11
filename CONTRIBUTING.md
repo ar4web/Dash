@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173/production/hr_dashboard.html. Vite hot-reloads
+Open http://localhost:9173/production/hr_dashboard.html. Vite hot-reloads
 SCSS, JS, and HTML.
 
 ## The chunk loop

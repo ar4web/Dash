@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2026-09-11
+
+Rebrand to **Dash**, the bilingual HR command center — version reset to mark
+the standalone system. All user-visible surfaces say Dash: package metadata
+(`dash@1.0.0`, repo `ar4web/Dash`), all 107 page titles, shell footer (brand
++ version), auth/standalone pages, PWA manifest, SEO/JSON-LD, demo data, and
+the full docs set (README, getting started, workflow, contributor guides, and
+15 rewritten topic guides replacing the old redirect stubs). Sidebar renders
+collapsed on desktop with restored contrast; tables, lists, headers,
+toolbars, and buttons unified to one style each. Pre-rebrand storage keys
+and the `__GENTELELLA_API__` flag remain honored as compat aliases.
+
 ## [4.1.1] - 2026-08-07
 
 Link fix. 4.1.0 was tagged and released on GitHub but never published to npm — this is the first 4.1.x on the registry, and it carries everything in 4.1.0 plus the fix below.
@@ -38,7 +50,7 @@ Breadcrumbs become navigable, plus a dependency refresh that includes the DataTa
   - `terser`: 5.49.0 → 5.49.2
   - `vite`: 8.1.5 → 8.2.0
 - Runtime deps `echarts` 6.1.0 and `leaflet` 1.9.4, and dev deps `@eslint/js` 10.0.1, `eslint-config-prettier` 10.1.8, `prettier` 3.9.6, `rollup-plugin-visualizer` 7.0.1 were already at their latest published versions — no change.
-- Docs updated for the new breadcrumb contract: [CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md), [.cursor/rules/project.mdc](.cursor/rules/project.mdc), [.github/copilot-instructions.md](.github/copilot-instructions.md), [README.md](README.md), [types/gentelella.d.ts](types/gentelella.d.ts), and `--breadcrumb` help in [scripts/new-page.mjs](scripts/new-page.mjs).
+- Docs updated for the new breadcrumb contract: [CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md), [.cursor/rules/project.mdc](.cursor/rules/project.mdc), [.github/copilot-instructions.md](.github/copilot-instructions.md), [README.md](README.md), [types/dash.d.ts](types/dash.d.ts), and `--breadcrumb` help in [scripts/new-page.mjs](scripts/new-page.mjs).
 - **ESLint `ecmaVersion`** 2022 → 2025, so the parser accepts the import attribute below. Emitted code is unchanged: `build.target` still pins ES2022.
 
 ### Fixed
@@ -128,7 +140,7 @@ Polish pass on top of rc.1: a real mobile responsive sweep, npm-package-ready di
 ### Added
 
 - **`npm run new`** — page generator ([scripts/new-page.mjs](scripts/new-page.mjs)). One command stamps out a `production/*.html` from the standard skeleton and (with `--nav-group`) wires the entry into the `NAV` array in [src/v4/shell-render.js](src/v4/shell-render.js). Flags: `--title`, `--pretitle`, `--breadcrumb`, `--nav-group`, `--icon`, `--dry-run`. Run `npm run new -- --help` for the full list.
-- **TypeScript declarations** — [types/gentelella.d.ts](types/gentelella.d.ts) typed-up the public JS surface (`mountShell`, `showModal`, `showToast`, `openMenu`, chart/table init, the `NAV` schema, `seedAdapter` / `httpAdapter`). Wired up via `types` field in [package.json](package.json) so VS Code IntelliSense resolves automatically — no `tsconfig` required.
+- **TypeScript declarations** — [types/dash.d.ts](types/dash.d.ts) typed-up the public JS surface (`mountShell`, `showModal`, `showToast`, `openMenu`, chart/table init, the `NAV` schema, `seedAdapter` / `httpAdapter`). Wired up via `types` field in [package.json](package.json) so VS Code IntelliSense resolves automatically — no `tsconfig` required.
 - **npm package metadata** — `exports`, `files`, and `types` fields added. The package is now consumable as `import { mountShell } from "gentelella"`. Subpath exports (`gentelella/v4/*`, `gentelella/scss/*`) for granular imports.
 - **Markup helpers** — [src/v4/markup.js](src/v4/markup.js) docs added to README and Playground. `statTile()`, `statusBadge()`, `customerCell()`, `activityItem()`, `visitorRow()`, `emptyState()`, `banner()`, `skeletonRows()`, `escapeHtml()`. For JS-rendered content (orders rows, inbox threads, kanban cards) where boilerplate adds up.
 - **Data adapter** ([src/v4/data-adapter.js](src/v4/data-adapter.js)) — `seedAdapter()` for in-memory demo state; `httpAdapter(url)` for REST. Add `?api=1` to a page URL to hydrate from a real backend.

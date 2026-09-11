@@ -63,7 +63,7 @@ npm install
 npm run dev
 ```
 
-Open the HR dashboard at `http://localhost:5173/production/hr_dashboard.html`
+Open the HR dashboard at `http://localhost:9173/production/hr_dashboard.html`
 (Vite prints the exact port; `/` redirects there). No database, no API keys, no
 environment variables — seed data loads out of the box so every page works offline.
 

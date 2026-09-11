@@ -15,7 +15,7 @@ npm install
 npm run dev
 ```
 
-Vite prints a local URL (default `http://localhost:5173/`). The site root `/`
+Vite prints a local URL (Vite prints the exact port). The site root `/`
 redirects to the HR dashboard; every page lives under `/production/`, e.g.
 `/production/hr_dashboard.html`, `/production/inbox.html`.
 

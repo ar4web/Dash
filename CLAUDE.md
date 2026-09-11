@@ -4,9 +4,9 @@ Guidance for Claude Code (claude.ai/code) when working in this repository. Cross
 
 ## What this is
 
-Gentelella v4 (`4.1.1`) — free admin dashboard template by Colorlib. **58 production HTML pages** under [production/](production/), built with Vite 8 (Rolldown). Vanilla ES2022, no Bootstrap, no jQuery, no SPA framework. SCSS-only styling. ECharts 6, DataTables.net 3, and Leaflet 1.9 are the only heavyweight runtime deps — all lazy-imported per page.
+Dash (`1.0.0`) — internal HR command center. **108 production HTML pages** under [production/](production/), built with Vite 8 (Rolldown). Vanilla ES2022, no Bootstrap, no jQuery, no SPA framework. SCSS-only styling. ECharts 6, DataTables.net 3, Leaflet 1.9, and xlsx are the only heavyweight runtime deps — all lazy-imported per page.
 
-Live preview: <https://preview.colorlib.com/theme/gentelella/>.
+Live preview: `npm run dev` (Vite on :9173).
 
 ## Commands
 
@@ -28,6 +28,18 @@ npm run deploy:preview     # Build + sync to R2 with per-file cache headers
 ```
 
 Override the dev port via `PORT=…`; build under a subpath via `BASE_PATH=/foo/ npm run build`.
+
+## Workflow
+
+Chunk by chunk: code one concern → gate it → commit + push immediately (see
+[docs/workflow.md](docs/workflow.md)). Gates: `npm test` (static + HR logic),
+`npm run test:runtime` (vitest + jsdom), `npm run lint` (0 errors),
+Prettier-clean touched lines, dev smoke of touched pages in EN + AR at
+desktop and mobile widths.
+
+Standing rules: bilingual UI (EN/AR) on everything new; KSA-first HR logic;
+no page deletions; settings-driven behavior; Excel import + export on data
+grids.
 
 ## Architecture
 
@@ -51,6 +63,8 @@ if (document.getElementById('inbox-root')) {
 | `vendor-tables`  | table pages | `node_modules/datatables.net/`  |
 | `vendor-maps`    | map page    | `node_modules/leaflet/`         |
 
+(`xlsx` is the fourth heavy dep; it lazy-imports without a split chunk.)
+
 Everything else (shell, command palette, charts wrapper, tables wrapper, etc.) is in the main chunk and is small enough not to need splitting.
 
 ### Directory layout
@@ -69,7 +83,11 @@ src/
 │   │   ├── _datatable.scss # DataTables re-skin
 │   │   ├── _pages.scss     # Per-page styles (kept narrow)
 │   │   ├── _apps.scss      # Inbox, kanban, chat, calendar, settings
-│   │   └── _auth.scss      # Login/register/forgot/2FA/lock/errors
+│   │   ├── _auth.scss      # Login/register/forgot/2FA/lock/errors
+│   │   ├── _hr.scss        # HR module surfaces
+│   │   ├── _ksa.scss       # Saudi-specific surfaces
+│   │   ├── _rtl.scss       # Arabic joining/override guards
+│   │   └── _mobile.scss    # Narrow-viewport rules
 └── v4/
     ├── shell.js            # mountShell — sidebar/topbar wiring
     ├── shell-render.js     # Pure renderers + NAV definition (used by Vite plugin)
@@ -82,19 +100,22 @@ src/
     ├── page-actions.js     # Per-page action button delegation
     ├── inbox.js            # Folders, reader, compose
     ├── kanban.js           # Drag/drop board
-    ├── calendar.js         # FullCalendar-style CRUD
+    ├── calendar.js         # Month-grid CRUD
     ├── settings.js         # localStorage-backed settings page
     ├── form-controls.js    # Date range, multi-select, rich text
     ├── file-manager.js     # Tree + grid file browser
     ├── details.js          # Disclosure rows
     ├── markup.js           # HTML pretty-printer for component playground
-    ├── data-adapter.js     # Demo data shim
+    ├── data-adapter.js     # Seed/API adapter (useApiMode, seedAdapter, httpAdapter)
     ├── product-images.js   # E-commerce gallery
-    └── product-mockups.js  # Storefront demo
+    ├── product-mockups.js  # Storefront demo
+    ├── i18n.js             # EN/AR dictionaries, shell i18n, branding
+    └── hr-*.js, payroll.js, eosb.js, gosi.js, wps.js, visas.js…  # HR modules
 
-production/                 # 58 HTML entry pages (auto-discovered)
+production/                 # 108 HTML entry pages (auto-discovered)
 public/                     # Static assets copied verbatim to dist/
-types/gentelella.d.ts       # TypeScript declarations for the public JS surface
+tests/                      # hr-audit-*, hr-logic-*, runtime-smoke.test.js
+types/dash.d.ts             # TypeScript declarations for the public JS surface
 scripts/
 ├── new-page.mjs            # Scaffold a page + register in NAV
 ├── screenshots.mjs         # Playwright capture (22 pages × 2 themes)
@@ -124,7 +145,7 @@ If you write the file by hand instead, the contract is:
 
 ### NAV and icons
 
-Single source of truth: `NAV` in [src/v4/shell-render.js](src/v4/shell-render.js). 7 groups (General, Apps, E-commerce, Projects, UI library, Admin, Layouts). Items are either flat leaves `{ key, href, text, icon, badge? }` or parents with a `children: []` array — the parent stays expanded if any child matches the page's `data-page`.
+Single source of truth: `NAV` in [src/v4/shell-render.js](src/v4/shell-render.js). 1 group (HR & Operations, with template sections nested under HR Settings). Items are either flat leaves `{ key, href, text, icon, badge? }` or parents with a `children: []` array. Groups render collapsed on desktop and only auto-open the active group on mobile; a stored manual toggle always wins.
 
 Icons are inline SVG strings in the `ICONS` object in the same file. Use a `data-page` whose `icon:` matches a key; add new icons by appending to `ICONS` (one SVG per entry, currentColor stroke).
 
@@ -142,13 +163,13 @@ Prefer a crumb level that points somewhere. If a segment is a pure sidebar group
 
 ### Theming
 
-Tokens in [src/scss/v4/_tokens.scss](src/scss/v4/_tokens.scss) — CSS custom properties under `:root` (light) and `[data-theme="dark"]`. The pre-paint inline script in `vite.config.js` reads `localStorage.getItem('theme')` and sets `data-theme` on `<html>` before body render, so dark mode never flashes light. Theme toggle in the topbar flips the attribute and persists it.
+Tokens in [src/scss/v4/_tokens.scss](src/scss/v4/_tokens.scss) — CSS custom properties under `:root` (light) and `[data-theme="dark"]`. The shell reads `localStorage.getItem('theme')` and sets `data-theme` on `<html>` at startup (defaulting to `prefers-color-scheme`). Theme toggle in the topbar flips the attribute and persists it.
 
 The live theme generator at `production/theme.html` rewrites the same custom properties in real time and lets users copy/download the SCSS overrides.
 
 ### Subpath deploys
 
-`base` in [vite.config.js](vite.config.js) reads `process.env.BASE_PATH` for build/preview. Asset URLs (manifest, apple-touch-icon, service worker registration) all use `import.meta.env.BASE_URL` so deploys under e.g. `/theme/gentelella/` resolve correctly. The R2 deploy script (`npm run deploy:preview`) reads `PREVIEW_SLUG` and sets `BASE_PATH=/theme/$SLUG/` before building.
+`base` in [vite.config.js](vite.config.js) reads `process.env.BASE_PATH` for build/preview. Asset URLs (manifest, apple-touch-icon, service worker registration) all use `import.meta.env.BASE_URL` so deploys under e.g. `/Dash/` resolve correctly. The deploy script (`npm run deploy:preview`) reads `PREVIEW_BUCKET` / `PREVIEW_SLUG` / `PREVIEW_HOST` and sets `BASE_PATH=/$SLUG/` before building (see [scripts/deploy-preview.sh](scripts/deploy-preview.sh)).
 
 ### Service worker
 
@@ -223,7 +244,7 @@ dist/
 ├── assets/         # Hashed CSS + fonts
 ├── images/         # Hashed images
 ├── js/             # Hashed JS chunks
-├── production/     # 58 entry HTMLs (paths resolved at build time)
+├── production/     # 108 entry HTMLs (paths resolved at build time)
 ├── site.webmanifest
 ├── sw.js
 └── stats.html      # Bundle analyzer (stripped by deploy script)
@@ -233,4 +254,4 @@ The deploy script does three passes: long-cache hashed assets, short-cache HTML,
 
 ## TypeScript
 
-No `.ts` files, but [types/gentelella.d.ts](types/gentelella.d.ts) declares the public JS surface for IntelliSense. `package.json` `"types"` field points to it; VS Code picks it up automatically.
+No `.ts` files, but [types/dash.d.ts](types/dash.d.ts) declares the public JS surface for IntelliSense. `package.json` `"types"` field points to it; VS Code picks it up automatically.

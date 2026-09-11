@@ -1,12 +1,24 @@
 # AGENTS.md
 
-Cross-tool agent instructions for Gentelella v4. Read by Aider, Cline, Codex, Continue, and any tool following the [agents.md](https://agents.md) convention. Claude Code reads `CLAUDE.md`; Cursor reads `.cursor/rules/`; GitHub Copilot reads `.github/copilot-instructions.md`. Content is intentionally overlapping — each tool only sees its own file.
+Cross-tool agent instructions for Dash. Read by Aider, Cline, Codex, Continue, and any tool following the [agents.md](https://agents.md) convention. Claude Code reads `CLAUDE.md`; Cursor reads `.cursor/rules/`; GitHub Copilot reads `.github/copilot-instructions.md`. Content is intentionally overlapping — each tool only sees its own file.
 
 ## What this is
 
-Gentelella v4 (`4.1.1`) — free admin dashboard template by Colorlib. 58 server-rendered HTML pages in [production/](production/), built with **Vite 8** (Rolldown). **Vanilla ES2022**, no Bootstrap, no jQuery, no SPA framework. SCSS only. Heavyweight runtime deps are limited to **ECharts 6**, **DataTables.net 3**, and **Leaflet 1.9** — all lazy-imported per page.
+Dash (`1.0.0`) — internal HR command center. 108 server-rendered HTML pages in [production/](production/), built with **Vite 8** (Rolldown). **Vanilla ES2022**, no Bootstrap, no jQuery, no SPA framework. SCSS only. Heavyweight runtime deps are limited to **ECharts 6**, **DataTables.net 3**, **Leaflet 1.9**, and **xlsx** — all lazy-imported per page.
 
-Live preview: <https://preview.colorlib.com/theme/gentelella/>.
+Live preview: `npm run dev` (Vite on :9173).
+
+## Workflow
+
+Work ships chunk by chunk: code one concern → run every gate → commit + push
+immediately (see [docs/workflow.md](docs/workflow.md)). Gates: `npm test`
+(static + HR logic, all green), `npm run test:runtime` (vitest + jsdom, all
+green), `npm run lint` (0 errors), Prettier-clean touched lines, dev-server
+smoke of touched pages (EN + AR, desktop + mobile widths).
+
+Standing rules: bilingual UI (EN/AR) on everything new; KSA-first HR logic
+(labor law, GOSI, ZATCA, Nitaqat, Ajeer); no page deletions; settings-driven
+behavior; Excel import + export on data grids.
 
 ## Setup
 
@@ -28,9 +40,9 @@ npm run deploy:preview    # build + sync to R2 with cache headers
 - **Single entry** [src/main-v4.js](src/main-v4.js). Imports `scss/v4/main.scss`, mounts the shell, runs `initCharts/initTables/initCommandPalette/initPageActions`, then lazy-imports page-specific modules guarded by DOM presence (`if (document.getElementById('inbox-root')) import(...)`).
 - **Shell injection at build time.** [vite.config.js](vite.config.js)'s `shellInjectionPlugin` inlines sidebar/topbar/footer into every page whose body has `data-shell="admin"`. No FOUC. Runtime [src/v4/shell.js](src/v4/shell.js) `mountShell()` is a fallback for opening raw HTML.
 - **Auto-discovered entries.** `discoverEntries()` in [vite.config.js](vite.config.js) walks `production/*.html` and registers each as a Rollup input. No hand-maintained input list.
-- **Three lazy vendor chunks**: `vendor-echarts` (chart pages), `vendor-tables` (table pages), `vendor-maps` (map page). Everything else ships in the main chunk.
-- **NAV is one constant.** `NAV` in [src/v4/shell-render.js](src/v4/shell-render.js), 7 groups. Pages match into NAV by `data-page` ↔ leaf `key`.
-- **Theming via CSS custom properties.** Tokens in [src/scss/v4/_tokens.scss](src/scss/v4/_tokens.scss) under `:root` and `[data-theme="dark"]`. Pre-paint inline script (in the Vite plugin) sets `data-theme` on `<html>` from `localStorage` before body renders.
+- **Three lazy vendor chunks**: `vendor-echarts` (chart pages), `vendor-tables` (table pages), `vendor-maps` (map page). `xlsx` lazy-imports without a split chunk. Everything else ships in the main chunk.
+- **NAV is one constant.** `NAV` in [src/v4/shell-render.js](src/v4/shell-render.js), 1 group. Pages match into NAV by `data-page` ↔ leaf `key`.
+- **Theming via CSS custom properties.** Tokens in [src/scss/v4/_tokens.scss](src/scss/v4/_tokens.scss) under `:root` and `[data-theme="dark"]`. The shell applies `data-theme` on `<html>` from `localStorage` at startup (defaulting to `prefers-color-scheme`).
 - **PWA.** Service worker registered only in `import.meta.env.PROD`. `site.webmanifest` + meta tags injected into every page by the Vite plugin. Subpath-safe: paths use `import.meta.env.BASE_URL`.
 
 ## Directory layout
@@ -38,7 +50,7 @@ npm run deploy:preview    # build + sync to R2 with cache headers
 ```text
 src/
   main-v4.js               # Entry — mounts shell, lazy-loads modules
-  scss/v4/                 # 10 partials, main.scss is the @use'd entry
+  scss/v4/                 # 12 partials, main.scss is the @use'd entry
   v4/
     shell.js               # mountShell — runtime shell behavior
     shell-render.js        # Pure renderers + NAV + ICONS
@@ -53,9 +65,12 @@ src/
     form-controls.js       # Date range, multi-select, rich text
     details.js markup.js data-adapter.js
     product-images.js product-mockups.js
-production/                # 58 HTML entry pages (auto-discovered)
+    hr-*.js payroll.js eosb.js gosi.js wps.js visas.js …  # HR modules
+    i18n.js                # EN/AR dictionaries + branding
+production/                # 108 HTML entry pages (auto-discovered)
 public/                    # Copied verbatim to dist/
-types/gentelella.d.ts      # Type declarations for the public JS surface
+tests/                     # hr-audit-*, hr-logic-*, runtime-smoke.test.js
+types/dash.d.ts            # Type declarations for the public JS surface
 scripts/
   new-page.mjs             # npm run new -- <slug>
   screenshots.mjs          # npm run screenshots
@@ -147,15 +162,15 @@ Export a single `initReports()` from `src/v4/reports.js`. Guard re-entry; idempo
 ## Subpath / deploy
 
 ```bash
-BASE_PATH=/theme/gentelella/ npm run build      # build under a subpath
-PREVIEW_SLUG=gentelella npm run deploy:preview  # build + R2 sync, scoped to /theme/gentelella/
+BASE_PATH=/Dash/ npm run build                # build under a subpath
+PREVIEW_BUCKET=myremote:previews/dash npm run deploy:preview  # build + rclone sync
 ```
 
 [scripts/deploy-preview.sh](scripts/deploy-preview.sh) does three passes: long-cache for hashed assets, short-cache for HTML, no-cache for `sw.js` and `site.webmanifest`. This works around Cloudflare APO pinning stale HTML at deleted hashed asset URLs.
 
 ## TypeScript
 
-No `.ts` files, but [types/gentelella.d.ts](types/gentelella.d.ts) declares the public JS surface. `package.json` `"types"` points to it; VS Code / your editor picks it up automatically for IntelliSense across `src/v4/*.js`.
+No `.ts` files, but [types/dash.d.ts](types/dash.d.ts) declares the public JS surface. `package.json` `"types"` points to it; VS Code / your editor picks it up automatically for IntelliSense across `src/v4/*.js`.
 
 ## Commands reference
 

@@ -1,6 +1,6 @@
-# GitHub Copilot Instructions — Gentelella v4
+# GitHub Copilot Instructions — Dash
 
-Admin dashboard template (`4.1.1`) by Colorlib. 58 server-rendered HTML pages in `production/`, built with **Vite 8** (Rolldown). **Vanilla ES2022**, no Bootstrap, no jQuery, no SPA framework. SCSS only. Heavyweight deps — **ECharts 6**, **DataTables.net 3**, **Leaflet 1.9** — are lazy-imported per page. Full reference: `CLAUDE.md`.
+HR command center (`1.0.0`). 108 server-rendered HTML pages in `production/`, built with **Vite 8** (Rolldown). **Vanilla ES2022**, no Bootstrap, no jQuery, no SPA framework. SCSS only. Heavyweight deps — **ECharts 6**, **DataTables.net 3**, **Leaflet 1.9**, **xlsx** — are lazy-imported per page. Full reference: `CLAUDE.md`.
 
 ## Hard rules
 
@@ -9,7 +9,7 @@ Admin dashboard template (`4.1.1`) by Colorlib. 58 server-rendered HTML pages in
 - **Pages auto-discover.** Drop `production/<slug>.html` and `discoverEntries()` in `vite.config.js` picks it up — never edit `rollupOptions.input`.
 - **Shell opt-in**: `<body data-shell="admin" data-page="<key>" data-breadcrumb="Home > …">`. The Vite plugin inlines sidebar/topbar/footer at build/dev time (no FOUC).
 - **Breadcrumbs link themselves.** A segment matching a `NAV` item's text becomes a link (`Forms` → `form.html`; a parent resolves to its first child). Override with a pipe: `data-breadcrumb="Home > Projects|projects.html > Acme Redesign"`. The last segment is the current page and never links; untargeted segments stay plain text.
-- **NAV is one constant** — `NAV` in `src/v4/shell-render.js`, 7 groups. `key` matches `data-page`. New icons go in the `ICONS` object in the same file.
+- **NAV is one constant** — `NAV` in `src/v4/shell-render.js`, 1 group. `key` matches `data-page`. New icons go in the `ICONS` object in the same file.
 - **Overlays go through helpers**: `showModal()`/`showToast()`/`openMenu()`/`openPanel()` from `src/v4/{modal,toast,menus}.js`. Never hand-roll a backdrop, escape handler, or focus return.
 - **CSS custom properties for colors.** Tokens in `src/scss/v4/_tokens.scss` under `:root` and `[data-theme="dark"]`. Charts read them via `getComputedStyle(document.documentElement).getPropertyValue('--…')` so dark-mode redraw is automatic.
 - **Lazy ECharts.** Match the modular import pattern in `src/v4/charts.js`. Don't `import * as echarts`.
@@ -17,11 +17,13 @@ Admin dashboard template (`4.1.1`) by Colorlib. 58 server-rendered HTML pages in
 - **Idempotent `init<Name>()` exports.** Every module in `src/v4/` has one. Safe to call when its root element is absent, safe to call twice.
 - **No `console.*` in shipped code.** Terser drops them in production; ESLint flags earlier.
 - **Service worker only in prod** (`import.meta.env.PROD` guard) — keeps HMR working in dev.
+- **Chunk loop**: code one concern → `npm test` + `npm run test:runtime` + `npm run lint` (0 errors) → commit + push. See `docs/workflow.md`.
+- **Standing rules**: bilingual UI (EN/AR) on everything new; KSA-first HR logic; no page deletions; settings-driven behavior; Excel import + export on data grids.
 
 ## File layout
 
 - `src/main-v4.js` — entry; mounts shell + lazy-loads page modules
-- `src/scss/v4/` — 10 SCSS partials (`_tokens`, `_layout`, `_components`, `_widgets`, `_forms`, `_datatable`, `_pages`, `_apps`, `_auth`, `main`)
+- `src/scss/v4/` — 12 SCSS partials (`_tokens`, `_layout`, `_components`, `_widgets`, `_forms`, `_datatable`, `_pages`, `_apps`, `_auth`, `main`)
 - `src/v4/shell.js` — `mountShell()` runtime (sidebar accordion, theme toggle, mobile drawer)
 - `src/v4/shell-render.js` — `NAV` + `ICONS` + pure renderers (also imported by Vite plugin)
 - `src/v4/charts.js` — `initCharts()` + ECharts factories
@@ -30,9 +32,12 @@ Admin dashboard template (`4.1.1`) by Colorlib. 58 server-rendered HTML pages in
 - `src/v4/{modal,toast,menus}.js` — overlay helpers
 - `src/v4/{inbox,kanban,calendar,settings,file-manager}.js` — page modules (lazy-loaded)
 - `src/v4/form-controls.js` — date range, multi-select, rich text
-- `production/` — 58 HTML entry pages, auto-discovered
+- `src/v4/i18n.js` — EN/AR dictionaries, shell i18n, branding
+- `src/v4/hr-*.js` + payroll/eosb/gosi/wps/visas — HR modules
+- `tests/` — static audits, HR logic suites, runtime smoke tests
+- `production/` — 108 HTML entry pages, auto-discovered
 - `public/` — static assets copied verbatim to `dist/`
-- `types/gentelella.d.ts` — TypeScript declarations for the public JS surface
+- `types/dash.d.ts` — TypeScript declarations for the public JS surface
 - `scripts/new-page.mjs` — page scaffolder (`npm run new -- <slug>`)
 - `scripts/deploy-preview.sh` — R2 deploy with per-file cache headers
 
