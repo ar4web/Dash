@@ -1258,6 +1258,33 @@ body.modal-open { overflow: hidden; }
   font-size: 11.5px;
 }
 
+// Content lists — one style for prose stacks (tips, summaries, help).
+// .list: unstyled stack; .list-bullets: bullets with logical padding (RTL-safe).
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.list > li > strong {
+  color: var(--text);
+}
+.list-bullets {
+  margin: 0;
+  padding-inline-start: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.list-bullets > li > strong {
+  color: var(--text);
+}
+
 // ────────────────────────
 //  CODE & KBD
 // ────────────────────────

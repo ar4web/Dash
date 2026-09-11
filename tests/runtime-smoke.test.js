@@ -267,6 +267,17 @@ describe('sidebar hierarchy', () => {
   });
 });
 
+describe('lists', () => {
+  test('prose stacks use the list system (RTL-safe)', async () => {
+    await mountPage('form');
+    expect(document.querySelectorAll('ul.list').length).toBe(1);
+    expect(document.querySelector('ul.list').getAttribute('style')).toBe(null);
+    await mountPage('form_wizards');
+    expect(document.querySelectorAll('ul.list-bullets').length).toBe(1);
+    expect(document.querySelector('ul.list-bullets').getAttribute('style')).toBe(null);
+  });
+});
+
 describe('security', () => {
   test('imported row values render inert (stored-XSS overlay)', async () => {
     await mountPage('hr_employees');
