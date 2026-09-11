@@ -210,15 +210,13 @@ function shellInjectionPlugin() {
         // when present so each page gets distinct copy without per-page edits.
         if (!/name=["']description["']/i.test(out)) {
           const titleMatch = /<title>([^<]+)<\/title>/i.exec(out);
-          const title = titleMatch ? titleMatch[1].replace(/\s+\|\s+.*$/, '').trim() : 'Gentelella v4';
+          const title = titleMatch ? titleMatch[1].replace(/\s+\|\s+.*$/, '').trim() : 'Dash';
           const bcMatch = /data-breadcrumb=["']([^"']+)["']/i.exec(out);
           // Strip any "|href" targets — the description wants labels only.
           const breadcrumb = bcMatch
             ? bcMatch[1].replace(/\|[^>]*/g, '').replace(/^Home\s*>\s*/, '').replace(/\s*>\s*/g, ' > ').trim()
             : '';
-          const desc = breadcrumb
-            ? `${title} — ${breadcrumb}. Free admin template by Colorlib. 60 pages, 20 chart variants, dark mode, PWA-ready.`
-            : 'Gentelella v4 — free admin dashboard template. 60 pages, 20 chart variants, vanilla JS, no Bootstrap, no jQuery. By Colorlib.';
+          const desc = breadcrumb ? `${title} — ${breadcrumb}.` : 'Dash — HR command center.';
           const seo = `<meta name="description" content="${desc.replace(/"/g, '&quot;')}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${title.replace(/"/g, '&quot;')}">

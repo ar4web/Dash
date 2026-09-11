@@ -252,6 +252,19 @@ describe('sidebar hierarchy', () => {
     await mountPage('hr_dashboard');
     expect(document.querySelectorAll('.sidebar .nav-tree.open').length).toBe(1);
   });
+
+  test('footer carries brand + version, no template attribution', async () => {
+    const { renderFooter } = await import('../src/v4/shell-render.js');
+    const html = renderFooter();
+    expect(html).not.toMatch(/gentelella|colorlib/i);
+    expect(html).toContain('footer-brand');
+    await mountPage('hr_dashboard');
+    applyBranding();
+    expect(document.querySelector('.footer .footer-brand')?.textContent).toBe(
+      'Manpower Supply Co.'
+    );
+    expect(document.querySelector('.footer')?.textContent).toContain('v4.1.1');
+  });
 });
 
 describe('security', () => {

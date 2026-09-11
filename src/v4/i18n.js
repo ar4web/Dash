@@ -1551,11 +1551,15 @@ export function applyBranding() {
     root.setProperty('--primary', hex);
     root.setProperty('--primary-lt', `rgba(${r},${g},${b},0.06)`);
     root.setProperty('--primary-dk', `rgb(${dk[0]},${dk[1]},${dk[2]})`);
-    root.setProperty('--sidebar-active', `rgba(${r},${g},${b},0.08)`);
+    root.setProperty('--sidebar-active', `rgba(${r},${g},${b},0.12)`);
   }
   const brandName = document.querySelector('.sidebar-brand .brand-name');
   if (brandName) {
     brandName.textContent = name;
+  }
+  const footerBrand = document.querySelector('.footer .footer-brand');
+  if (footerBrand) {
+    footerBrand.textContent = name;
   }
   const icon = document.querySelector('.sidebar-brand .brand-icon');
   if (icon) {

@@ -504,8 +504,8 @@ export function renderTopbar(breadcrumb) {
 export function renderFooter() {
   return `
     <footer class="footer">
-      <span>Gentelella — free admin dashboard template by <a href="https://colorlib.com">Colorlib</a></span>
-      <span>v${VERSION} · <a href="https://github.com/ColorlibHQ/gentelella/blob/master/LICENSE.txt" target="_blank" rel="noopener">MIT</a></span>
+      <span class="footer-brand">Dash</span>
+      <span class="footer-meta">v${VERSION}</span>
     </footer>
   `;
 }
