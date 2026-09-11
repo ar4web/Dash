@@ -96,6 +96,26 @@ for (const m of mods) {
     ok(`jslink-${m}->${x[1]}`, existsSync(`${R}/production/${x[1]}`));
   }
 }
+// ── one table style: every <table> is class table/hr-table or a marked ──
+// plain (heatmap/kv) table. JS comment lines mentioning <table> are skipped.
+const tableOk = tag =>
+  /class="[^"]*\b(table|hr-table)\b/.test(tag) || tag.includes('data-plain-table');
+for (const p of pages) {
+  const html = read(`production/${p}`);
+  for (const m of html.matchAll(/<table[^>]*>/g)) {
+    ok(`table-style-${p}`, tableOk(m[0]), m[0].slice(0, 60));
+  }
+}
+for (const m of mods) {
+  const src = read(`src/v4/${m}`);
+  for (const x of src.matchAll(/<table[^>]*>/g)) {
+    const prefix = src.slice(src.lastIndexOf('\n', x.index) + 1, x.index);
+    if (/^\s*(\*|\/\/)/.test(prefix)) {
+      continue;
+    }
+    ok(`table-style-js-${m}`, tableOk(x[0]), x[0].slice(0, 60));
+  }
+}
 console.log(`  (pages=${pages.length} mods=${mods.length} keys-used=${used.size})`);
 
 console.log(fail.length ? `\nSYSTEM AUDIT: ${fail.length} FAILURES` : '\nALL SYSTEM CHECKS PASSED');

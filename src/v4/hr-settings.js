@@ -355,7 +355,7 @@ function renderExpCats() {
   const lists = customLists();
   const rows = (lists.expenseCats || getSeed('expenseCategories')).map(r => ({ ...r }));
   const draw = () => {
-    el.innerHTML = `<table class="hr-table"><thead><tr><th>${L('Code', 'الرمز')}</th><th>${L('EN', 'EN')}</th><th>${L('AR', 'AR')}</th><th>${L('Limit', 'السقف')}</th><th>${L('Receipt', 'إيصال')}</th><th>${L('VAT', 'ضريبة')}</th><th></th></tr></thead><tbody>
+    el.innerHTML = `<table class="table hr-table"><thead><tr><th>${L('Code', 'الرمز')}</th><th>${L('EN', 'EN')}</th><th>${L('AR', 'AR')}</th><th>${L('Limit', 'السقف')}</th><th>${L('Receipt', 'إيصال')}</th><th>${L('VAT', 'ضريبة')}</th><th></th></tr></thead><tbody>
       ${rows
         .map(
           (r, i) => `<tr>
