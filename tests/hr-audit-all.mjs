@@ -116,6 +116,28 @@ for (const m of mods) {
     ok(`table-style-js-${m}`, tableOk(x[0]), x[0].slice(0, 60));
   }
 }
+// ── RTL-safe inline styles: no physical direction props in markup/JS ──
+// (a nearby `direction: ltr` — e.g. code blocks — exempts the match)
+const physicalRe = /\b(margin-left|padding-left|border-left)\s*:|text-align\s*:\s*left\b/g;
+const ltrPinned = (src, idx) => /direction:\s*ltr/.test(src.slice(Math.max(0, idx - 120), idx));
+for (const p of pages) {
+  const html = read(`production/${p}`);
+  for (const m of html.matchAll(physicalRe)) {
+    if (!ltrPinned(html, m.index)) {
+      ok(`rtl-physical-${p}`, false, m[0]);
+    }
+  }
+  physicalRe.lastIndex = 0;
+}
+for (const m of mods) {
+  const src = read(`src/v4/${m}`);
+  for (const x of src.matchAll(physicalRe)) {
+    if (!ltrPinned(src, x.index)) {
+      ok(`rtl-physical-js-${m}`, false, x[0]);
+    }
+  }
+  physicalRe.lastIndex = 0;
+}
 console.log(`  (pages=${pages.length} mods=${mods.length} keys-used=${used.size})`);
 
 console.log(fail.length ? `\nSYSTEM AUDIT: ${fail.length} FAILURES` : '\nALL SYSTEM CHECKS PASSED');
