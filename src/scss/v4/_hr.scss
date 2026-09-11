@@ -1144,7 +1144,7 @@ details.zone:not([open]) .zone-head::before {
     transform: translateX(-50%);
   }
 }
-[dir='rtl'] .ticker-track {
+[dir="rtl"] .ticker-track {
   animation-name: tick-scroll-rtl;
 }
 @keyframes tick-scroll-rtl {
@@ -1181,4 +1181,13 @@ details.zone:not([open]) .zone-head::before {
 .check-item.todo .tick {
   border: 2px solid var(--border-color);
   color: transparent;
+}
+h4.sub {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 12px 0 8px;
+}
+h4.sub:first-child {
+  margin-top: 0;
 }

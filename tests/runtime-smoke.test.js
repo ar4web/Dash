@@ -28,7 +28,7 @@ const MARKERS = {
   hr_leave_calendar: '#lc-grid > *',
   hr_tracker: '#track-board > *',
   hr_org_chart: '#org-tree > *',
-  hr_dashboard: '#hr-kpis > *',
+  hr_dashboard: '#dash-head > *',
   hr_settings: '#set-brand input',
   hr_roles: '#ro-matrix tr',
   hr_my_space: '#my-head > *',

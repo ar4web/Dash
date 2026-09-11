@@ -82,101 +82,6 @@ function alerts() {
   const rank = { red: 0, yellow: 1 };
   return out.sort((a, b) => rank[a.sev] - rank[b.sev]);
 }
-
-function renderKpis() {
-  const grid = document.getElementById('hr-kpis');
-  if (!grid) {
-    return;
-  }
-  const emps = getSeed('employees');
-  const assigns = getSeed('assignments');
-  const n = nitaqatEstimate(emps);
-  const deployed = new Set(assigns.map(a => a.emp)).size;
-  const bench = emps.filter(
-    e => !e.saudi && e.st === 'active' && !assigns.some(a => a.emp === e.code)
-  ).length;
-  const payroll = emps
-    .filter(e => e.st !== 'inactive' && e.st !== 'exited' && e.st !== 'huroob')
-    .reduce((s, e) => s + (e.basic || 0) + (e.housing || 0) + (e.transport || 0), 0);
-  const monthly = assigns.reduce((s, a) => s + (a.rate || 0), 0);
-  const blocked = assigns.filter(a => {
-    const e = emps.find(x => x.code === a.emp);
-    return (
-      e &&
-      !ajeerCheck(
-        a,
-        e,
-        CLIENTS.find(c => c.id === a.client)
-      ).ok
-    );
-  }).length;
-  const cards = [
-    {
-      icon: 'users',
-      color: 'teal',
-      label: L('Workforce', 'القوى العاملة'),
-      value: emps.length,
-      sub: `${n.saudis} SA · ${n.expats} ${L('expat', 'أجنبي')}`,
-      href: 'hr_employees.html'
-    },
-    {
-      icon: 'briefcase',
-      color: 'blue',
-      label: L('Deployed', 'موزعون'),
-      value: deployed,
-      sub: `${L('Bench', 'احتياطي')}: ${bench}`,
-      href: 'hr_employees.html'
-    },
-    {
-      icon: 'shield',
-      color: blocked ? 'red' : 'green',
-      label: L('Compliance', 'الامتثال'),
-      value: blocked ? `${blocked} ⚠` : '✓',
-      sub: `${alerts().length} ${L('open actions', 'إجراءات مفتوحة')}`,
-      href: 'hr_sa_compliance.html'
-    },
-    {
-      icon: 'flag',
-      color: 'yellow',
-      label: `${L('Saudization', 'السعودة')} (${L('est.', 'تقديري')})`,
-      value: `${n.pct}%`,
-      sub: `${L('Target', 'المستهدف')}: ${getSettings().nitaqat.target}%`,
-      href: 'hr_sa_compliance.html'
-    },
-    {
-      icon: 'wallet',
-      color: 'purple',
-      label: L('Monthly payroll', 'الرواتب الشهرية'),
-      value: fmtSAR(payroll),
-      sub: L('Basic + housing + transport', 'أساسي + سكن + مواصلات'),
-      href: 'hr_client_dashboard.html'
-    },
-    {
-      icon: 'doc',
-      color: 'green',
-      label: L('Deployment billing/mo', 'فوترة التوزيع/شهر'),
-      value: fmtSAR(monthly),
-      sub: `${assigns.length} ${L('assignments', 'تكليفًا')}`,
-      href: 'hr_client_dashboard.html'
-    }
-  ];
-  grid.innerHTML = cards
-    .map(
-      c => `
-    <a class="card hr-card-link" href="${c.href}">
-      <div class="stat">
-        <div class="stat-icon ${c.color}">${ICONS[c.icon] || ''}</div>
-        <div class="stat-content">
-          <div class="stat-label">${c.label}</div>
-          <div class="stat-value-row"><span class="stat-value">${c.value}</span></div>
-          <div class="stat-subtext">${c.sub}</div>
-        </div>
-      </div>
-    </a>`
-    )
-    .join('');
-}
-
 function renderAlerts() {
   const el = document.getElementById('hr-alerts');
   if (!el) {
@@ -1134,7 +1039,6 @@ function renderAll() {
   renderS4();
   renderS5();
   renderS6();
-  renderKpis();
   renderAlerts();
   renderExpiries();
   renderMix();
@@ -1344,7 +1248,8 @@ function renderS6() {
   const half = bands
     .map(([tone, text]) => `<span class="ticker-band ${tone}">${esc(text)}</span>`)
     .join('');
-  document.getElementById('ticker-track').innerHTML = half + half;
+  document.getElementById('ticker-track').innerHTML =
+    half + `<span aria-hidden="true" style="display:contents">${half}</span>`;
 
   const tasks = getSeed('tasks') || [];
   const prio = { high: 0, medium: 1, low: 2 };
